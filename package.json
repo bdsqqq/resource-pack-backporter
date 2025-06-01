@@ -1,0 +1,21 @@
+{
+  "name": "minecraft-cit-converter",
+  "version": "1.0.0",
+  "description": "Converts modern Minecraft item model JSON files to CIT properties files",
+  "main": "convert-to-cit.ts",
+  "scripts": {
+    "convert": "bun run convert-to-cit.ts",
+    "test": "bun test"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "bun-types": "latest"
+  },
+  "keywords": [
+    "minecraft",
+    "resource-pack", 
+    "cit",
+    "custom-item-textures",
+    "converter"
+  ]
+}

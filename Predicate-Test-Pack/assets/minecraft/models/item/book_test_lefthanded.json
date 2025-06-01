@@ -1,0 +1,20 @@
+{
+  "parent": "item/generated",
+  "textures": {
+    "layer0": "item/book"
+  },
+  "overrides": [
+    {
+      "predicate": {
+        "lefthanded": true
+      },
+      "model": "item/test/red"
+    },
+    {
+      "predicate": {
+        "lefthanded": false
+      },
+      "model": "item/test/green"
+    }
+  ]
+}

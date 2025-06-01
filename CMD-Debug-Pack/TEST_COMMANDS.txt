@@ -1,0 +1,23 @@
+# CustomModelData Debug Tests
+
+## Test 1: Red Wool Texture (should definitely work)
+/give @p minecraft:enchanted_book[minecraft:custom_model_data=1]
+
+## Test 2: 3D Enchanted Book Model  
+/give @p minecraft:enchanted_book[minecraft:custom_model_data=2]
+
+## Test 3: Specific Aqua Affinity Model
+/give @p minecraft:enchanted_book[minecraft:custom_model_data=3]
+
+## What to expect:
+- CMD 1: Red block texture (proves CustomModelData works)
+- CMD 2: 3D enchanted book model
+- CMD 3: Specific aqua affinity model
+
+## If CMD 1 doesn't work:
+- CustomModelData system is broken
+- Check resource pack is enabled and reloaded
+
+## If CMD 1 works but 2/3 don't:
+- Model paths are wrong
+- 3D models have issues

@@ -1,0 +1,32 @@
+{
+  "parent": "item/generated",
+  "textures": {
+    "layer0": "item/written_book"
+  },
+  "overrides": [
+    {
+      "predicate": {
+        "custom_model_data": 1
+      },
+      "model": "item/enchanted_books/written_book"
+    },
+    {
+      "predicate": {
+        "custom_model_data": 2
+      },
+      "model": "item/books_3d/written_book_3d_open"
+    },
+    {
+      "predicate": {
+        "custom_model_data": 3
+      },
+      "model": "item/books_3d/written_book_3d"
+    },
+    {
+      "predicate": {
+        "custom_model_data": 4
+      },
+      "model": "item/written_book"
+    }
+  ]
+}

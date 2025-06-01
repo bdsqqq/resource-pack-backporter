@@ -1,0 +1,11 @@
+# Commands to get writable_book with different models
+# Use these in creative mode or with command blocks
+
+# base_default (gui,fixed,ground)
+/give @p minecraft:writable_book{CustomModelData:1}
+
+# base_default (firstperson_lefthand,thirdperson_lefthand,head)
+/give @p minecraft:writable_book{CustomModelData:2}
+
+# base_default (fallback)
+/give @p minecraft:writable_book{CustomModelData:3}

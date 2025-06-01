@@ -1,0 +1,30 @@
+# Predicate Test Pack Instructions
+
+## What to Test:
+
+### 1. Test book_test_lefthanded.json
+- Rename it to book.json temporarily
+- Should show different colors based on left/right-handed setting
+- Red = left-handed players, Green = right-handed players
+
+### 2. Test book_test_custom_model_data.json  
+- Rename it to book.json temporarily
+- Use commands:
+  /give @p minecraft:book{CustomModelData:1} (should be red)
+  /give @p minecraft:book{CustomModelData:2} (should be green)
+  /give @p minecraft:book{CustomModelData:3} (should be blue)
+
+### 3. Test book_test_damaged.json
+- Rename it to book.json temporarily  
+- Get damaged vs undamaged books (books don't usually have durability though)
+
+## Results:
+- Note which predicates actually work
+- CustomModelData should definitely work
+- lefthanded and damaged are questionable
+
+## Current Working Predicates in 1.21.1:
+✅ custom_model_data
+❓ lefthanded  
+❓ damaged
+❓ Others unknown

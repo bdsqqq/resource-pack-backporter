@@ -1,0 +1,11 @@
+{
+  "parent": "item/books_3d/written_book_3d",
+  "overrides": [
+    {
+      "predicate": {
+        "lefthanded": false
+      },
+      "model": "item/books_3d/written_book_3d_open"
+    }
+  ]
+}

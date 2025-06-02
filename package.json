@@ -2,9 +2,9 @@
   "name": "minecraft-resource-pack-backporter",
   "version": "1.0.0",
   "description": "Backports Minecraft 1.21.4+ resource packs to work in 1.21.1 using CIT + Pommel",
-  "main": "complete-books-cit-pommel.ts",
+  "main": "resource-pack-backporter.ts",
   "scripts": {
-    "convert": "bun complete-books-cit-pommel.ts . dist/cit-pommel",
+    "backport": "bun resource-pack-backporter.ts . dist/backported",
     "clean": "rm -rf dist"
   },
   "devDependencies": {

@@ -1,80 +1,86 @@
 # Minecraft Resource Pack Backporter
 
-Converts Minecraft 1.21.4+ resource packs to work in 1.21.1 using CIT + Pommel mod combination.
+Automatically backports Minecraft 1.21.4+ resource packs to work in 1.21.1 using CIT + Pommel mod combination.
 
 ## What This Tool Does
 
-Modern Minecraft versions (1.21.4+) use a component-based model selection system that allows resource packs to show different 3D book models based on enchantments and display contexts. However, this system doesn't exist in 1.21.1.
+Modern Minecraft versions (1.21.4+) introduced a component-based model selection system that allows resource packs to show different item models based on NBT data, enchantments, and display contexts. This system doesn't exist in 1.21.1.
 
-This tool backports these modern resource packs by:
+This tool automatically detects and converts these modern component-based resource packs by:
 
-1. **Converting component-based models** to CIT (Custom Item Textures) properties files
-2. **Generating Pommel models** that handle hand-specific behavior
-3. **Fixing model compatibility issues** for 1.21.1
+1. **Scanning for component-based items** - Automatically finds items using 1.21.4+ features
+2. **Converting to CIT properties** - Generates Custom Item Textures files for NBT detection
+3. **Creating Pommel models** - Handles context-specific behavior (hand position, ground, etc.)
+4. **Fixing compatibility issues** - Resolves model problems for 1.21.1
 
 ## Features
 
-- ✅ **Full enchantment support** - Automatically detects all 125+ enchantment combinations
-- ✅ **Hand-specific behavior** - Open books in right hand, closed books in left hand  
-- ✅ **All book types** - Supports regular books, enchanted books, written books, etc.
-- ✅ **No invisibility issues** - Fixes problematic `builtin/entity` parents
-- ✅ **2D inventory fallback** - Shows 2D sprites in inventory/GUI
+- ✅ **Universal compatibility** - Works with any resource pack using component-based models
+- ✅ **Automatic detection** - No manual configuration required
+- ✅ **Full component support** - Handles enchantments, custom data, and other NBT components
+- ✅ **Context-aware models** - Different models for different hands and display contexts
+- ✅ **Model fixing** - Automatically resolves 1.21.1 compatibility issues
+- ✅ **One-shot conversion** - Single command does everything
 
 ## Requirements
 
 - **Bun** runtime (for running the converter)
-- **CIT Resewn** mod (for enchantment detection)
-- **Pommel** mod (for hand-specific models)
+- **CIT Resewn** mod (for NBT-based item detection)
+- **Pommel** mod (for context-specific models)
 
-### Important: Enhanced Pommel Required
+### Enhanced Pommel (Recommended)
 
-For perfect feature parity, you need the latest Pommel build with enhanced predicates:
+For perfect feature parity, use the latest Pommel build with enhanced predicates:
 
 1. Clone: `https://github.com/TimmyChips/Pommel-Held-Item-Models`
 2. Build: `./gradlew build`
 3. Install the resulting JAR in your mods folder
 
-This enables `pommel:is_offhand` predicate for exact left/right hand behavior.
+This enables advanced predicates like `pommel:is_offhand` for precise context behavior.
 
 ## Usage
 
 ### Quick Start
 
-1. Place your 1.21.4+ resource pack in this directory (replace the example files)
-2. Run the converter:
+1. Place your 1.21.4+ resource pack in this directory
+2. Run the backporter:
    ```bash
-   bun run convert
+   bun run backport
    ```
-3. Copy `dist/cit-pommel/` to your Minecraft resource packs folder
+3. Copy `dist/backported/` to your Minecraft resource packs folder
 
-### Directory Structure
+### Input Structure
 
 Your resource pack should have this structure:
 ```
 assets/
 ├── minecraft/
 │   ├── items/
-│   │   └── enchanted_book.json     # Component-based model definitions
+│   │   ├── enchanted_book.json     # Component-based definitions
+│   │   ├── custom_item.json        # Any item with components
+│   │   └── ...
 │   ├── models/
 │   │   └── item/
-│   │       └── books_3d/           # 3D book models
+│   │       ├── item_models_3d/     # 3D model variants
+│   │       └── ...
 │   └── textures/
 │       └── item/
-│           └── enchanted_books/    # 2D book textures
+│           ├── item_textures/      # 2D texture variants
+│           └── ...
 pack.mcmeta
 pack.png
 ```
 
 ### Output Structure
 
-The converted pack will have:
+The backported pack will have:
 ```
-dist/cit-pommel/
+dist/backported/
 ├── assets/minecraft/
-│   ├── optifine/cit/              # CIT properties files
+│   ├── optifine/cit/              # Generated CIT properties
 │   ├── models/item/
-│   │   ├── books/                 # Pommel model files
-│   │   └── books_3d/              # Fixed 3D models
+│   │   ├── pommel/                # Generated Pommel models
+│   │   └── ...                    # Fixed original models
 │   └── textures/                  # Copied textures
 pack.mcmeta
 pack.png
@@ -82,21 +88,33 @@ pack.png
 
 ## How It Works
 
-### 1. Component Analysis
-Extracts enchantment mappings from `enchanted_book.json` component selectors.
+### 1. Component Detection
+Scans `assets/minecraft/items/` for files using component-based model selection:
+```json
+{
+  "type": "minecraft:select",
+  "component": "minecraft:stored_enchantments",
+  "cases": [
+    {
+      "when": { "minecraft:sharpness": 1 },
+      "model": { "model": "minecraft:item/books/sharpness_1" }
+    }
+  ]
+}
+```
 
 ### 2. CIT Generation
-Creates `.properties` files that detect enchanted books by their NBT data:
+Creates properties files for NBT-based detection:
 ```properties
 type=item
 items=enchanted_book
-model=assets/minecraft/models/item/books/sharpness_1
+model=assets/minecraft/models/item/pommel/sharpness_1
 enchantmentIDs=minecraft:sharpness
 enchantmentLevels=1
 ```
 
 ### 3. Pommel Models
-Generates hand-aware models using predicates:
+Generates context-aware models:
 ```json
 {
   "parent": "minecraft:item/handheld",
@@ -114,21 +132,37 @@ Generates hand-aware models using predicates:
 }
 ```
 
-### 4. Model Fixes
-Removes problematic `builtin/entity` parents and fixes zero-thickness elements that cause invisibility in 1.21.1.
+### 4. Model Compatibility
+Automatically fixes common 1.21.1 issues:
+- Removes problematic `builtin/entity` parents
+- Fixes zero-thickness elements that cause invisibility
+- Preserves all other model properties
+
+## Supported Components
+
+- ✅ **minecraft:stored_enchantments** - Enchanted items
+- ⚠️ **Other components** - Basic support with NBT fallback
+
+Additional components can be added by extending the `generateCITFile` function.
 
 ## Troubleshooting
 
-### Only closed books show in both hands
-You need the enhanced Pommel build with `pommel:is_offhand` predicate support.
+### No items detected
+Ensure your resource pack has component-based items in `assets/minecraft/items/`.
 
-### Enchantments not detected
-Ensure CIT Resewn mod is installed and NBT data is preserved in your world.
+### Models not showing correctly
+Make sure both CIT Resewn and Pommel mods are installed and enabled.
+
+### Hand behavior not working
+Use the enhanced Pommel build with `pommel:is_offhand` predicate support.
+
+### Custom components not working
+The tool currently has full support for enchantments. Other components use NBT fallback which may need manual refinement.
 
 ## Contributing
 
-This tool was developed specifically for the "Better Fresher 3D Books" resource pack but should work with any 1.21.4+ resource pack that uses component-based model selection.
+This tool is designed to work with any 1.21.4+ resource pack. If you encounter issues with specific component types, please contribute improvements to the component detection logic.
 
 ## License
 
-Open source - feel free to adapt for your own resource pack backporting needs!
+Open source - adapt and improve for the community!

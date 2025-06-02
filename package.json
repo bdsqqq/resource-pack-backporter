@@ -1,17 +1,12 @@
 {
-  "name": "minecraft-cit-converter",
+  "name": "minecraft-resource-pack-backporter",
   "version": "1.0.0",
-  "description": "Converts modern Minecraft item model JSON files to CIT properties files",
-  "main": "convert-to-cit.ts",
+  "description": "Backports Minecraft 1.21.4+ resource packs to work in 1.21.1 using CIT + Pommel",
+  "main": "complete-books-cit-pommel.ts",
   "scripts": {
-    "build": "bun run build.ts",
-    "build:cmd": "bun fix-specific-models.ts . dist",
-    "build:simple": "bun create-immediate-3d.ts",
-    "build:cit-pommel": "bun cit-pommel-converter.ts . dist/cit-pommel",
-    "build:complete-books": "bun complete-books-cit-pommel.ts . dist/complete-cit-pommel",
-    "fix-open-books": "bun fix-open-book-models.ts . dist/fixed-models",
-    "clean": "rm -rf dist",
-    "test": "bun test"
+    "convert": "bun complete-books-cit-pommel.ts . dist/cit-pommel",
+    "fix-open-books": "bun fix-all-open-books.ts",
+    "clean": "rm -rf dist"
   },
   "devDependencies": {
     "@types/node": "^20.0.0",
@@ -21,7 +16,10 @@
     "minecraft",
     "resource-pack", 
     "cit",
-    "custom-item-textures",
-    "converter"
+    "pommel",
+    "backport",
+    "converter",
+    "1.21.4",
+    "1.21.1"
   ]
 }

@@ -62,10 +62,10 @@ async function fixAllOpenBooks(booksDir: string) {
 }
 
 if (import.meta.main) {
-  const booksDir = 'dist/complete-cit-pommel/assets/minecraft/models/item/books_3d';
-  
-  fixAllOpenBooks(booksDir)
-    .catch(error => {
-      console.error('❌ Fix failed:', error.message);
-    });
+const booksDir = 'dist/cit-pommel/assets/minecraft/models/item/books_3d';
+
+fixAllOpenBooks(booksDir)
+.catch(error => {
+console.error('❌ Fix failed:', error.message);
+});
 }

@@ -56,6 +56,12 @@ class PommelPredicateSystem implements PredicateSystem {
       model: item.baseModel
     });
     
+    // Ground/dropped: always base/closed variant (3D when dropped)
+    overrides.push({
+      predicate: { "pommel:is_ground": 1.0 },
+      model: item.baseModel
+    });
+    
     return overrides;
   }
 }

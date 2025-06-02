@@ -8,6 +8,8 @@
     "build:cmd": "bun fix-specific-models.ts . dist",
     "build:simple": "bun create-immediate-3d.ts",
     "build:cit-pommel": "bun cit-pommel-converter.ts . dist/cit-pommel",
+    "build:complete-books": "bun complete-books-cit-pommel.ts . dist/complete-cit-pommel",
+    "fix-open-books": "bun fix-open-book-models.ts . dist/fixed-models",
     "clean": "rm -rf dist",
     "test": "bun test"
   },

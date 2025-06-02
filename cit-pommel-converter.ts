@@ -104,7 +104,7 @@ function generatePommelModel(mapping: EnchantmentMapping): PommelModel {
   return {
     parent: "minecraft:item/handheld",
     textures: {
-      layer0: `minecraft:item/books/${bookModelName}`
+      layer0: `minecraft:item/enchanted_books/${bookModelName}`
     },
     overrides: [
       {
@@ -122,7 +122,24 @@ function generatePommelModel(mapping: EnchantmentMapping): PommelModel {
 function getBookModelName(mapping: EnchantmentMapping): string {
   const enchantmentName = mapping.enchantment.replace('minecraft:', '');
   const level = mapping.level;
-  return level ? `${enchantmentName}_${level}` : enchantmentName;
+  
+  // Special cases for enchantments that don't have level suffixes in textures
+  const noLevelSuffix = ['aqua_affinity', 'channeling', 'flame', 'infinity', 'mending', 'multishot', 'silk_touch'];
+  const isNoLevelEnchantment = noLevelSuffix.includes(enchantmentName);
+  
+  // Handle curse enchantments with different texture names
+  if (enchantmentName === 'binding_curse') {
+    return 'curse_of_binding';
+  }
+  if (enchantmentName === 'vanishing_curse') {
+    return 'curse_of_vanishing';
+  }
+  
+  if (isNoLevelEnchantment || level === 1) {
+    return enchantmentName;
+  }
+  
+  return `${enchantmentName}_${level}`;
 }
 
 function getEnchantmentFileName(mapping: EnchantmentMapping): string {

@@ -4,303 +4,184 @@ import { mkdir, writeFile, readFile, readdir } from 'fs/promises';
 import { join } from 'path';
 import { existsSync } from 'fs';
 
-interface ComponentMapping {
+// Core interfaces
+interface DisplayContextMapping {
   itemId: string;
-  component: string;
-  conditions: Record<string, any>;
-  model: string;
-}
-
-interface ItemProcessor {
-  name: string;
-  canProcess(itemId: string, modelsDir: string, itemsDir: string): Promise<boolean>;
-  process(inputDir: string, outputDir: string, citDir: string, predicateSystem: PredicateSystem): Promise<void>;
+  enchantment?: string;
+  level?: number;
+  contexts: Record<string, string>; // displayContext -> modelPath
 }
 
 interface PredicateSystem {
   name: string;
-  generateOverrides(item: ItemVariant): PredicateOverride[];
+  mapDisplayContext(context: string): { predicate: Record<string, number> } | null;
 }
 
 interface ItemVariant {
   itemId: string;
   variantId: string;
   textureRef: string;
-  baseModel: string;
-  openModel?: string;
-  component?: string;
-  conditions?: Record<string, any>;
-}
-
-interface PredicateOverride {
-  predicate: Record<string, number>;
-  model: string;
+  models: Record<string, string>; // predicateName -> modelPath
+  enchantment?: string;
+  level?: number;
 }
 
 // Predicate Systems
 class PommelPredicateSystem implements PredicateSystem {
   name = 'pommel';
   
-  generateOverrides(item: ItemVariant): PredicateOverride[] {
-    const overrides: PredicateOverride[] = [];
+  mapDisplayContext(context: string) {
+    const mapping = {
+      'firstperson_righthand': { predicate: { "pommel:is_held": 1.0 } },
+      'thirdperson_righthand': { predicate: { "pommel:is_held": 1.0 } },
+      'firstperson_lefthand': { predicate: { "pommel:is_offhand": 1.0 } },
+      'thirdperson_lefthand': { predicate: { "pommel:is_offhand": 1.0 } },
+      'head': { predicate: { "pommel:is_offhand": 1.0 } },
+      'ground': { predicate: { "pommel:is_ground": 1.0 } }
+    };
     
-    // Right hand: open variant if available, otherwise base
-    overrides.push({
-      predicate: { "pommel:is_held": 1.0 },
-      model: item.openModel || item.baseModel
-    });
-    
-    // Left hand: always base/closed variant
-    overrides.push({
-      predicate: { "pommel:is_offhand": 1.0 },
-      model: item.baseModel
-    });
-    
-    // Ground/dropped: always base/closed variant (3D when dropped)
-    overrides.push({
-      predicate: { "pommel:is_ground": 1.0 },
-      model: item.baseModel
-    });
-    
-    return overrides;
+    return mapping[context as keyof typeof mapping] || null;
   }
 }
 
-// Item Processors
-class EnchantedBookProcessor implements ItemProcessor {
-  name = 'enchanted_book';
+// Main extraction function
+function extractDisplayContextMappings(componentJson: any, itemId: string): DisplayContextMapping[] {
+  const mappings: Record<string, DisplayContextMapping> = {}; // key: enchantment:level
   
-  async canProcess(itemId: string, modelsDir: string, itemsDir: string): Promise<boolean> {
-    return itemId === 'enchanted_book' && existsSync(join(itemsDir, 'enchanted_book.json'));
-  }
-  
-  async process(inputDir: string, outputDir: string, citDir: string, predicateSystem: PredicateSystem): Promise<void> {
-    console.log('📚 Processing enchanted books...');
-    
-    // Copy textures to proper location
-    const enchantedBooksTextureSrc = join(inputDir, 'assets/minecraft/textures/item/enchanted_books');
-    const booksTextureDest = join(outputDir, 'assets/minecraft/textures/item/books');
-    if (existsSync(enchantedBooksTextureSrc)) {
-      await mkdir(booksTextureDest, { recursive: true });
-      const { cp } = await import('fs/promises');
-      await cp(enchantedBooksTextureSrc, booksTextureDest, { recursive: true });
-    }
-    
-    // Extract mappings from component file
-    const enchantedBookPath = join(inputDir, 'assets/minecraft/items/enchanted_book.json');
-    const enchantedBookJson = JSON.parse(await readFile(enchantedBookPath, 'utf-8'));
-    const mappings = this.extractEnchantmentMappings(enchantedBookJson);
-    
-    console.log(`📦 Found ${mappings.length} enchantment variants`);
-    
-    // Create Pommel model directory
-    const pommelModelsDir = join(outputDir, 'assets/minecraft/models/item/books');
-    await mkdir(pommelModelsDir, { recursive: true });
-    
-    for (const mapping of mappings) {
-      const variant = this.createItemVariant(mapping);
+  // Look for display context selectors
+  if (componentJson?.model?.type === "minecraft:select" && componentJson.model.property === "minecraft:display_context") {
+    for (const displayCase of componentJson.model.cases || []) {
+      const displayContexts = Array.isArray(displayCase.when) ? displayCase.when : [displayCase.when];
       
-      // Generate CIT file
-      await this.generateCITFile(variant, citDir);
-      
-      // Generate predicate model file
-      await this.generatePredicateModel(variant, pommelModelsDir, predicateSystem);
-    }
-  }
-  
-  private extractEnchantmentMappings(componentJson: any): ComponentMapping[] {
-    const mappings: ComponentMapping[] = [];
-    
-    function traverse(node: any) {
-      if (node?.type === "minecraft:select" && node?.component === "minecraft:stored_enchantments") {
-        for (const caseItem of node.cases || []) {
-          if (caseItem.when && typeof caseItem.when === 'object') {
-            for (const [enchantment, level] of Object.entries(caseItem.when)) {
-              if (typeof enchantment !== 'string' || !enchantment.includes(':')) continue;
-              if (typeof level !== 'number') continue;
-              
-              if (caseItem.model?.model) {
-                mappings.push({
-                  itemId: 'enchanted_book',
-                  component: 'minecraft:stored_enchantments',
-                  conditions: { [enchantment]: level },
-                  model: caseItem.model.model
-                });
+      // Look for component selectors within this display context
+      if (displayCase.model?.type === "minecraft:select" && displayCase.model.component === "minecraft:stored_enchantments") {
+        for (const enchantmentCase of displayCase.model.cases || []) {
+          if (enchantmentCase.when && enchantmentCase.model?.model) {
+            // Handle both single object and array of objects
+            const whenItems = Array.isArray(enchantmentCase.when) ? enchantmentCase.when : [enchantmentCase.when];
+            
+            for (const whenItem of whenItems) {
+              if (typeof whenItem === 'object') {
+                for (const [enchantment, level] of Object.entries(whenItem)) {
+                  if (typeof enchantment !== 'string' || !enchantment.includes(':')) continue;
+                  if (typeof level !== 'number') continue;
+                  
+                  const key = `${enchantment}:${level}`;
+                  
+                  // Find or create mapping for this enchantment+level
+                  if (!mappings[key]) {
+                    mappings[key] = {
+                      itemId,
+                      enchantment,
+                      level,
+                      contexts: {}
+                    };
+                  }
+                  
+                  // Add all display contexts that use this model
+                  for (const context of displayContexts) {
+                    mappings[key].contexts[context] = enchantmentCase.model.model;
+                  }
+                }
               }
             }
           }
         }
       }
-      
-      if (node?.model) traverse(node.model);
-      if (node?.cases) {
-        for (const caseItem of node.cases) {
-          if (caseItem.model) traverse(caseItem.model);
-        }
+    }
+  }
+  
+  return Object.values(mappings);
+}
+
+// Convert display context mappings to item variants for a predicate system
+function createItemVariants(mappings: DisplayContextMapping[], predicateSystem: PredicateSystem): ItemVariant[] {
+  const variants: ItemVariant[] = [];
+  
+  for (const mapping of mappings) {
+    if (!mapping.enchantment || mapping.level === undefined) continue;
+    
+    const enchantmentName = mapping.enchantment.replace('minecraft:', '');
+    const variantId = `${enchantmentName}_${mapping.level}`;
+    const textureModelName = getTextureModelName(enchantmentName, mapping.level);
+    
+    // Create predicate models from display contexts
+    const predicateModels: Record<string, string> = {};
+    
+    for (const [context, modelPath] of Object.entries(mapping.contexts)) {
+      const predicateMapping = predicateSystem.mapDisplayContext(context);
+      if (predicateMapping) {
+        const predicateKey = JSON.stringify(predicateMapping.predicate);
+        predicateModels[predicateKey] = modelPath;
       }
     }
     
-    traverse(componentJson);
-    return mappings;
-  }
-  
-  private createItemVariant(mapping: ComponentMapping): ItemVariant {
-    const enchantment = Object.keys(mapping.conditions)[0];
-    const level = mapping.conditions[enchantment];
-    
-    const fileName = this.getEnchantmentFileName(enchantment, level);
-    const textureModelName = this.getTextureModelName(enchantment, level);
-    const baseEnchantmentName = this.getBaseEnchantmentName(enchantment);
-    
-    return {
-      itemId: 'enchanted_book',
-      variantId: fileName,
-      textureRef: `minecraft:item/books/${textureModelName}`,
-      baseModel: `minecraft:item/books_3d/${baseEnchantmentName}_3d`,
-      openModel: `minecraft:item/books_3d/${baseEnchantmentName}_3d_open`,
-      component: 'minecraft:stored_enchantments',
-      conditions: { [enchantment]: level }
-    };
-  }
-  
-  private getEnchantmentFileName(enchantment: string, level: number): string {
-    const enchantmentName = enchantment.replace('minecraft:', '');
-    return `${enchantmentName}_${level}`;
-  }
-  
-  private getTextureModelName(enchantment: string, level: number): string {
-    const enchantmentName = enchantment.replace('minecraft:', '');
-    
-    // Handle curse enchantments with different texture names
-    if (enchantmentName === 'binding_curse') return 'curse_of_binding';
-    if (enchantmentName === 'vanishing_curse') return 'curse_of_vanishing';
-    
-    // Special enchantments that don't have level suffixes in textures
-    const noLevelSuffix = ['aqua_affinity', 'channeling', 'flame', 'infinity', 'mending', 'multishot', 'silk_touch'];
-    if (noLevelSuffix.includes(enchantmentName)) {
-      return enchantmentName;
+    // Only create variant if we have predicate models
+    if (Object.keys(predicateModels).length > 0) {
+      variants.push({
+        itemId: mapping.itemId,
+        variantId,
+        textureRef: `minecraft:item/books/${textureModelName}`,
+        models: predicateModels,
+        enchantment: mapping.enchantment,
+        level: mapping.level
+      });
     }
-    
-    // All other enchantments use level suffixes in texture names
-    return `${enchantmentName}_${level}`;
   }
   
-  private getBaseEnchantmentName(enchantment: string): string {
-    const enchantmentName = enchantment.replace('minecraft:', '');
-    
-    // Handle curse enchantments
-    if (enchantmentName === 'binding_curse') return 'curse_of_binding';
-    if (enchantmentName === 'vanishing_curse') return 'curse_of_vanishing';
-    
+  return variants;
+}
+
+function getTextureModelName(enchantmentName: string, level: number): string {
+  // Handle curse enchantments with different texture names
+  if (enchantmentName === 'binding_curse') return 'curse_of_binding';
+  if (enchantmentName === 'vanishing_curse') return 'curse_of_vanishing';
+  
+  // Special enchantments that don't have level suffixes in textures
+  const noLevelSuffix = ['aqua_affinity', 'channeling', 'flame', 'infinity', 'mending', 'multishot', 'silk_touch'];
+  if (noLevelSuffix.includes(enchantmentName)) {
     return enchantmentName;
   }
   
-  private async generateCITFile(variant: ItemVariant, citDir: string): Promise<void> {
-    const enchantment = Object.keys(variant.conditions!)[0];
-    const level = variant.conditions![enchantment];
-    
-    const citContent = [
-      'type=item',
-      'items=enchanted_book',
-      `model=assets/minecraft/models/item/books/${variant.variantId}`,
-      `enchantmentIDs=${enchantment}`,
-      `enchantmentLevels=${level}`
-    ].join('\n');
-    
-    await writeFile(join(citDir, `${variant.variantId}.properties`), citContent);
-  }
-  
-  private async generatePredicateModel(variant: ItemVariant, modelsDir: string, predicateSystem: PredicateSystem): Promise<void> {
-    const overrides = predicateSystem.generateOverrides(variant);
-    
-    const model = {
-      parent: "minecraft:item/handheld",
-      textures: {
-        layer0: variant.textureRef
-      },
-      overrides
-    };
-    
-    await writeFile(
-      join(modelsDir, `${variant.variantId}.json`),
-      JSON.stringify(model, null, 2)
-    );
-  }
+  // All other enchantments use level suffixes in texture names
+  return `${enchantmentName}_${level}`;
 }
 
-class RegularBookProcessor implements ItemProcessor {
-  name = 'regular_books';
+async function generateCITFile(variant: ItemVariant, citDir: string): Promise<void> {
+  const citContent = [
+    'type=item',
+    'items=enchanted_book',
+    `model=assets/minecraft/models/item/books/${variant.variantId}`,
+    `enchantmentIDs=${variant.enchantment}`,
+    `enchantmentLevels=${variant.level}`
+  ].join('\n');
   
-  private bookConfigs = [
-    { itemId: 'book', textureRef: 'minecraft:item/books/book' },
-    { itemId: 'writable_book', textureRef: 'minecraft:item/books/writable_book' },
-    { itemId: 'written_book', textureRef: 'minecraft:item/books/written_book' },
-    { itemId: 'knowledge_book', textureRef: 'minecraft:item/books/knowledge_book' }
-  ];
+  await writeFile(join(citDir, `${variant.variantId}.properties`), citContent);
+}
+
+async function generatePredicateModel(variant: ItemVariant, modelsDir: string): Promise<void> {
+  const overrides = [];
   
-  async canProcess(itemId: string, modelsDir: string, itemsDir: string): Promise<boolean> {
-    if (!this.bookConfigs.some(config => config.itemId === itemId)) return false;
-    
-    // Check if 3D models exist
-    const booksDir = join(modelsDir, 'books_3d');
-    if (!existsSync(booksDir)) return false;
-    
-    const files = await readdir(booksDir);
-    return files.includes(`${itemId}_3d.json`);
+  for (const [predicateKey, modelPath] of Object.entries(variant.models)) {
+    const predicate = JSON.parse(predicateKey);
+    overrides.push({
+      predicate,
+      model: modelPath
+    });
   }
   
-  async process(inputDir: string, outputDir: string, citDir: string, predicateSystem: PredicateSystem): Promise<void> {
-    // Create Pommel model directory
-    const pommelModelsDir = join(outputDir, 'assets/minecraft/models/item/books');
-    await mkdir(pommelModelsDir, { recursive: true });
-    
-    for (const config of this.bookConfigs) {
-      if (await this.canProcess(config.itemId, join(inputDir, 'assets/minecraft/models/item'), '')) {
-        console.log(`📖 Processing ${config.itemId}...`);
-        
-        const variant: ItemVariant = {
-          itemId: config.itemId,
-          variantId: config.itemId,
-          textureRef: config.textureRef,
-          baseModel: `minecraft:item/books_3d/${config.itemId}_3d`,
-          openModel: `minecraft:item/books_3d/${config.itemId}_3d_open`
-        };
-        
-        // Generate CIT file
-        await this.generateCITFile(variant, citDir);
-        
-        // Generate predicate model file
-        await this.generatePredicateModel(variant, pommelModelsDir, predicateSystem);
-      }
-    }
-  }
+  const model = {
+    parent: "minecraft:item/handheld",
+    textures: {
+      layer0: variant.textureRef
+    },
+    overrides
+  };
   
-  private async generateCITFile(variant: ItemVariant, citDir: string): Promise<void> {
-    const citContent = [
-      'type=item',
-      `items=${variant.itemId}`,
-      `model=assets/minecraft/models/item/books/${variant.variantId}`
-    ].join('\n');
-    
-    await writeFile(join(citDir, `${variant.variantId}.properties`), citContent);
-  }
-  
-  private async generatePredicateModel(variant: ItemVariant, modelsDir: string, predicateSystem: PredicateSystem): Promise<void> {
-    const overrides = predicateSystem.generateOverrides(variant);
-    
-    const model = {
-      parent: "minecraft:item/handheld",
-      textures: {
-        layer0: variant.textureRef
-      },
-      overrides
-    };
-    
-    await writeFile(
-      join(modelsDir, `${variant.variantId}.json`),
-      JSON.stringify(model, null, 2)
-    );
-  }
+  await writeFile(
+    join(modelsDir, `${variant.variantId}.json`),
+    JSON.stringify(model, null, 2)
+  );
 }
 
 // Main backporter function
@@ -309,7 +190,9 @@ async function backportResourcePack(inputDir: string, outputDir: string, predica
   
   // Create output directories
   const citDir = join(outputDir, 'assets/minecraft/optifine/cit');
+  const pommelModelsDir = join(outputDir, 'assets/minecraft/models/item/books');
   await mkdir(citDir, { recursive: true });
+  await mkdir(pommelModelsDir, { recursive: true });
   
   // Copy pack metadata
   for (const file of ['pack.mcmeta', 'pack.png']) {
@@ -332,6 +215,15 @@ async function backportResourcePack(inputDir: string, outputDir: string, predica
     }
   }
   
+  // Copy textures to proper location for books
+  const enchantedBooksTextureSrc = join(inputDir, 'assets/minecraft/textures/item/enchanted_books');
+  const booksTextureDest = join(outputDir, 'assets/minecraft/textures/item/books');
+  if (existsSync(enchantedBooksTextureSrc)) {
+    await mkdir(booksTextureDest, { recursive: true });
+    const { cp } = await import('fs/promises');
+    await cp(enchantedBooksTextureSrc, booksTextureDest, { recursive: true });
+  }
+  
   // Fix model compatibility
   console.log('🔧 Fixing model compatibility for 1.21.1...');
   await fixModelCompatibility(outputDir);
@@ -348,45 +240,91 @@ async function backportResourcePack(inputDir: string, outputDir: string, predica
   
   console.log(`🎯 Using ${predicateSystem.name} predicate system`);
   
-  // Initialize processors
-  const processors: ItemProcessor[] = [
-    new EnchantedBookProcessor(),
-    new RegularBookProcessor()
+  // Process enchanted books
+  const enchantedBookPath = join(inputDir, 'assets/minecraft/items/enchanted_book.json');
+  if (existsSync(enchantedBookPath)) {
+    console.log('📚 Processing enchanted books...');
+    
+    const enchantedBookJson = JSON.parse(await readFile(enchantedBookPath, 'utf-8'));
+    const displayMappings = extractDisplayContextMappings(enchantedBookJson, 'enchanted_book');
+
+    
+    const variants = createItemVariants(displayMappings, predicateSystem);
+    
+
+    
+    console.log(`📦 Found ${variants.length} enchantment variants`);
+    
+    for (const variant of variants) {
+      await generateCITFile(variant, citDir);
+      await generatePredicateModel(variant, pommelModelsDir);
+    }
+  }
+  
+  // TODO: Process regular books similarly
+  // For now, handle them with simple hardcoded mappings
+  const regularBooks = [
+    { itemId: 'book', textureRef: 'minecraft:item/books/book' },
+    { itemId: 'writable_book', textureRef: 'minecraft:item/books/writable_book' },
+    { itemId: 'written_book', textureRef: 'minecraft:item/books/written_book' },
+    { itemId: 'knowledge_book', textureRef: 'minecraft:item/books/knowledge_book' }
   ];
   
-  // Process items
-  const modelsDir = join(inputDir, 'assets/minecraft/models/item');
-  const itemsDir = join(inputDir, 'assets/minecraft/items');
-  
-  let totalProcessed = 0;
-  
-  for (const processor of processors) {
-    let processed = false;
-    
-    if (processor.name === 'enchanted_book') {
-      if (await processor.canProcess('enchanted_book', modelsDir, itemsDir)) {
-        await processor.process(inputDir, outputDir, citDir, predicateSystem);
-        processed = true;
-        totalProcessed++;
+  for (const book of regularBooks) {
+    const booksDir = join(inputDir, 'assets/minecraft/models/item/books_3d');
+    if (existsSync(join(booksDir, `${book.itemId}_3d.json`))) {
+      console.log(`📖 Processing ${book.itemId}...`);
+      
+      // Create simple CIT file
+      const citContent = [
+        'type=item',
+        `items=${book.itemId}`,
+        `model=assets/minecraft/models/item/books/${book.itemId}`
+      ].join('\n');
+      await writeFile(join(citDir, `${book.itemId}.properties`), citContent);
+      
+      // Create Pommel model with standard mappings
+      const rightHandPredicate = predicateSystem.mapDisplayContext('firstperson_righthand');
+      const leftHandPredicate = predicateSystem.mapDisplayContext('firstperson_lefthand');
+      const groundPredicate = predicateSystem.mapDisplayContext('ground');
+      
+      const overrides = [];
+      if (rightHandPredicate) {
+        overrides.push({
+          predicate: rightHandPredicate.predicate,
+          model: `minecraft:item/books_3d/${book.itemId}_3d_open`
+        });
       }
-    } else {
-      // For other processors, check each book type
-      const bookTypes = ['book', 'writable_book', 'written_book', 'knowledge_book'];
-      for (const bookType of bookTypes) {
-        if (await processor.canProcess(bookType, modelsDir, itemsDir)) {
-          if (!processed) {
-            await processor.process(inputDir, outputDir, citDir, predicateSystem);
-            processed = true;
-          }
-        }
+      if (leftHandPredicate) {
+        overrides.push({
+          predicate: leftHandPredicate.predicate,
+          model: `minecraft:item/books_3d/${book.itemId}_3d`
+        });
       }
-      if (processed) totalProcessed++;
+      if (groundPredicate) {
+        overrides.push({
+          predicate: groundPredicate.predicate,
+          model: `minecraft:item/books_3d/${book.itemId}_3d`
+        });
+      }
+      
+      const model = {
+        parent: "minecraft:item/handheld",
+        textures: {
+          layer0: book.textureRef
+        },
+        overrides
+      };
+      
+      await writeFile(
+        join(pommelModelsDir, `${book.itemId}.json`),
+        JSON.stringify(model, null, 2)
+      );
     }
   }
   
   console.log(`✅ Resource pack backport complete!`);
   console.log(`📁 Output: ${outputDir}`);
-  console.log(`🎯 Processed ${totalProcessed} item type(s) with ${predicateSystem.name} predicates`);
 }
 
 async function fixModelCompatibility(outputDir: string) {

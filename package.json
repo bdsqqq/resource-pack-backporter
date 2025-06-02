@@ -5,7 +5,6 @@
   "main": "complete-books-cit-pommel.ts",
   "scripts": {
     "convert": "bun complete-books-cit-pommel.ts . dist/cit-pommel",
-    "fix-open-books": "bun fix-all-open-books.ts",
     "clean": "rm -rf dist"
   },
   "devDependencies": {

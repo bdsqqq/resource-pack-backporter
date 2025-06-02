@@ -45,11 +45,7 @@ This enables `pommel:is_offhand` predicate for exact left/right hand behavior.
    ```bash
    bun run convert
    ```
-3. Fix open book models:
-   ```bash
-   bun run fix-open-books
-   ```
-4. Copy `dist/cit-pommel/` to your Minecraft resource packs folder
+3. Copy `dist/cit-pommel/` to your Minecraft resource packs folder
 
 ### Directory Structure
 
@@ -122,12 +118,6 @@ Generates hand-aware models using predicates:
 Removes problematic `builtin/entity` parents and fixes zero-thickness elements that cause invisibility in 1.21.1.
 
 ## Troubleshooting
-
-### Books are invisible when held
-Run the fix script:
-```bash
-bun run fix-open-books
-```
 
 ### Only closed books show in both hands
 You need the enhanced Pommel build with `pommel:is_offhand` predicate support.

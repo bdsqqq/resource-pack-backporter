@@ -53,9 +53,9 @@ async function createCompleteBooksPack(inputDir: string, outputDir: string) {
     }
   }
   
-  // Skip fixing open book models for now - caused invisibility
-  // console.log('🔧 Fixing open book models for 1.21.1...');
-  // await fixOpenBookModels(join(outputDir, 'assets/minecraft/models/item/books_3d'));
+  // Fix open book models for 1.21.1 compatibility
+  console.log('🔧 Fixing open book models for 1.21.1...');
+  await fixAllOpenBooks(join(outputDir, 'assets/minecraft/models/item/books_3d'));
   
   // Also copy enchanted book textures to books/ directory for Pommel models
   const enchantedBooksTextureSrc = join(inputDir, 'assets/minecraft/textures/item/enchanted_books');
@@ -307,26 +307,55 @@ function fixZeroThicknessElements(model: BookModel): boolean {
   return hasChanges;
 }
 
-async function fixOpenBookModels(booksDir: string) {
+async function fixAllOpenBooks(booksDir: string) {
   const files = await readdir(booksDir);
   const openModelFiles = files.filter(file => file.includes('_open.json'));
+  
+  console.log(`📚 Found ${openModelFiles.length} open book models to fix`);
+  
+  let fixedCount = 0;
   
   for (const file of openModelFiles) {
     const filePath = join(booksDir, file);
     
     try {
       const content = await readFile(filePath, 'utf-8');
-      const model: BookModel = JSON.parse(content);
+      const model = JSON.parse(content);
       
-      const hasChanges = fixZeroThicknessElements(model);
+      let hasChanges = false;
+      
+      // Remove builtin/entity parent if it exists
+      if (model.parent === 'builtin/entity') {
+        delete model.parent;
+        console.log(`  ✅ Removed builtin/entity parent from ${file}`);
+        hasChanges = true;
+      }
+      
+      // Also fix zero-thickness elements while we're at it
+      if (model.elements) {
+        for (let i = 0; i < model.elements.length; i++) {
+          const element = model.elements[i];
+          if (!element.from || !element.to) continue;
+          
+          for (let axis = 0; axis < 3; axis++) {
+            if (element.from[axis] === element.to[axis]) {
+              element.to[axis] = element.to[axis] + 0.01;
+              hasChanges = true;
+            }
+          }
+        }
+      }
       
       if (hasChanges) {
         await writeFile(filePath, JSON.stringify(model, null, '\t'));
+        fixedCount++;
       }
     } catch (error) {
-      console.error(`Error processing ${file}:`, error);
+      console.error(`  ❌ Error processing ${file}:`, error);
     }
   }
+  
+  console.log(`🎉 Fixed ${fixedCount} open book models!`);
 }
 
 // CLI usage

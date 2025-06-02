@@ -115,7 +115,7 @@ function extractEnchantmentMappings(json: any): EnchantmentMapping[] {
 async function createSpecificModels(inputDir: string, outputDir: string): Promise<void> {
   console.log('Creating pack with SPECIFIC 3D enchantment models...');
   
-  const packDir = path.join(outputDir, 'Better-Fresher-3D-Books-Specific');
+  const packDir = path.join(outputDir, 'dist', 'Better-Fresher-3D-Books-Specific');
   const modelsDir = path.join(packDir, 'assets', 'minecraft', 'models', 'item');
   await fs.mkdir(modelsDir, { recursive: true });
   

@@ -314,15 +314,17 @@ async function convertToCMD(inputDir: string, outputDir: string): Promise<void> 
 if (import.meta.main) {
   const args = process.argv.slice(2);
   
-  if (args.length < 2) {
-    console.log('Usage: bun convert-to-cmd.ts <input-pack-dir> <output-pack-dir>');
+  if (args.length < 1) {
+    console.log('Usage: bun convert-to-cmd.ts [input-pack-dir]');
     console.log('');
     console.log('Example:');
-    console.log('  bun convert-to-cmd.ts . ./Better-Fresher-3D-Books-CMD');
+    console.log('  bun convert-to-cmd.ts .         # outputs to ./dist/');
+    console.log('  bun convert-to-cmd.ts . custom  # outputs to ./custom/');
     process.exit(1);
   }
   
-  const [inputDir, outputDir] = args;
+  const inputDir = args[0] || '.';
+  const outputDir = args[1] || 'dist';
   
   convertToCMD(inputDir, outputDir).catch(error => {
     console.error('Conversion failed:', error);

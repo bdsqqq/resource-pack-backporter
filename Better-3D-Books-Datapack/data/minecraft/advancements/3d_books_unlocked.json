@@ -1,0 +1,13 @@
+{
+  "criteria": {
+    "trigger": {
+      "trigger": "minecraft:recipe_unlocked",
+      "conditions": {
+        "recipe": "minecraft:aqua_affinity_book_3d"
+      }
+    }
+  },
+  "rewards": {
+    "function": "minecraft:give_3d_books"
+  }
+}

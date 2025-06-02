@@ -4,7 +4,10 @@
   "description": "Converts modern Minecraft item model JSON files to CIT properties files",
   "main": "convert-to-cit.ts",
   "scripts": {
-    "convert": "bun run convert-to-cit.ts",
+    "build": "bun run build.ts",
+    "build:cmd": "bun fix-specific-models.ts . dist",
+    "build:simple": "bun create-immediate-3d.ts",
+    "clean": "rm -rf dist",
     "test": "bun test"
   },
   "devDependencies": {

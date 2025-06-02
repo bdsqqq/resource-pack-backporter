@@ -1,0 +1,30 @@
+# Distribution builds - generated resource pack outputs
+dist/
+
+# Node.js / Bun
+node_modules/
+*.log
+.env
+
+# macOS
+.DS_Store
+.DS_Store?
+._*
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Temporary files
+*.tmp
+*.temp
+temp/
+tmp/

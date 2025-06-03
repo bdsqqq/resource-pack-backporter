@@ -225,12 +225,21 @@ class ResourcePackIntrospector {
     analysis: ComponentAnalysis,
     _parentContexts: string[]
   ) {
+    const explicitContexts = new Set<string>();
+    
     if (selectObj.cases && Array.isArray(selectObj.cases)) {
       for (const caseObj of selectObj.cases) {
         if (caseObj.when && caseObj.model) {
           const contexts = Array.isArray(caseObj.when)
             ? caseObj.when
             : [caseObj.when];
+
+          // Track explicitly handled contexts
+          for (const context of contexts) {
+            if (typeof context === "string") {
+              explicitContexts.add(context);
+            }
+          }
 
           // Add to global context list
           for (const context of contexts) {
@@ -260,6 +269,38 @@ class ResourcePackIntrospector {
             this.extractComponentInfo(caseObj.model, analysis, "", contexts);
           }
         }
+      }
+    }
+
+    // Handle fallback case - infer missing standard contexts
+    if (selectObj.fallback && selectObj.fallback.type === "minecraft:model" && selectObj.fallback.model) {
+      const standardContexts = [
+        "gui", "fixed", "ground", 
+        "firstperson_righthand", "thirdperson_righthand",
+        "firstperson_lefthand", "thirdperson_lefthand", "head"
+      ];
+      
+      const missingContexts = standardContexts.filter(context => !explicitContexts.has(context));
+      
+      if (missingContexts.length > 0) {
+        // Add missing contexts to global context list
+        for (const context of missingContexts) {
+          if (!analysis.displayContexts.includes(context)) {
+            analysis.displayContexts.push(context);
+          }
+        }
+
+        // Create context mappings for fallback contexts
+        const fallbackContextMappings: { [context: string]: string } = {};
+        for (const context of missingContexts) {
+          fallbackContextMappings[context] = selectObj.fallback.model;
+        }
+
+        analysis.conditionalModels.push({
+          component: "pure_display_context",
+          conditions: [{}], // Empty condition for pure context mapping
+          contextMappings: fallbackContextMappings,
+        });
       }
     }
   }
@@ -814,7 +855,7 @@ class PurePommelGenerationStrategy implements FileGenerationStrategy {
   private async generatePommelModel(
     variant: ItemVariant,
     outputDir: string,
-    _packStructure: ResourcePackStructure
+    packStructure: ResourcePackStructure
   ): Promise<void> {
     // Generate the base model file that Minecraft will use directly (no CIT needed)
     const modelPath = `assets/minecraft/models/item/${variant.itemId}.json`;
@@ -826,29 +867,165 @@ class PurePommelGenerationStrategy implements FileGenerationStrategy {
     });
 
     const overrides: any[] = [];
-
-    // Use a context mapping strategy to create overrides
     const contextStrategy = new PommelContextStrategy();
 
-    for (const [context, modelPath] of Object.entries(variant.modelMappings)) {
-      const mapping = contextStrategy.mapContext(context);
-      if (mapping && mapping.type === "pommel") {
-        overrides.push({
-          predicate: mapping.predicates,
-          model: modelPath,
-        });
+    // Analyze the pack structure to determine the optimal base model strategy
+    const packAnalysis = this.analyzePackStructure(variant, packStructure);
+    
+    let baseModel: any;
+    
+    if (packAnalysis.shouldUse3DBase) {
+      // Use 3D model as base (GUI can't be overridden by Pommel anyway)
+      // This handles patterns like Fresh Music Discs where fallback is 3D
+      const handModel = packAnalysis.handModel;
+      if (handModel && this.is3DModel(handModel, packStructure)) {
+        // Copy the 3D model content directly instead of referencing it
+        const originalModel = this.load3DModelContent(handModel, packStructure);
+        if (originalModel) {
+          baseModel = originalModel;
+        } else {
+          baseModel = { parent: handModel };
+        }
+      } else {
+        // Fallback to 2D base if we can't find a proper 3D model
+        baseModel = {
+          parent: "minecraft:item/generated",
+          textures: { layer0: variant.textureRef },
+        };
+      }
+      
+      // Only add overrides for contexts that Pommel can actually override
+      // (hands and ground - GUI/fixed cannot be overridden)
+      for (const [context, modelPath] of Object.entries(variant.modelMappings)) {
+        const mapping = contextStrategy.mapContext(context);
+        if (mapping && mapping.type === "pommel" && context === "ground") {
+          // Only override ground context if different from hand models
+          if (modelPath !== packAnalysis.handModel) {
+            overrides.push({
+              predicate: mapping.predicates,
+              model: modelPath,
+            });
+          }
+        }
+      }
+    } else {
+      // Use 2D model as base, override to 3D for hands
+      // This handles patterns where GUI contexts use 2D and hands use 3D
+      baseModel = {
+        parent: "minecraft:item/generated",
+        textures: { layer0: variant.textureRef },
+      };
+      
+      // Add overrides for hand and ground contexts only
+      for (const [context, modelPath] of Object.entries(variant.modelMappings)) {
+        const mapping = contextStrategy.mapContext(context);
+        if (mapping && mapping.type === "pommel") {
+          overrides.push({
+            predicate: mapping.predicates,
+            model: modelPath,
+          });
+        }
       }
     }
 
     const model = {
-      parent: "minecraft:item/handheld",
-      textures: {
-        layer0: variant.textureRef,
-      },
+      ...baseModel,
       overrides,
     };
 
     await writeFile(fullModelPath, JSON.stringify(model, null, 2));
+  }
+
+  private analyzePackStructure(variant: ItemVariant, packStructure: ResourcePackStructure): {
+    shouldUse3DBase: boolean;
+    handModel: string | null;
+    guiModel: string | null;
+  } {
+    const { modelMappings } = variant;
+    
+    // Get representative models for different contexts
+    const guiModel = modelMappings.gui || modelMappings.fixed;
+    const handModel = modelMappings.firstperson_righthand || 
+                     modelMappings.thirdperson_righthand ||
+                     modelMappings.firstperson_lefthand ||
+                     modelMappings.thirdperson_lefthand;
+    
+    // Check if we have a fallback-based pattern (like Fresh Music Discs)
+    // where GUI uses 2D but hands use 3D, and the pack relies on 3D fallback
+    const hasExplicitGuiModel = !!guiModel;
+    const hasExplicitHandModel = !!handModel;
+    
+    if (hasExplicitGuiModel && hasExplicitHandModel) {
+      const guiIs3D = this.is3DModel(guiModel, packStructure);
+      const handIs3D = this.is3DModel(handModel, packStructure);
+      
+      // If GUI is 2D and hands are 3D, use 3D base since GUI can't be overridden
+      const shouldUse3DBase = !guiIs3D && handIs3D;
+      
+      return {
+        shouldUse3DBase,
+        handModel,
+        guiModel,
+      };
+    }
+    
+    // Default to 2D base strategy
+    return {
+      shouldUse3DBase: false,
+      handModel,
+      guiModel,
+    };
+  }
+
+  private is3DModel(modelPath: string, packStructure: ResourcePackStructure): boolean {
+    // Convert minecraft: model path to file path
+    const filePath = modelPath.replace("minecraft:", "assets/minecraft/models/") + ".json";
+    
+    // Find the model file in the pack structure
+    const modelFile = packStructure.modelFiles.find(file => {
+      const normalizedFile = file.replace(/\\/g, "/");
+      const normalizedPath = filePath.replace(/\\/g, "/");
+      return normalizedFile.endsWith(normalizedPath) &&
+             (normalizedFile === normalizedPath || normalizedFile.endsWith(`/${normalizedPath}`));
+    });
+    
+    if (!modelFile) return false;
+    
+    try {
+      const fs = require("node:fs");
+      const modelContent = JSON.parse(fs.readFileSync(modelFile, "utf-8"));
+      
+      // 3D models have elements array, 2D models use parent: "minecraft:item/generated"
+      return !!modelContent.elements && Array.isArray(modelContent.elements) && modelContent.elements.length > 0;
+    } catch {
+      return false;
+    }
+  }
+
+  private load3DModelContent(modelPath: string, packStructure: ResourcePackStructure): any | null {
+    // Convert minecraft: model path to file path
+    const filePath = modelPath.replace("minecraft:", "assets/minecraft/models/") + ".json";
+    
+    // Find the model file in the pack structure
+    const modelFile = packStructure.modelFiles.find(file => {
+      const normalizedFile = file.replace(/\\/g, "/");
+      const normalizedPath = filePath.replace(/\\/g, "/");
+      return normalizedFile.endsWith(normalizedPath) &&
+             (normalizedFile === normalizedPath || normalizedFile.endsWith(`/${normalizedPath}`));
+    });
+    
+    if (!modelFile) return null;
+    
+    try {
+      const fs = require("node:fs");
+      const modelContent = JSON.parse(fs.readFileSync(modelFile, "utf-8"));
+      
+      // Return the model content without the overrides if any
+      const { overrides, ...baseContent } = modelContent;
+      return baseContent;
+    } catch {
+      return null;
+    }
   }
 }
 

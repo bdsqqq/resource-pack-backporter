@@ -37,7 +37,10 @@ interface ConditionalModel {
 interface ComponentStrategy {
   name: string;
   canHandle(component: string): boolean;
-  extractVariants(analysis: ComponentAnalysis, packStructure: ResourcePackStructure): ItemVariant[];
+  extractVariants(
+    analysis: ComponentAnalysis,
+    packStructure: ResourcePackStructure
+  ): ItemVariant[];
 }
 
 interface ContextMappingStrategy {
@@ -85,7 +88,11 @@ class ResourcePackIntrospector {
     return structure;
   }
 
-  private async scanDirectory(dir: string, structure: ResourcePackStructure, basePath = "") {
+  private async scanDirectory(
+    dir: string,
+    structure: ResourcePackStructure,
+    basePath = ""
+  ) {
     if (!existsSync(dir)) return;
 
     const entries = await readdir(dir, { withFileTypes: true });
@@ -107,7 +114,10 @@ class ResourcePackIntrospector {
     relativePath: string,
     structure: ResourcePackStructure
   ) {
-    if (relativePath.includes("assets/minecraft/items/") && relativePath.endsWith(".json")) {
+    if (
+      relativePath.includes("assets/minecraft/items/") &&
+      relativePath.endsWith(".json")
+    ) {
       structure.itemFiles.push(fullPath);
     } else if (
       relativePath.includes("assets/minecraft/models/") &&
@@ -115,7 +125,8 @@ class ResourcePackIntrospector {
     ) {
       structure.modelFiles.push(fullPath);
       const dir = relativePath.substring(0, relativePath.lastIndexOf("/"));
-      if (!structure.modelDirectories[dir]) structure.modelDirectories[dir] = [];
+      if (!structure.modelDirectories[dir])
+        structure.modelDirectories[dir] = [];
       structure.modelDirectories[dir].push(relativePath);
     } else if (
       relativePath.includes("assets/minecraft/textures/") &&
@@ -123,13 +134,16 @@ class ResourcePackIntrospector {
     ) {
       structure.textureFiles.push(fullPath);
       const dir = relativePath.substring(0, relativePath.lastIndexOf("/"));
-      if (!structure.textureDirectories[dir]) structure.textureDirectories[dir] = [];
+      if (!structure.textureDirectories[dir])
+        structure.textureDirectories[dir] = [];
       structure.textureDirectories[dir].push(relativePath);
     }
   }
 
   private isImageFile(path: string): boolean {
-    return path.endsWith(".png") || path.endsWith(".jpg") || path.endsWith(".jpeg");
+    return (
+      path.endsWith(".png") || path.endsWith(".jpg") || path.endsWith(".jpeg")
+    );
   }
 
   async analyzeComponent(itemFilePath: string): Promise<ComponentAnalysis> {
@@ -174,19 +188,34 @@ class ResourcePackIntrospector {
 
       // Track component selectors within display contexts
       if (key === "component" && obj.cases) {
-        this.extractConditionalModels(obj, analysis, currentPath, currentContexts);
+        this.extractConditionalModels(
+          obj,
+          analysis,
+          currentPath,
+          currentContexts
+        );
         return; // Don't recurse further as we've handled this branch
       }
 
       // Handle minecraft:condition with on_true/on_false branches
       if (key === "type" && value === "minecraft:condition") {
-        this.extractConditionModels(obj, analysis, currentPath, currentContexts);
+        this.extractConditionModels(
+          obj,
+          analysis,
+          currentPath,
+          currentContexts
+        );
         return; // Don't recurse further as we've handled this branch
       }
 
       // Recurse with updated context
       if (typeof value === "object") {
-        this.extractComponentInfo(value, analysis, currentPath, currentContexts);
+        this.extractComponentInfo(
+          value,
+          analysis,
+          currentPath,
+          currentContexts
+        );
       }
     }
   }
@@ -199,11 +228,16 @@ class ResourcePackIntrospector {
     if (selectObj.cases && Array.isArray(selectObj.cases)) {
       for (const caseObj of selectObj.cases) {
         if (caseObj.when && caseObj.model) {
-          const contexts = Array.isArray(caseObj.when) ? caseObj.when : [caseObj.when];
+          const contexts = Array.isArray(caseObj.when)
+            ? caseObj.when
+            : [caseObj.when];
 
           // Add to global context list
           for (const context of contexts) {
-            if (typeof context === "string" && !analysis.displayContexts.includes(context)) {
+            if (
+              typeof context === "string" &&
+              !analysis.displayContexts.includes(context)
+            ) {
               analysis.displayContexts.push(context);
             }
           }
@@ -241,7 +275,9 @@ class ResourcePackIntrospector {
     if (selectObj.cases && Array.isArray(selectObj.cases)) {
       for (const caseObj of selectObj.cases) {
         if (caseObj.when && caseObj.model) {
-          const conditions = Array.isArray(caseObj.when) ? caseObj.when : [caseObj.when];
+          const conditions = Array.isArray(caseObj.when)
+            ? caseObj.when
+            : [caseObj.when];
           const modelPath = caseObj.model.model || caseObj.model;
 
           // Build context mappings - each condition gets mapped to specific contexts with specific models
@@ -276,10 +312,18 @@ class ResourcePackIntrospector {
 
     // Extract models from both branches and add them to current contexts
     if (condition.on_true) {
-      this.extractModelsFromBranch(condition.on_true, analysis, currentContexts);
+      this.extractModelsFromBranch(
+        condition.on_true,
+        analysis,
+        currentContexts
+      );
     }
     if (condition.on_false) {
-      this.extractModelsFromBranch(condition.on_false, analysis, currentContexts);
+      this.extractModelsFromBranch(
+        condition.on_false,
+        analysis,
+        currentContexts
+      );
     }
   }
 
@@ -339,7 +383,11 @@ class DisplayContextStrategy implements ComponentStrategy {
     const variant: ItemVariant = {
       itemId: analysis.itemId,
       variantId: analysis.itemId,
-      textureRef: this.determineTextureRef(analysis.itemId, packStructure, modelMappings),
+      textureRef: this.determineTextureRef(
+        analysis.itemId,
+        packStructure,
+        modelMappings
+      ),
       modelMappings,
       metadata: {
         strategy: this.name,
@@ -367,7 +415,10 @@ class DisplayContextStrategy implements ComponentStrategy {
     console.log(`🔍 guiModel: ${guiModel}`);
     if (guiModel) {
       // Try to read the actual model file to get its texture
-      const modelPath = guiModel.replace("minecraft:", "assets/minecraft/models/");
+      const modelPath = guiModel.replace(
+        "minecraft:",
+        "assets/minecraft/models/"
+      );
       const modelFile = `${modelPath}.json`;
 
       // Look for the model file in the pack structure with exact path matching
@@ -395,7 +446,9 @@ class DisplayContextStrategy implements ComponentStrategy {
           (normalizedFile === normalizedModelFile ||
             normalizedFile.endsWith(`/${normalizedModelFile}`));
         if (matches) {
-          console.log(`🔍 FOUND MATCH: ${normalizedFile} for ${normalizedModelFile}`);
+          console.log(
+            `🔍 FOUND MATCH: ${normalizedFile} for ${normalizedModelFile}`
+          );
         }
         return matches;
       });
@@ -407,7 +460,9 @@ class DisplayContextStrategy implements ComponentStrategy {
           const modelContent = JSON.parse(fs.readFileSync(found, "utf-8"));
           console.log("🔍 File content:", modelContent);
           if (modelContent.textures?.layer0) {
-            console.log(`🔍 Extracted texture: ${modelContent.textures.layer0}`);
+            console.log(
+              `🔍 Extracted texture: ${modelContent.textures.layer0}`
+            );
             return modelContent.textures.layer0;
           }
           console.log("🔍 No layer0 texture found in model file");
@@ -422,7 +477,9 @@ class DisplayContextStrategy implements ComponentStrategy {
     const possibleDirs = Object.keys(packStructure.textureDirectories);
     for (const dir of possibleDirs) {
       const textures = packStructure.textureDirectories[dir];
-      const found = textures.find((texture) => texture.endsWith(`${itemId}.png`));
+      const found = textures.find((texture) =>
+        texture.endsWith(`${itemId}.png`)
+      );
       if (found) {
         return found
           .replace(/^.*assets\/minecraft\/textures\//, "minecraft:")
@@ -454,7 +511,9 @@ class WritableBookContentStrategy implements ComponentStrategy {
     // Build mappings from analysis of the writable_book item structure
     for (const conditionalModel of analysis.conditionalModels) {
       if (conditionalModel.contextMappings) {
-        for (const [context, model] of Object.entries(conditionalModel.contextMappings)) {
+        for (const [context, model] of Object.entries(
+          conditionalModel.contextMappings
+        )) {
           modelMappings[context] = model;
         }
       }
@@ -482,7 +541,11 @@ class WritableBookContentStrategy implements ComponentStrategy {
         itemId: analysis.itemId,
         variantId: analysis.itemId,
         modelMappings,
-        textureRef: this.determineTextureRef(analysis.itemId, packStructure, modelMappings),
+        textureRef: this.determineTextureRef(
+          analysis.itemId,
+          packStructure,
+          modelMappings
+        ),
         metadata: {},
       },
     ];
@@ -497,7 +560,10 @@ class WritableBookContentStrategy implements ComponentStrategy {
     const guiModel = modelMappings.gui || modelMappings.fixed;
     if (guiModel) {
       // Try to read the actual model file to get its texture
-      const modelPath = guiModel.replace("minecraft:", "assets/minecraft/models/");
+      const modelPath = guiModel.replace(
+        "minecraft:",
+        "assets/minecraft/models/"
+      );
       const modelFile = `${modelPath}.json`;
 
       // Look for the model file in the pack structure
@@ -544,13 +610,15 @@ class StoredEnchanmentsStrategy implements ComponentStrategy {
     const variantMap = new Map<string, ItemVariant>();
 
     for (const conditionalModel of analysis.conditionalModels) {
-      if (conditionalModel.component !== "minecraft:stored_enchantments") continue;
+      if (conditionalModel.component !== "minecraft:stored_enchantments")
+        continue;
 
       for (const condition of conditionalModel.conditions) {
         if (typeof condition !== "object") continue;
 
         for (const [enchantment, level] of Object.entries(condition)) {
-          if (typeof enchantment !== "string" || typeof level !== "number") continue;
+          if (typeof enchantment !== "string" || typeof level !== "number")
+            continue;
 
           const enchantmentName = enchantment.replace("minecraft:", "");
           const variantKey = `${enchantmentName}_${level}`;
@@ -573,7 +641,10 @@ class StoredEnchanmentsStrategy implements ComponentStrategy {
           }
 
           // Merge context mappings from all conditional models for this enchantment
-          Object.assign(variant.modelMappings, conditionalModel.contextMappings);
+          Object.assign(
+            variant.modelMappings,
+            conditionalModel.contextMappings
+          );
         }
       }
     }
@@ -601,7 +672,10 @@ class StoredEnchanmentsStrategy implements ComponentStrategy {
     // Extract texture from the GUI model specified in the pack
     const guiModel = modelMappings.gui || modelMappings.fixed;
     if (guiModel) {
-      const modelPath = guiModel.replace("minecraft:", "assets/minecraft/models/");
+      const modelPath = guiModel.replace(
+        "minecraft:",
+        "assets/minecraft/models/"
+      );
       const modelFile = `${modelPath}.json`;
 
       const found = packStructure.modelFiles.find((file) => {
@@ -658,7 +732,10 @@ class StoredEnchanmentsStrategy implements ComponentStrategy {
     const firstTextureDir = possibleDirs[0];
     if (firstTextureDir) {
       const baseName = this.getTextureBaseName(enchantmentName, level);
-      return `${firstTextureDir.replace(/^.*assets\/minecraft\/textures\//, "minecraft:")}/${baseName}`;
+      return `${firstTextureDir.replace(
+        /^.*assets\/minecraft\/textures\//,
+        "minecraft:"
+      )}/${baseName}`;
     }
 
     return `minecraft:item/${enchantmentName}`;
@@ -744,7 +821,9 @@ class PurePommelGenerationStrategy implements FileGenerationStrategy {
     const fullModelPath = join(outputDir, modelPath);
 
     // Ensure directory exists
-    await mkdir(fullModelPath.substring(0, fullModelPath.lastIndexOf("/")), { recursive: true });
+    await mkdir(fullModelPath.substring(0, fullModelPath.lastIndexOf("/")), {
+      recursive: true,
+    });
 
     const overrides: any[] = [];
 
@@ -796,7 +875,10 @@ class CombinedGenerationStrategy implements FileGenerationStrategy {
     const lines = ["type=item", `items=${variant.itemId}`];
 
     // Add item-specific model reference
-    const modelPath = `assets/minecraft/models/item/${this.getModelOutputPath(variant, packStructure)}`;
+    const modelPath = `assets/minecraft/models/item/${this.getModelOutputPath(
+      variant,
+      packStructure
+    )}`;
     lines.push(`model=${modelPath}`);
 
     // Add metadata-based properties
@@ -848,7 +930,10 @@ class CombinedGenerationStrategy implements FileGenerationStrategy {
     await writeFile(modelFile, JSON.stringify(model, null, 2));
   }
 
-  private getModelOutputDir(variant: ItemVariant, _packStructure: ResourcePackStructure): string {
+  private getModelOutputDir(
+    variant: ItemVariant,
+    _packStructure: ResourcePackStructure
+  ): string {
     // Introspect the pack to find where models should be placed
     // Look at the model mappings to determine the appropriate directory structure
     if (Object.keys(variant.modelMappings).length > 0) {
@@ -868,8 +953,13 @@ class CombinedGenerationStrategy implements FileGenerationStrategy {
     return variant.itemId;
   }
 
-  private getModelOutputPath(variant: ItemVariant, packStructure: ResourcePackStructure): string {
-    return `${this.getModelOutputDir(variant, packStructure)}/${variant.variantId}`;
+  private getModelOutputPath(
+    variant: ItemVariant,
+    packStructure: ResourcePackStructure
+  ): string {
+    return `${this.getModelOutputDir(variant, packStructure)}/${
+      variant.variantId
+    }`;
   }
 }
 
@@ -909,7 +999,10 @@ class BackportCoordinator {
       new StoredEnchanmentsStrategy(),
       new WritableBookContentStrategy()
     );
-    this.contextStrategies.push(new PommelContextStrategy(), new CITContextStrategy());
+    this.contextStrategies.push(
+      new PommelContextStrategy(),
+      new CITContextStrategy()
+    );
     // Generation strategies are selected dynamically based on analysis
   }
 
@@ -935,7 +1028,12 @@ class BackportCoordinator {
 
     // Process each item file
     for (const itemFile of packStructure.itemFiles) {
-      await this.processItemFile(itemFile, outputDir, packStructure, introspector);
+      await this.processItemFile(
+        itemFile,
+        outputDir,
+        packStructure,
+        introspector
+      );
     }
 
     console.log("✅ Backport complete!");
@@ -959,26 +1057,34 @@ class BackportCoordinator {
     if (hasSignificantComponents && hasContextSwitching) {
       // Both NBT/component-based AND context-based variation -> Combined CIT + Pommel
       console.log(
-        `🎯 Using combined CIT + Pommel strategy (components: ${analysis.componentsUsed.join(", ")}, contexts: ${analysis.displayContexts.length})`
+        `🎯 Using combined CIT + Pommel strategy (components: ${analysis.componentsUsed.join(
+          ", "
+        )}, contexts: ${analysis.displayContexts.length})`
       );
       return new CombinedGenerationStrategy();
     }
     if (hasSignificantComponents && !hasContextSwitching) {
       // Only NBT/component-based variation -> Pure CIT (not implemented yet)
       console.log(
-        `🎯 Using pure CIT strategy (components only: ${analysis.componentsUsed.join(", ")})`
+        `🎯 Using pure CIT strategy (components only: ${analysis.componentsUsed.join(
+          ", "
+        )})`
       );
       return new CombinedGenerationStrategy(); // Fallback for now
     }
     if (!hasSignificantComponents && hasContextSwitching) {
       // Only context-based variation -> Pure Pommel
       console.log(
-        `🎯 Using pure Pommel strategy (contexts only: ${analysis.displayContexts.length} contexts, components: ${analysis.componentsUsed.join(", ")})`
+        `🎯 Using pure Pommel strategy (contexts only: ${
+          analysis.displayContexts.length
+        } contexts, components: ${analysis.componentsUsed.join(", ")})`
       );
       return new PurePommelGenerationStrategy();
     }
     // No variation detected -> fallback
-    console.log("🎯 Using fallback combined strategy (no clear variation pattern)");
+    console.log(
+      "🎯 Using fallback combined strategy (no clear variation pattern)"
+    );
     return new CombinedGenerationStrategy();
   }
 
@@ -996,25 +1102,38 @@ class BackportCoordinator {
 
     // Find applicable component strategies
     const componentsToProcess =
-      analysis.componentsUsed.length > 0 ? analysis.componentsUsed : ["pure_display_context"]; // Handle items with no components but display contexts
+      analysis.componentsUsed.length > 0
+        ? analysis.componentsUsed
+        : ["pure_display_context"]; // Handle items with no components but display contexts
 
     for (const component of componentsToProcess) {
-      const strategy = this.componentStrategies.find((s) => s.canHandle(component));
+      const strategy = this.componentStrategies.find((s) =>
+        s.canHandle(component)
+      );
       if (!strategy) {
         console.log(`⚠️  No strategy found for component: ${component}`);
         continue;
       }
 
       console.log(`🎯 Using ${strategy.name} strategy for ${component}`);
-      console.log(`🔍 Found ${analysis.conditionalModels.length} conditional model groups`);
+      console.log(
+        `🔍 Found ${analysis.conditionalModels.length} conditional model groups`
+      );
       const variants = strategy.extractVariants(analysis, packStructure);
 
       console.log(`📦 Generated ${variants.length} variants`);
 
       // Generate files for each variant using the appropriate strategy
       for (const variant of variants) {
-        const generationStrategy = this.selectGenerationStrategy(analysis, variants);
-        await generationStrategy.generateFiles(variant, outputDir, packStructure);
+        const generationStrategy = this.selectGenerationStrategy(
+          analysis,
+          variants
+        );
+        await generationStrategy.generateFiles(
+          variant,
+          outputDir,
+          packStructure
+        );
       }
     }
   }
@@ -1119,7 +1238,7 @@ class BackportCoordinator {
 // CLI entry point
 async function main() {
   const args = process?.argv || [];
-  const [inputDir = ".", outputDir = "dist/backported"] = args.slice(2);
+  const [inputDir = ".", outputDir = "dist/↺--backported_pack"] = args.slice(2);
 
   const coordinator = new BackportCoordinator();
   try {

@@ -5,6 +5,21 @@ import { mkdir, readFile, readdir, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 
 // =============================================
+// CORE PRINCIPLES FOR UNIVERSAL BACKPORTING
+// =============================================
+//
+// 1. PURE PACK INTROSPECTION: All decisions are made by analyzing the original
+//    pack structure and contents. No hardcoded assumptions about specific packs.
+//
+// 2. MINIMAL STRATEGY SELECTION: Use the simplest approach that covers all cases by combining CIT, Pommel predicates, eatinganimationmod predicates, and vanilla minecraft 1.21.1 features as necessary.
+//
+// 3. TEXTURE EXTRACTION: Always read actual model files to get texture references, never use fallback heuristics or assumptions about naming patterns.
+//
+// 4. File Generation:
+//    - Don't generate unnecessary files - each mod(Pommel, CIT, etc.) handles its domain
+//    - Don't generate files that are already present in the original pack
+
+// =============================================
 // Core Data Structures
 // =============================================
 
@@ -226,7 +241,7 @@ class ResourcePackIntrospector {
     _parentContexts: string[]
   ) {
     const explicitContexts = new Set<string>();
-    
+
     if (selectObj.cases && Array.isArray(selectObj.cases)) {
       for (const caseObj of selectObj.cases) {
         if (caseObj.when && caseObj.model) {
@@ -273,15 +288,26 @@ class ResourcePackIntrospector {
     }
 
     // Handle fallback case - infer missing standard contexts
-    if (selectObj.fallback && selectObj.fallback.type === "minecraft:model" && selectObj.fallback.model) {
+    if (
+      selectObj.fallback &&
+      selectObj.fallback.type === "minecraft:model" &&
+      selectObj.fallback.model
+    ) {
       const standardContexts = [
-        "gui", "fixed", "ground", 
-        "firstperson_righthand", "thirdperson_righthand",
-        "firstperson_lefthand", "thirdperson_lefthand", "head"
+        "gui",
+        "fixed",
+        "ground",
+        "firstperson_righthand",
+        "thirdperson_righthand",
+        "firstperson_lefthand",
+        "thirdperson_lefthand",
+        "head",
       ];
-      
-      const missingContexts = standardContexts.filter(context => !explicitContexts.has(context));
-      
+
+      const missingContexts = standardContexts.filter(
+        (context) => !explicitContexts.has(context)
+      );
+
       if (missingContexts.length > 0) {
         // Add missing contexts to global context list
         for (const context of missingContexts) {
@@ -871,9 +897,9 @@ class PurePommelGenerationStrategy implements FileGenerationStrategy {
 
     // Analyze the pack structure to determine the optimal base model strategy
     const packAnalysis = this.analyzePackStructure(variant, packStructure);
-    
+
     let baseModel: any;
-    
+
     if (packAnalysis.shouldUse3DBase) {
       // Use 3D model as base (GUI can't be overridden by Pommel anyway)
       // This handles patterns like Fresh Music Discs where fallback is 3D
@@ -893,10 +919,12 @@ class PurePommelGenerationStrategy implements FileGenerationStrategy {
           textures: { layer0: variant.textureRef },
         };
       }
-      
+
       // Only add overrides for contexts that Pommel can actually override
       // (hands and ground - GUI/fixed cannot be overridden)
-      for (const [context, modelPath] of Object.entries(variant.modelMappings)) {
+      for (const [context, modelPath] of Object.entries(
+        variant.modelMappings
+      )) {
         const mapping = contextStrategy.mapContext(context);
         if (mapping && mapping.type === "pommel" && context === "ground") {
           // Only override ground context if different from hand models
@@ -915,9 +943,11 @@ class PurePommelGenerationStrategy implements FileGenerationStrategy {
         parent: "minecraft:item/generated",
         textures: { layer0: variant.textureRef },
       };
-      
+
       // Add overrides for hand and ground contexts only
-      for (const [context, modelPath] of Object.entries(variant.modelMappings)) {
+      for (const [context, modelPath] of Object.entries(
+        variant.modelMappings
+      )) {
         const mapping = contextStrategy.mapContext(context);
         if (mapping && mapping.type === "pommel") {
           overrides.push({
@@ -936,39 +966,43 @@ class PurePommelGenerationStrategy implements FileGenerationStrategy {
     await writeFile(fullModelPath, JSON.stringify(model, null, 2));
   }
 
-  private analyzePackStructure(variant: ItemVariant, packStructure: ResourcePackStructure): {
+  private analyzePackStructure(
+    variant: ItemVariant,
+    packStructure: ResourcePackStructure
+  ): {
     shouldUse3DBase: boolean;
     handModel: string | null;
     guiModel: string | null;
   } {
     const { modelMappings } = variant;
-    
+
     // Get representative models for different contexts
     const guiModel = modelMappings.gui || modelMappings.fixed;
-    const handModel = modelMappings.firstperson_righthand || 
-                     modelMappings.thirdperson_righthand ||
-                     modelMappings.firstperson_lefthand ||
-                     modelMappings.thirdperson_lefthand;
-    
+    const handModel =
+      modelMappings.firstperson_righthand ||
+      modelMappings.thirdperson_righthand ||
+      modelMappings.firstperson_lefthand ||
+      modelMappings.thirdperson_lefthand;
+
     // Check if we have a fallback-based pattern (like Fresh Music Discs)
     // where GUI uses 2D but hands use 3D, and the pack relies on 3D fallback
     const hasExplicitGuiModel = !!guiModel;
     const hasExplicitHandModel = !!handModel;
-    
+
     if (hasExplicitGuiModel && hasExplicitHandModel) {
       const guiIs3D = this.is3DModel(guiModel, packStructure);
       const handIs3D = this.is3DModel(handModel, packStructure);
-      
+
       // If GUI is 2D and hands are 3D, use 3D base since GUI can't be overridden
       const shouldUse3DBase = !guiIs3D && handIs3D;
-      
+
       return {
         shouldUse3DBase,
         handModel,
         guiModel,
       };
     }
-    
+
     // Default to 2D base strategy
     return {
       shouldUse3DBase: false,
@@ -977,49 +1011,67 @@ class PurePommelGenerationStrategy implements FileGenerationStrategy {
     };
   }
 
-  private is3DModel(modelPath: string, packStructure: ResourcePackStructure): boolean {
+  private is3DModel(
+    modelPath: string,
+    packStructure: ResourcePackStructure
+  ): boolean {
     // Convert minecraft: model path to file path
-    const filePath = modelPath.replace("minecraft:", "assets/minecraft/models/") + ".json";
-    
+    const filePath =
+      modelPath.replace("minecraft:", "assets/minecraft/models/") + ".json";
+
     // Find the model file in the pack structure
-    const modelFile = packStructure.modelFiles.find(file => {
+    const modelFile = packStructure.modelFiles.find((file) => {
       const normalizedFile = file.replace(/\\/g, "/");
       const normalizedPath = filePath.replace(/\\/g, "/");
-      return normalizedFile.endsWith(normalizedPath) &&
-             (normalizedFile === normalizedPath || normalizedFile.endsWith(`/${normalizedPath}`));
+      return (
+        normalizedFile.endsWith(normalizedPath) &&
+        (normalizedFile === normalizedPath ||
+          normalizedFile.endsWith(`/${normalizedPath}`))
+      );
     });
-    
+
     if (!modelFile) return false;
-    
+
     try {
       const fs = require("node:fs");
       const modelContent = JSON.parse(fs.readFileSync(modelFile, "utf-8"));
-      
+
       // 3D models have elements array, 2D models use parent: "minecraft:item/generated"
-      return !!modelContent.elements && Array.isArray(modelContent.elements) && modelContent.elements.length > 0;
+      return (
+        !!modelContent.elements &&
+        Array.isArray(modelContent.elements) &&
+        modelContent.elements.length > 0
+      );
     } catch {
       return false;
     }
   }
 
-  private load3DModelContent(modelPath: string, packStructure: ResourcePackStructure): any | null {
+  private load3DModelContent(
+    modelPath: string,
+    packStructure: ResourcePackStructure
+  ): any | null {
     // Convert minecraft: model path to file path
-    const filePath = modelPath.replace("minecraft:", "assets/minecraft/models/") + ".json";
-    
+    const filePath =
+      modelPath.replace("minecraft:", "assets/minecraft/models/") + ".json";
+
     // Find the model file in the pack structure
-    const modelFile = packStructure.modelFiles.find(file => {
+    const modelFile = packStructure.modelFiles.find((file) => {
       const normalizedFile = file.replace(/\\/g, "/");
       const normalizedPath = filePath.replace(/\\/g, "/");
-      return normalizedFile.endsWith(normalizedPath) &&
-             (normalizedFile === normalizedPath || normalizedFile.endsWith(`/${normalizedPath}`));
+      return (
+        normalizedFile.endsWith(normalizedPath) &&
+        (normalizedFile === normalizedPath ||
+          normalizedFile.endsWith(`/${normalizedPath}`))
+      );
     });
-    
+
     if (!modelFile) return null;
-    
+
     try {
       const fs = require("node:fs");
       const modelContent = JSON.parse(fs.readFileSync(modelFile, "utf-8"));
-      
+
       // Return the model content without the overrides if any
       const { overrides, ...baseContent } = modelContent;
       return baseContent;
@@ -1140,26 +1192,6 @@ class CombinedGenerationStrategy implements FileGenerationStrategy {
   }
 }
 
-// =============================================
-// CORE PRINCIPLES FOR UNIVERSAL BACKPORTING
-// =============================================
-//
-// 1. PURE PACK INTROSPECTION: All decisions are made by analyzing the original
-//    pack structure and contents. No hardcoded assumptions about specific packs.
-//
-// 2. MINIMAL STRATEGY SELECTION: Use the simplest approach that covers all cases:
-//    - Pure Pommel: When ALL variation is context-based (gui vs hand positions)
-//    - Pure CIT: When ALL variation is NBT/component-based (enchantments, etc.)
-//    - Combined CIT + Pommel: When BOTH types of variation exist
-//
-// 3. MOD COMPATIBILITY UNDERSTANDING:
-//    - Pommel: Handles context switching (gui, firstperson_righthand, etc.)
-//    - CIT: Handles NBT/component switching (stored_enchantments, etc.)
-//    - Don't generate unnecessary files - each mod handles its domain
-//
-// 4. TEXTURE EXTRACTION: Always read actual model files to get texture references,
-//    never use fallback heuristics or assumptions about naming patterns.
-//
 // =============================================
 // Strategy Coordinator
 // =============================================

@@ -1,4 +1,4 @@
-import { readFile, mkdir, copyFile } from "node:fs/promises";
+import { readFile, mkdir, copyFile, readdir, stat } from "node:fs/promises";
 import { existsSync } from "node:fs";
 import { join, dirname, relative, basename } from "node:path";
 import { ConditionalPathExtractor } from './path-extractor';
@@ -126,18 +126,31 @@ export class ConditionalBackportCoordinator {
     // Ensure output directory exists
     await mkdir(outputDir, { recursive: true });
 
-    // Copy pack.mcmeta
-    await this.copyPackMeta(inputDir, outputDir);
+    // Copy pack.mcmeta and other root-level files
+    await this.copyPackFiles(inputDir, outputDir);
     
     // Copy minecraft assets (models, textures, but not items - we'll regenerate those)
     await this.copyMinecraftAssets(inputDir, outputDir);
   }
 
-  private async copyPackMeta(inputDir: string, outputDir: string): Promise<void> {
-    const packMetaPath = join(inputDir, "pack.mcmeta");
-    if (existsSync(packMetaPath)) {
-      await copyFile(packMetaPath, join(outputDir, "pack.mcmeta"));
-      console.log("✅ Copied pack.mcmeta");
+  private async copyPackFiles(inputDir: string, outputDir: string): Promise<void> {
+    
+    try {
+      const entries = await readdir(inputDir);
+      
+      for (const entry of entries) {
+        const fullPath = join(inputDir, entry);
+        const stats = await stat(fullPath);
+        
+        // Only copy files (not directories) from the root level
+        if (stats.isFile() && !entry.startsWith('.')) {
+          const outputPath = join(outputDir, entry);
+          await copyFile(fullPath, outputPath);
+          console.log(`✅ Copied ${entry}`);
+        }
+      }
+    } catch (error) {
+      console.warn(`⚠️  Could not copy pack files: ${error.message}`);
     }
   }
 

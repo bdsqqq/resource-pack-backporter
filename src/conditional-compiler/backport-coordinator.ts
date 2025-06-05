@@ -1,4 +1,4 @@
-import { readFile, mkdir, copyFile, readdir, stat } from "node:fs/promises";
+import { readFile, writeFile, mkdir, copyFile, readdir, stat } from "node:fs/promises";
 import { existsSync } from "node:fs";
 import { join, dirname, relative, basename } from "node:path";
 import { ConditionalPathExtractor } from './path-extractor';
@@ -145,12 +145,43 @@ export class ConditionalBackportCoordinator {
         // Only copy files (not directories) from the root level
         if (stats.isFile() && !entry.startsWith('.')) {
           const outputPath = join(outputDir, entry);
-          await copyFile(fullPath, outputPath);
+          
+          // Special handling for pack.mcmeta to update description
+          if (entry === 'pack.mcmeta') {
+            await this.copyAndUpdatePackMcmeta(fullPath, outputPath);
+          } else {
+            await copyFile(fullPath, outputPath);
+          }
+          
           console.log(`✅ Copied ${entry}`);
         }
       }
     } catch (error) {
       console.warn(`⚠️  Could not copy pack files: ${error.message}`);
+    }
+  }
+
+  private async copyAndUpdatePackMcmeta(inputPath: string, outputPath: string): Promise<void> {
+    try {
+      const content = await readFile(inputPath, 'utf-8');
+      const packData = JSON.parse(content);
+      
+      // Update the description to add the backported by credit
+      if (packData.pack && packData.pack.description) {
+        if (typeof packData.pack.description === 'string') {
+          packData.pack.description += " ↺_backported_by_@bdsqqq";
+        } else if (Array.isArray(packData.pack.description)) {
+          // Handle text component format
+          packData.pack.description.push(" ↺_backported_by_@bdsqqq");
+        }
+      }
+      
+      // Write the updated pack.mcmeta
+      await writeFile(outputPath, JSON.stringify(packData, null, 2), 'utf-8');
+    } catch (error) {
+      // If parsing fails, just copy the file as-is
+      console.warn(`⚠️  Could not update pack.mcmeta description, copying as-is: ${error.message}`);
+      await copyFile(inputPath, outputPath);
     }
   }
 

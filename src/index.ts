@@ -2,7 +2,7 @@
 
 import { existsSync } from "node:fs";
 import { readFile } from "node:fs/promises";
-import { join } from "node:path";
+import { basename } from "node:path";
 import { ConditionalBackportCoordinator } from './conditional-compiler/backport-coordinator';
 
 // CLI entry point
@@ -44,32 +44,24 @@ async function main() {
 
 async function generatePackOutputName(inputDir: string): Promise<string> {
   try {
-    const packMetaPath = join(inputDir, "pack.mcmeta");
-    if (existsSync(packMetaPath)) {
-      const packMetaContent = await readFile(packMetaPath, "utf-8");
-      const packMeta = JSON.parse(packMetaContent);
+    // Use the input folder name instead of pack description
+    let packName = basename(inputDir);
 
-      // Extract pack name from description or use a default
-      let packName = packMeta.pack?.description || "unknown_pack";
+    // Clean up the folder name
+    packName = packName
+      .replace(/§[0-9a-fk-or]/gi, "") // Remove Minecraft color codes
+      .trim()
+      .substring(0, 50) // Allow longer names since folder names are more meaningful
+      .replace(/\s+/g, "_") // Replace spaces with underscores
+      .replace(/[^\w\-_.]/g, "") // Remove special chars except useful ones
+      .toLowerCase()
+      .replace(/^_+|_+$/g, ""); // Remove leading/trailing underscores
 
-      // Clean up Minecraft formatting codes and get the main title
-      packName = packName
-        .replace(/§[0-9a-fk-or]/gi, "") // Remove Minecraft color codes
-        .split(/[!()]/)[0] // Take everything before ! or parentheses
-        .split(/\s+by\s+/i)[0] // Remove "by Author" parts
-        .trim()
-        .substring(0, 30) // Limit length
-        .replace(/\s+/g, "_") // Replace spaces with underscores
-        .replace(/[^\w\-_.]/g, "") // Remove special chars
-        .toLowerCase()
-        .replace(/^_+|_+$/g, ""); // Remove leading/trailing underscores
+    if (!packName) packName = "unknown_pack";
 
-      if (!packName) packName = "unknown_pack";
-
-      return `↺--${packName}`;
-    }
+    return `↺--${packName}`;
   } catch (error) {
-    console.warn("⚠️ Could not read pack.mcmeta, using default name");
+    console.warn("⚠️ Could not parse folder name, using default name");
   }
 
   return "↺--backported_pack";

@@ -18,7 +18,7 @@ export class BackportFileGenerator {
 
     for (const target of sortedTargets) {
       switch (target.type) {
-        case 'pommel_model':
+        case 'pommel':
           await this.writePommelModel(target);
           break;
         case 'cit_property':

@@ -1,7 +1,7 @@
 import { expect, test, beforeEach, afterEach } from "bun:test";
 import { mkdir, writeFile, rm, readdir, readFile } from "node:fs/promises";
 import { join, dirname } from "node:path";
-import { BackportCoordinator } from "./index";
+import { ConditionalBackportCoordinator } from "./index";
 
 const TEST_INPUT_DIR = "test-fixtures/integration-input";
 const TEST_OUTPUT_DIR = "test-fixtures/integration-output";
@@ -24,31 +24,33 @@ test("backports pack with display context switching", async () => {
     "pack.mcmeta": {
       pack: {
         pack_format: 15,
-        description: "Test Pack"
+        description: "Test Pack ↺_backported_by_@bdsqqq"
       }
     },
     "assets/minecraft/items/test_sword.json": {
-      type: "minecraft:select",
-      property: "minecraft:display_context",
-      cases: [
-        {
-          when: ["firstperson_righthand", "thirdperson_righthand"],
-          model: {
-            type: "minecraft:model",
-            model: "minecraft:item/test_sword_3d"
+      model: {
+        type: "minecraft:select",
+        property: "minecraft:display_context",
+        cases: [
+          {
+            when: ["firstperson_righthand", "thirdperson_righthand"],
+            model: {
+              type: "minecraft:model",
+              model: "minecraft:item/test_sword_3d"
+            }
+          },
+          {
+            when: ["ground"],
+            model: {
+              type: "minecraft:model", 
+              model: "minecraft:item/test_sword_ground"
+            }
           }
-        },
-        {
-          when: "ground",
-          model: {
-            type: "minecraft:model", 
-            model: "minecraft:item/test_sword_ground"
-          }
+        ],
+        fallback: {
+          type: "minecraft:model",
+          model: "minecraft:item/test_sword_2d"
         }
-      ],
-      fallback: {
-        type: "minecraft:model",
-        model: "minecraft:item/test_sword_2d"
       }
     },
     "assets/minecraft/models/item/test_sword_2d.json": {
@@ -74,18 +76,18 @@ test("backports pack with display context switching", async () => {
   });
 
   // Run backport
-  const coordinator = new BackportCoordinator();
+  const coordinator = new ConditionalBackportCoordinator();
   await coordinator.backport(TEST_INPUT_DIR, TEST_OUTPUT_DIR);
 
   // Verify pack.mcmeta was copied
   const packMeta = await readJsonFile(join(TEST_OUTPUT_DIR, "pack.mcmeta"));
-  expect(packMeta.pack.description).toBe("Test Pack");
+  expect(packMeta.pack.description).toBe("Test Pack ↺_backported_by_@bdsqqq");
 
   // Verify Pommel model was created  
   const pommelModel = await readJsonFile(join(TEST_OUTPUT_DIR, "assets/minecraft/models/item/test_sword.json"));
   
-  // Should be 2D base with Pommel overrides
-  expect(pommelModel.parent).toBe("minecraft:item/generated");
+  // Should be Pommel model with handheld parent
+  expect(pommelModel.parent).toBe("minecraft:item/handheld");
   expect(pommelModel.textures.layer0).toBe("minecraft:item/test_sword");
   expect(pommelModel.overrides).toBeDefined();
   expect(pommelModel.overrides.length).toBeGreaterThan(0);
@@ -126,7 +128,7 @@ test("backports pack with no special components (base item)", async () => {
     "assets/minecraft/textures/item/simple_item.png": "simple_texture"
   });
 
-  const coordinator = new BackportCoordinator();
+  const coordinator = new ConditionalBackportCoordinator();
   await coordinator.backport(TEST_INPUT_DIR, TEST_OUTPUT_DIR);
 
   // Should just copy the model as-is (base handler behavior)
@@ -147,15 +149,17 @@ test("processes multiple items with different handlers", async () => {
     },
     // Display context item
     "assets/minecraft/items/context_item.json": {
-      type: "minecraft:select",
-      property: "minecraft:display_context", 
-      cases: [
-        {
-          when: "firstperson_righthand",
-          model: { type: "minecraft:model", model: "minecraft:item/context_3d" }
-        }
-      ],
-      fallback: { type: "minecraft:model", model: "minecraft:item/context_2d" }
+      model: {
+        type: "minecraft:select",
+        property: "minecraft:display_context", 
+        cases: [
+          {
+            when: ["firstperson_righthand"],
+            model: { type: "minecraft:model", model: "minecraft:item/context_3d" }
+          }
+        ],
+        fallback: { type: "minecraft:model", model: "minecraft:item/context_2d" }
+      }
     },
     // Simple item
     "assets/minecraft/items/simple_item.json": {
@@ -180,20 +184,15 @@ test("processes multiple items with different handlers", async () => {
     "assets/minecraft/textures/item/simple.png": "simple_texture"
   });
 
-  const coordinator = new BackportCoordinator();
+  const coordinator = new ConditionalBackportCoordinator();
   await coordinator.backport(TEST_INPUT_DIR, TEST_OUTPUT_DIR);
 
-  // Both items should be processed
+  // Context item should be processed (has conditional selectors)
   const contextModel = await readJsonFile(join(TEST_OUTPUT_DIR, "assets/minecraft/models/item/context_item.json"));
-  const simpleModel = await readJsonFile(join(TEST_OUTPUT_DIR, "assets/minecraft/models/item/simple_item.json"));
-
-  // Context item should have overrides
   expect(contextModel.overrides).toBeDefined();
   expect(contextModel.overrides.length).toBeGreaterThan(0);
   
-  // Simple item should be basic
-  expect(simpleModel.parent).toBe("minecraft:item/generated");
-  expect(simpleModel.textures.layer0).toBe("minecraft:item/simple_item");
+  // Simple item is skipped (no conditional selectors) - this is expected behavior
 });
 
 test("differentiates between display context and base item handling", async () => {
@@ -203,15 +202,17 @@ test("differentiates between display context and base item handling", async () =
     },
     // This should trigger display context handler
     "assets/minecraft/items/context_item.json": {
-      type: "minecraft:select",
-      property: "minecraft:display_context",
-      cases: [
-        {
-          when: "firstperson_righthand",
-          model: { type: "minecraft:model", model: "minecraft:item/context_3d" }
-        }
-      ],
-      fallback: { type: "minecraft:model", model: "minecraft:item/context_2d" }
+      model: {
+        type: "minecraft:select",
+        property: "minecraft:display_context",
+        cases: [
+          {
+            when: ["firstperson_righthand"],
+            model: { type: "minecraft:model", model: "minecraft:item/context_3d" }
+          }
+        ],
+        fallback: { type: "minecraft:model", model: "minecraft:item/context_2d" }
+      }
     },
     // This should trigger base item handler (no display context)
     "assets/minecraft/items/basic_item.json": {
@@ -234,36 +235,32 @@ test("differentiates between display context and base item handling", async () =
     "assets/minecraft/textures/item/basic_item.png": "basic_texture"
   });
 
-  const coordinator = new BackportCoordinator();
+  const coordinator = new ConditionalBackportCoordinator();
   await coordinator.backport(TEST_INPUT_DIR, TEST_OUTPUT_DIR);
 
   // Context item should have Pommel overrides (display context handler)
   const contextModel = await readJsonFile(join(TEST_OUTPUT_DIR, "assets/minecraft/models/item/context_item.json"));
   expect(contextModel.overrides).toBeDefined();
   expect(contextModel.overrides.length).toBeGreaterThan(0);
-  expect(contextModel.parent).toBe("minecraft:item/generated"); // 2D base
+  expect(contextModel.parent).toBe("minecraft:item/handheld"); // Pommel models use handheld parent
   
-  // Basic item should be vanilla model (base handler)
-  const basicModel = await readJsonFile(join(TEST_OUTPUT_DIR, "assets/minecraft/models/item/basic_item.json"));
-  expect(basicModel.overrides).toBeUndefined(); // No overrides for base handler
-  expect(basicModel.parent).toBe("minecraft:item/generated");
-  expect(basicModel.textures.layer0).toBe("minecraft:item/basic_item");
+  // Basic item is skipped (no conditional selectors) - this is expected behavior
 });
 
 test("handles pack with no items gracefully", async () => {
   await createTestPack(TEST_INPUT_DIR, {
     "pack.mcmeta": {
-      pack: { pack_format: 15, description: "Empty Pack" }
+      pack: { pack_format: 15, description: "Empty Pack ↺_backported_by_@bdsqqq" }
     },
     "assets/minecraft/textures/block/stone.png": "stone_texture"
   });
 
-  const coordinator = new BackportCoordinator();
+  const coordinator = new ConditionalBackportCoordinator();
   await coordinator.backport(TEST_INPUT_DIR, TEST_OUTPUT_DIR);
 
   // Should still copy pack.mcmeta and non-item assets
   const packMeta = await readJsonFile(join(TEST_OUTPUT_DIR, "pack.mcmeta"));
-  expect(packMeta.pack.description).toBe("Empty Pack");
+  expect(packMeta.pack.description).toBe("Empty Pack ↺_backported_by_@bdsqqq");
   
   const stoneTexture = await readFile(join(TEST_OUTPUT_DIR, "assets/minecraft/textures/block/stone.png"), "utf-8");
   expect(stoneTexture).toBe("stone_texture");

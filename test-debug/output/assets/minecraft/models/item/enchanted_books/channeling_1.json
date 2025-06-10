@@ -1,0 +1,44 @@
+{
+  "parent": "minecraft:item/handheld",
+  "textures": {
+    "layer0": "minecraft:item/enchanted_books/channeling"
+  },
+  "overrides": [
+    {
+      "predicate": {
+        "pommel:is_ground": 1
+      },
+      "model": "minecraft:item/enchanted_books/channeling"
+    },
+    {
+      "predicate": {
+        "pommel:is_held": 1
+      },
+      "model": "minecraft:item/books_3d/channeling_3d_open"
+    },
+    {
+      "predicate": {
+        "pommel:is_held": 1
+      },
+      "model": "minecraft:item/books_3d/channeling_3d_open"
+    },
+    {
+      "predicate": {
+        "pommel:is_offhand": 1
+      },
+      "model": "minecraft:item/books_3d/channeling_3d"
+    },
+    {
+      "predicate": {
+        "pommel:is_offhand": 1
+      },
+      "model": "minecraft:item/books_3d/channeling_3d"
+    },
+    {
+      "predicate": {
+        "pommel:is_offhand": 1
+      },
+      "model": "minecraft:item/books_3d/channeling_3d"
+    }
+  ]
+}

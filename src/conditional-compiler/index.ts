@@ -16,7 +16,7 @@ export interface ExecutionPath {
 }
 
 export interface OutputTarget {
-  type: 'pommel_model' | 'cit_property' | 'base_texture' | 'enhanced_model';
+  type: 'pommel' | 'cit_property' | 'base_texture' | 'enhanced_model';
   file: string;
   content: any;
   priority: number;

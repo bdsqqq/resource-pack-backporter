@@ -125,6 +125,20 @@ export class ConditionalPathExtractor {
           merged.enchantment = this.parseEnchantment(condition.when);
         }
       }
+      
+      if (condition.property === 'minecraft:stored_enchantments') {
+        // Handle enchanted books (stored enchantments)
+        if (condition.when !== 'FALLBACK') {
+          merged.enchantment = this.parseEnchantment(condition.when);
+        }
+      }
+      
+      if (condition.property === 'minecraft:enchantments') {
+        // Handle enchanted tools/weapons/armor (active enchantments)
+        if (condition.when !== 'FALLBACK') {
+          merged.enchantment = this.parseEnchantment(condition.when);
+        }
+      }
     }
 
     return merged;

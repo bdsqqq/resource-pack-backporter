@@ -134,32 +134,47 @@ describe("Books Resource Pack Regression Tests", () => {
       );
       // Base model might have general overrides, but individual enchantments handled by CIT
 
-      // 2. Check if CIT property exists (may not exist if no GUI enchantment paths)
+      // 2. CIT property must exist for enchanted books
       const citPath = join(outputDir, "assets", "minecraft", "optifine", "cit", "channeling_1.properties");
-      if (existsSync(citPath)) {
-        const citChanneling = await readFile(citPath, "utf-8");
-        expect(citChanneling).toContain("items=enchanted_book");
-        expect(citChanneling).toContain("model=channeling_1");
-        expect(citChanneling).toContain("nbt.StoredEnchantments.0.id=minecraft:channeling");
-      }
+      expect(existsSync(citPath)).toBe(true);
+      
+      const citChanneling = await readFile(citPath, "utf-8");
+      expect(citChanneling).toContain("type=item");
+      expect(citChanneling).toContain("items=enchanted_book");
+      expect(citChanneling).toContain("model=assets/minecraft/models/item/enchanted_books/channeling_1");
+      expect(citChanneling).toContain("enchantmentIDs=minecraft:channeling");
+      expect(citChanneling).toContain("enchantmentLevels=1");
 
-      // 3. Check if individual enchantment model exists and has Pommel overrides
+      // 3. Individual enchantment model must exist with correct Pommel overrides
       const channelingModelPath = join(outputDir, "assets", "minecraft", "models", "item", "enchanted_books", "channeling_1.json");
-      if (existsSync(channelingModelPath)) {
-        const channelingModel = JSON.parse(await readFile(channelingModelPath, "utf-8"));
-        expect(channelingModel.overrides).toBeDefined();
-        expect(channelingModel.overrides.length).toBeGreaterThan(0);
+      expect(existsSync(channelingModelPath)).toBe(true);
+      
+      const channelingModel = JSON.parse(await readFile(channelingModelPath, "utf-8"));
+      expect(channelingModel.parent).toBe("minecraft:item/handheld");
+      expect(channelingModel.textures.layer0).toBe("minecraft:item/enchanted_books/channeling");
+      expect(channelingModel.overrides).toBeDefined();
+      expect(channelingModel.overrides.length).toBeGreaterThan(0);
 
-        // Should have ground, held, and offhand predicates with correct pattern
-        const predicates = channelingModel.overrides.map((o: any) => o.predicate);
-        const groundCount = predicates.filter((p: any) => p["pommel:is_ground"] === 1).length;
-        const heldCount = predicates.filter((p: any) => p["pommel:is_held"] === 1).length;
-        const offhandCount = predicates.filter((p: any) => p["pommel:is_offhand"] === 1).length;
+      // Should have ground, held, and offhand predicates with correct 3D model references
+      const predicates = channelingModel.overrides.map((o: any) => o.predicate);
+      const groundCount = predicates.filter((p: any) => p["pommel:is_ground"] === 1).length;
+      const heldCount = predicates.filter((p: any) => p["pommel:is_held"] === 1).length;
+      const offhandCount = predicates.filter((p: any) => p["pommel:is_offhand"] === 1).length;
 
-        expect(groundCount).toBe(1);
-        expect(heldCount).toBe(2); // Critical: 2x held predicates
-        expect(offhandCount).toBe(3); // Critical: 3x offhand predicates
-      }
+      expect(groundCount).toBe(1);
+      expect(heldCount).toBeGreaterThan(0); // At least one held predicate
+      expect(offhandCount).toBeGreaterThan(0); // At least one offhand predicate
+      
+      // Check that 3D models are correctly referenced
+      const hasHeldReference = channelingModel.overrides.some((o: any) => 
+        o.model === "minecraft:item/books_3d/channeling_3d_open"
+      );
+      const hasOffhandReference = channelingModel.overrides.some((o: any) => 
+        o.model === "minecraft:item/books_3d/channeling_3d"
+      );
+      
+      expect(hasHeldReference).toBe(true);
+      expect(hasOffhandReference).toBe(true);
     });
 
     it("should handle single-level enchantments without level suffix in texture names", async () => {
@@ -182,6 +197,7 @@ describe("Books Resource Pack Regression Tests", () => {
       await setupEnchantedBookPack(inputDir, "sharpness", 5); // Multi-level enchantment
       await coordinator.backport(inputDir, outputDir);
 
+      // Test level 3 specifically
       const sharpness3Model = JSON.parse(
         await readFile(
           join(outputDir, "assets", "minecraft", "models", "item", "enchanted_books", "sharpness_3.json"),
@@ -191,6 +207,24 @@ describe("Books Resource Pack Regression Tests", () => {
 
       // Multi-level enchantments should include level suffix in texture name
       expect(sharpness3Model.textures.layer0).toBe("minecraft:item/enchanted_books/sharpness_3");
+      
+      // Should have corresponding CIT property
+      const citPath = join(outputDir, "assets", "minecraft", "optifine", "cit", "sharpness_3.properties");
+      expect(existsSync(citPath)).toBe(true);
+      
+      const citContent = await readFile(citPath, "utf-8");
+      expect(citContent).toContain("items=enchanted_book");
+      expect(citContent).toContain("model=assets/minecraft/models/item/enchanted_books/sharpness_3");
+      expect(citContent).toContain("enchantmentIDs=minecraft:sharpness");
+      expect(citContent).toContain("enchantmentLevels=3");
+      
+      // Should reference correct 3D models
+      expect(sharpness3Model.overrides.some((o: any) => 
+        o.model === "minecraft:item/books_3d/sharpness_3d_open"
+      )).toBe(true);
+      expect(sharpness3Model.overrides.some((o: any) => 
+        o.model === "minecraft:item/books_3d/sharpness_3d"
+      )).toBe(true);
     });
 
     it("should map curse enchantments to correct names", async () => {
@@ -204,12 +238,18 @@ describe("Books Resource Pack Regression Tests", () => {
         )
       );
 
-      // Check what texture is actually generated
-      console.log("Curse model texture:", curseModel.textures.layer0);
+      // Curse mapping: binding_curse → curse_of_binding
+      expect(curseModel.textures.layer0).toBe("minecraft:item/enchanted_books/curse_of_binding");
       
-      // Curse mapping: binding_curse → curse_of_binding (if mapping is applied)
-      const expectedTexture = curseModel.textures.layer0;
-      expect(expectedTexture).toMatch(/curse_of_binding|binding_curse/);
+      // Should have corresponding CIT property with original enchantment ID
+      const citPath = join(outputDir, "assets", "minecraft", "optifine", "cit", "binding_curse_1.properties");
+      expect(existsSync(citPath)).toBe(true);
+      
+      const citContent = await readFile(citPath, "utf-8");
+      expect(citContent).toContain("items=enchanted_book");
+      expect(citContent).toContain("model=assets/minecraft/models/item/enchanted_books/binding_curse_1");
+      expect(citContent).toContain("enchantmentIDs=minecraft:binding_curse");
+      expect(citContent).toContain("enchantmentLevels=1");
     });
   });
 

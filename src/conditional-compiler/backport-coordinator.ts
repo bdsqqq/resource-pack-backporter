@@ -168,11 +168,19 @@ export class ConditionalBackportCoordinator {
       
       // Update the description to add the backported by credit
       if (packData.pack && packData.pack.description) {
+        const attribution = " ↺_backported_by_@bdsqqq";
         if (typeof packData.pack.description === 'string') {
-          packData.pack.description += " ↺_backported_by_@bdsqqq";
+          if (!packData.pack.description.includes(attribution)) {
+            packData.pack.description += attribution;
+          }
         } else if (Array.isArray(packData.pack.description)) {
-          // Handle text component format
-          packData.pack.description.push(" ↺_backported_by_@bdsqqq");
+          // Handle text component format - check if attribution already exists
+          const hasAttribution = packData.pack.description.some(item => 
+            typeof item === 'string' && item.includes("↺_backported_by_@bdsqqq")
+          );
+          if (!hasAttribution) {
+            packData.pack.description.push(attribution);
+          }
         }
       }
       

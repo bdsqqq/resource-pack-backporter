@@ -2,6 +2,7 @@ import { afterEach, beforeEach, describe, expect, it } from "bun:test";
 import { existsSync } from "node:fs";
 import { mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import { join } from "node:path";
+import { ConditionalBackportCoordinator } from "../src/conditional-compiler/backport-coordinator";
 
 describe("Integration Tests", () => {
   let testDir: string;
@@ -79,9 +80,7 @@ describe("Integration Tests", () => {
     );
 
     // Import and run the backporter
-    const { BackportCoordinator } = await import("../resource-pack-backporter.ts");
-
-    const coordinator = new BackportCoordinator();
+    const coordinator = new ConditionalBackportCoordinator();
     await coordinator.backport(inputDir, outputDir);
 
     // Verify output structure
@@ -191,8 +190,8 @@ describe("Integration Tests", () => {
     );
 
     // Run backporter
-    const { BackportCoordinator } = await import("../resource-pack-backporter.ts");
-    const coordinator = new BackportCoordinator();
+    const coordinator = new ConditionalBackportCoordinator();
+    
     await coordinator.backport(inputDir, outputDir);
 
     // Verify both books have correct textures
@@ -264,8 +263,8 @@ describe("Integration Tests", () => {
     );
 
     // Run backporter
-    const { BackportCoordinator } = await import("../resource-pack-backporter.ts");
-    const coordinator = new BackportCoordinator();
+    const coordinator = new ConditionalBackportCoordinator();
+    
     await coordinator.backport(inputDir, outputDir);
 
     // Verify output directory was cleared and regenerated correctly
@@ -336,8 +335,8 @@ describe("Integration Tests", () => {
     );
 
     // Run backporter
-    const { BackportCoordinator } = await import("../resource-pack-backporter.ts");
-    const coordinator = new BackportCoordinator();
+    const coordinator = new ConditionalBackportCoordinator();
+    
     await coordinator.backport(inputDir, outputDir);
 
     // Verify core pack files were preserved

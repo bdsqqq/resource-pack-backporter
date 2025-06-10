@@ -8,6 +8,8 @@ interface GroupedPaths {
 }
 
 export class TargetSystemMapper {
+  constructor(private sourceDir?: string) {}
+
   mapPathsToTargets(paths: ExecutionPath[], itemId: string): OutputTarget[] {
     const targets: OutputTarget[] = [];
 
@@ -40,7 +42,7 @@ export class TargetSystemMapper {
     } else {
       // Non-book item - generate generic model with correct texture paths
       targets.push(
-        this.generateGenericItemModel(groupedPaths.pommel, paths, itemId)
+        ...this.generateGenericItemModel(groupedPaths.pommel, paths, itemId)
       );
     }
 
@@ -660,12 +662,21 @@ export class TargetSystemMapper {
     pommelPaths: ExecutionPath[],
     allPaths: ExecutionPath[],
     itemId: string
-  ): OutputTarget {
+  ): OutputTarget[] {
     // For non-book items, extract texture from the GUI model and generate proper Pommel overrides
     const textureRef = this.extractBaseTexture(allPaths, itemId);
-    const overrides = this.createGenericPommelOverrides(pommelPaths, allPaths);
+    
+    // Check if we need to preserve the original 3D model
+    const fallbackPath = allPaths.find((path) => path.isFallback);
+    const preservedModelName = fallbackPath ? this.shouldPreserve3DModel(fallbackPath, itemId) : null;
+    
+    // Generate overrides with potential model name updates
+    const overrides = this.createGenericPommelOverrides(pommelPaths, allPaths, preservedModelName);
 
-    return {
+    const targets: OutputTarget[] = [];
+
+    // Add the main Pommel model
+    targets.push({
       type: "pommel",
       file: `models/item/${itemId}.json`,
       content: {
@@ -676,7 +687,32 @@ export class TargetSystemMapper {
         overrides: overrides,
       },
       priority: 1,
-    };
+    });
+
+    // Add preservation target if needed
+    if (preservedModelName && fallbackPath) {
+      targets.push({
+        type: "preserve_3d_model",
+        file: `models/item/${preservedModelName}.json`,
+        content: null, // Will be copied from original
+        priority: 0,
+      });
+    }
+
+    return targets;
+  }
+
+  private shouldPreserve3DModel(fallbackPath: ExecutionPath, itemId: string): string | null {
+    // Check if the fallback model would be overwritten by our Pommel model
+    const fallbackModel = fallbackPath.targetModel.replace("minecraft:", "");
+    const pommelModel = `item/${itemId}`;
+    
+    if (fallbackModel === pommelModel) {
+      // Would be overwritten - preserve with _3d suffix
+      return `${itemId}_3d`;
+    }
+    
+    return null;
   }
 
   private extractBaseTexture(paths: ExecutionPath[], itemId: string): string {
@@ -688,31 +724,56 @@ export class TargetSystemMapper {
     );
 
     if (guiPath && guiPath.targetModel) {
-      // Try to extract texture from the 2D model path
-      const modelPath = guiPath.targetModel.replace("minecraft:", "");
-      if (modelPath.endsWith("_2d")) {
-        // Convert 2D model path to 3D texture path
-        const baseName = modelPath.replace("item/", "").replace("_2d", "");
-        return `minecraft:item/${baseName}_3d`;
+      try {
+        // Read the actual texture from the GUI model file
+        const modelPath = guiPath.targetModel.replace("minecraft:", "assets/minecraft/models/") + ".json";
+        
+        const fs = require("node:fs");
+        const { join } = require("node:path");
+        
+        // Try different possible paths for the model file
+        const possiblePaths = [
+          this.sourceDir ? join(this.sourceDir, modelPath) : modelPath, // Source directory
+          modelPath, // Direct path
+          `test-fixtures/${modelPath}` // In test fixtures for tests
+        ];
+        
+        for (const tryPath of possiblePaths) {
+          if (fs.existsSync(tryPath)) {
+            const modelContent = JSON.parse(fs.readFileSync(tryPath, "utf-8"));
+            if (modelContent.textures?.layer0) {
+              // Normalize texture path to minecraft: format
+              let texturePath = modelContent.textures.layer0;
+              if (!texturePath.startsWith("minecraft:")) {
+                texturePath = `minecraft:${texturePath}`;
+              }
+              return texturePath;
+            }
+            break;
+          }
+        }
+      } catch (error) {
+        console.log(`⚠️  Error reading GUI model for texture: ${error.message}`);
       }
     }
 
-    // Fallback to default
+    // Fallback to vanilla item texture
     return `minecraft:item/${itemId}`;
   }
 
   private createGenericPommelOverrides(
     pommelPaths: ExecutionPath[],
-    allPaths: ExecutionPath[]
+    allPaths: ExecutionPath[],
+    preservedModelName?: string | null
   ): any[] {
     const overrides: any[] = [];
 
-    // Map ground context to Pommel predicate with the 3D model
+    // Find the fallback 3D model (used for hand contexts)
+    const fallbackPath = allPaths.find((path) => path.isFallback);
+    
+    // Map ground context to 2D model
     const groundPath = allPaths.find(
-      (path) =>
-        path.conditions.displayContext.includes("ground") ||
-        (!path.conditions.displayContext.includes("gui") &&
-          !path.conditions.displayContext.includes("fixed"))
+      (path) => path.conditions.displayContext.includes("ground")
     );
 
     if (groundPath && groundPath.targetModel) {
@@ -721,6 +782,29 @@ export class TargetSystemMapper {
           "pommel:is_ground": 1,
         },
         model: groundPath.targetModel,
+      });
+    }
+
+    // Map hand contexts to 3D model (fallback or preserved)
+    if (fallbackPath && fallbackPath.targetModel) {
+      // Use preserved model name if available, otherwise original
+      const handModelName = preservedModelName 
+        ? `minecraft:item/${preservedModelName}`
+        : fallbackPath.targetModel;
+        
+      // Add held predicates for 3D model
+      overrides.push({
+        predicate: {
+          "pommel:is_held": 1,
+        },
+        model: handModelName,
+      });
+      
+      overrides.push({
+        predicate: {
+          "pommel:is_offhand": 1,
+        },
+        model: handModelName,
       });
     }
 

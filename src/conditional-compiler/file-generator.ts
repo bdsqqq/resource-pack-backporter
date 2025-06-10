@@ -27,6 +27,9 @@ export class BackportFileGenerator {
         case 'enhanced_model':
           await this.copyEnhancedModel(target);
           break;
+        case 'preserve_3d_model':
+          await this.copyPreserved3DModel(target);
+          break;
         case 'base_texture':
           await this.copyTexture(target);
           break;
@@ -71,6 +74,25 @@ export class BackportFileGenerator {
       console.log(`✅ Copied enhanced 3D model: ${target.file}`);
     } else {
       console.warn(`⚠️  Enhanced model not found in source: ${target.file}`);
+    }
+  }
+
+  private async copyPreserved3DModel(target: OutputTarget): Promise<void> {
+    // Preserve original 3D model by copying and renaming it
+    // Target file is the new name (e.g. music_disc_13_3d.json)
+    // Source is the original name (e.g. music_disc_13.json) 
+    const destFile = join(this.outputDir, 'assets', 'minecraft', target.file);
+    
+    // Extract original model name from target file name
+    const originalFileName = target.file.replace('_3d.json', '.json');
+    const sourceFile = join(this.sourceDir, 'assets', 'minecraft', originalFileName);
+    
+    if (existsSync(sourceFile)) {
+      await this.ensureDirectory(destFile);
+      await copyFile(sourceFile, destFile);
+      console.log(`✅ Preserved 3D model: ${originalFileName} → ${target.file}`);
+    } else {
+      console.warn(`⚠️  Original 3D model not found: ${originalFileName}`);
     }
   }
 

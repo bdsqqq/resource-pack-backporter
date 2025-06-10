@@ -20,6 +20,9 @@ export class ConditionalBackportCoordinator {
   async backport(inputDir: string, outputDir: string, options: Partial<BackportOptions> = {}): Promise<void> {
     this.verbose = options.verbose || false;
     this.fileGenerator = new BackportFileGenerator(outputDir, inputDir);
+    
+    // Update target mapper with source directory
+    this.targetMapper = new TargetSystemMapper(inputDir);
 
     console.log("🚀 Starting conditional compiler backport...");
 

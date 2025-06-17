@@ -14,6 +14,17 @@
     "verbatimModuleSyntax": true,
     "noEmit": true,
 
+    // Path aliases
+    "baseUrl": ".",
+    "paths": {
+      "@backporter/*": ["tools/backporter/src/*"],
+      "@linter/*": ["tools/linter/src/*"],
+      "@file-utils/*": ["tools/file-utils/src/*"],
+      "@json-utils/*": ["tools/json-utils/src/*"],
+      "@mc-paths/*": ["tools/mc-paths/src/*"],
+      "@tools/*": ["tools/*"]
+    },
+
     // Best practices
     "strict": true,
     "skipLibCheck": true,

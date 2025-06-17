@@ -1,27 +1,32 @@
 {
-  "name": "resource-pack-backporter",
+  "name": "minecraft-resource-pack-tools",
   "version": "1.0.0",
-  "description": "Universal Minecraft resource pack backporter from 1.21.4+ to 1.21.1 using CIT + Pommel",
-  "main": "resource-pack-backporter.ts",
+  "description": "Universal toolbox for Minecraft resource pack development - backporting, linting, and more",
+  "main": "tools/index.ts",
   "scripts": {
     "test": "bun test",
     "test:watch": "bun test --watch",
     "test:coverage": "bun test --coverage",
-    "dev": "bun run resource-pack-backporter.ts",
-    "build": "bun build resource-pack-backporter.ts --outdir dist --target bun",
-    "lint": "bunx @biomejs/biome check .",
+    "backport": "bun run tools/backporter/index.ts",
+    "lint": "bun run tools/linter/index.ts",
+    "dev": "bun run tools/backporter/index.ts",
+    "build": "bun build tools/*/index.ts --outdir dist --target bun",
+    "lint:code": "bunx @biomejs/biome check .",
     "format": "bunx @biomejs/biome format --write ."
   },
   "keywords": [
     "minecraft",
     "resource-pack",
     "backport",
+    "linter",
     "cit",
     "pommel",
     "1.21.4",
-    "1.21.1"
+    "1.21.1",
+    "tools",
+    "validation"
   ],
-  "author": "Better Fresher 3D Books Backporter",
+  "author": "Minecraft Resource Pack Tools",
   "license": "MIT",
   "devDependencies": {
     "@biomejs/biome": "^2.0.0-beta.6",

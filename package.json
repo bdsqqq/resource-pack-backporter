@@ -12,14 +12,26 @@
     "lint": "bunx @biomejs/biome check .",
     "format": "bunx @biomejs/biome format --write ."
   },
-  "keywords": ["minecraft", "resource-pack", "backport", "cit", "pommel", "1.21.4", "1.21.1"],
+  "keywords": [
+    "minecraft",
+    "resource-pack",
+    "backport",
+    "cit",
+    "pommel",
+    "1.21.4",
+    "1.21.1"
+  ],
   "author": "Better Fresher 3D Books Backporter",
   "license": "MIT",
   "devDependencies": {
-    "@biomejs/biome": "^1.9.4",
-    "bun-types": "latest"
+    "@biomejs/biome": "^2.0.0-beta.6",
+    "@types/bun": "latest"
   },
   "engines": {
     "bun": ">=1.0.0"
+  },
+  "private": true,
+  "peerDependencies": {
+    "typescript": "^5"
   }
 }

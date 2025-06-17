@@ -16,10 +16,10 @@ export async function main() {
 
   const [packDir = "."] = nonFlagArgs;
 
-  console.log("🔍 Starting resource pack validation...");
-  console.log(`📁 Pack directory: ${packDir}`);
+  console.log("◉ Starting resource pack validation...");
+  console.log(`▸ Pack directory: ${packDir}`);
   if (verbose) {
-    console.log("🔍 Verbose logging enabled");
+    console.log("◉ Verbose logging enabled");
   }
   if (fix) {
     console.log("🔧 Fix mode enabled");
@@ -29,25 +29,25 @@ export async function main() {
     const result = await validateResourcePack(packDir, { verbose, fix });
 
     if (result.isValid) {
-      console.log("✅ Resource pack validation passed!");
+      console.log("✓ Resource pack validation passed!");
       console.log(
-        `📊 Checked ${result.stats.filesChecked} files, found ${result.stats.issues} issues`
+        `▪ Checked ${result.stats.filesChecked} files, found ${result.stats.issues} issues`
       );
     } else {
-      console.error("❌ Resource pack validation failed!");
+      console.error("✗ Resource pack validation failed!");
       console.error(
-        `📊 Checked ${result.stats.filesChecked} files, found ${result.stats.issues} issues`
+        `▪ Checked ${result.stats.filesChecked} files, found ${result.stats.issues} issues`
       );
 
       if (result.errors.length > 0) {
-        console.error("\n🚨 Errors:");
+        console.error("\n! Errors:");
         for (const error of result.errors) {
           console.error(`  - ${error}`);
         }
       }
 
       if (result.warnings.length > 0) {
-        console.warn("\n⚠️  Warnings:");
+        console.warn("\n⚠ Warnings:");
         for (const warning of result.warnings) {
           console.warn(`  - ${warning}`);
         }
@@ -56,7 +56,7 @@ export async function main() {
       process?.exit?.(1);
     }
   } catch (error: any) {
-    console.error("❌ Validation failed:", error.message);
+    console.error("✗ Validation failed:", error.message);
     process?.exit?.(1);
   }
 }

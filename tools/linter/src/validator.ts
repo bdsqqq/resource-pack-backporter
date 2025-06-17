@@ -27,7 +27,7 @@ export async function validateResourcePack(
   let filesChecked = 0;
 
   if (verbose) {
-    console.log(`🔍 Scanning pack directory: ${packDir}`);
+    console.log(`◉ Scanning pack directory: ${packDir}`);
   }
 
   // Check pack.mcmeta exists and is valid
@@ -37,7 +37,7 @@ export async function validateResourcePack(
       errors.push(`Invalid pack.mcmeta: ${packMeta.error}`);
     } else {
       if (verbose) {
-        console.log("✅ pack.mcmeta is valid");
+        console.log("✓ pack.mcmeta is valid");
       }
     }
     filesChecked++;
@@ -77,7 +77,7 @@ export async function validateResourcePack(
   // Find all texture files and check for unused ones
   const textureFiles = walkTextures(`${packDir}/assets`);
   if (verbose) {
-    console.log(`🖼️  Found ${textureFiles.length} texture files`);
+    console.log(`▪  Found ${textureFiles.length} texture files`);
   }
 
   const isValid = errors.length === 0;

@@ -45,7 +45,7 @@ export class ResourcePackIntrospector {
     }
     if (!existsSync(dir)) {
       if (verbose) {
-        console.log(`❌ Directory does not exist: ${dir}`);
+        console.log(`✗ Directory does not exist: ${dir}`);
       }
       return;
     }
@@ -71,7 +71,7 @@ export class ResourcePackIntrospector {
     verbose = false
   ) {
     if (verbose) {
-      console.log(`🔍 Categorizing: ${relativePath}`);
+      console.log(`◉ Categorizing: ${relativePath}`);
     }
     if (
       relativePath.includes("assets/minecraft/items/") &&

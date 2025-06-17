@@ -28,14 +28,14 @@ async function main() {
   console.log(`📥 Input: ${inputDir}`);
   console.log(`📤 Output: ${outputDir}`);
   if (verbose) {
-    console.log("🔍 Verbose logging enabled");
+    console.log("◉ Verbose logging enabled");
   }
 
   const coordinator = new ConditionalBackportCoordinator();
   try {
     await coordinator.backport(inputDir, outputDir, { verbose });
   } catch (error: any) {
-    console.error("❌ Backport failed:", error.message);
+    console.error("✗ Backport failed:", error.message);
     process?.exit?.(1);
   }
 }
@@ -63,7 +63,7 @@ async function generatePackOutputName(inputDir: string): Promise<string> {
 
     return `↺--${packName}`;
   } catch (error) {
-    console.warn("⚠️ Could not parse folder name, using default name");
+    console.warn("⚠ Could not parse folder name, using default name");
   }
 
   return "↺--backported_pack";

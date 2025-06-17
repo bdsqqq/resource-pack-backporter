@@ -11,11 +11,13 @@ The system uses a **Conditional Compiler** approach rather than a Strategy Patte
 ### Core Components
 
 1. **ConditionalPathExtractor** (`src/conditional-compiler/path-extractor.ts`)
+
    - Parses nested `minecraft:select` and `minecraft:condition` nodes
    - Extracts all possible execution paths with their conditions
    - Handles display contexts, enchantments, and component conditions
 
 2. **TargetSystemMapper** (`src/conditional-compiler/target-mapper.ts`)
+
    - Converts execution paths to output targets
    - Handles three target systems: Pommel model overrides, CIT properties, and base textures
    - Implements critical deduplication for proper Pommel functionality
@@ -35,6 +37,7 @@ The system uses a **Conditional Compiler** approach rather than a Strategy Patte
 **Key Insight**: CIT properties without context restrictions apply to ALL display contexts, overriding Pommel 3D models.
 
 **Correct Pattern**:
+
 - CIT points to individual enchantment model files (e.g., `channeling_1.json`)
 - These model files contain Pommel overrides for 3D contexts
 - Regular books get Pommel overrides directly
@@ -45,8 +48,9 @@ The system uses a **Conditional Compiler** approach rather than a Strategy Patte
 **Critical Discovery**: When items are in offhand, BOTH `pommel:is_held` AND `pommel:is_offhand` return 1.0 simultaneously.
 
 **Required Pattern**:
+
 - 1x ground predicate: `pommel:is_ground`
-- 2x held predicates: `pommel:is_held` 
+- 2x held predicates: `pommel:is_held`
 - 3x offhand predicates: `pommel:is_offhand`
 
 This ensures proper override precedence and functionality.
@@ -54,7 +58,7 @@ This ensures proper override precedence and functionality.
 ### 3. Context Grouping
 
 - **GUI contexts**: `gui`, `fixed`, `head` - get 2D sprites via CIT
-- **Ground context**: `ground` - gets own Pommel predicate 
+- **Ground context**: `ground` - gets own Pommel predicate
 - **3D contexts**: `firstperson_righthand`, `thirdperson_righthand`, `firstperson_lefthand`, `thirdperson_lefthand` - get Pommel 3D models
 
 ## Template File Architecture
@@ -72,6 +76,7 @@ Template files (e.g., `assets/minecraft/models/item/books_3d/template_book_open.
 ### Template File Validation
 
 The system validates template files to ensure:
+
 - No spurious `parent` field (the root cause of main hand invisibility)
 - Required fields: `credit`, `texture_size`, `elements`, `display`
 - Proper structure for 3D model processing
@@ -79,6 +84,7 @@ The system validates template files to ensure:
 ### Post-Processing Protection
 
 The `ModelCompatibilityProcessor` includes safeguards:
+
 - **Template Protection**: Skips template files from compatibility fixes
 - **Validation**: Ensures template files maintain expected structure
 - **Prevention**: Stops spurious parent injection that breaks Pommel rendering
@@ -86,13 +92,15 @@ The `ModelCompatibilityProcessor` includes safeguards:
 ## File Generation Patterns
 
 ### Enchanted Books
+
 ```
-enchanted_book.json (base model, no overrides) 
+enchanted_book.json (base model, no overrides)
 ├── CIT Property → channeling_1.json
 └── channeling_1.json (contains Pommel overrides for 3D contexts)
 ```
 
 ### Regular Books
+
 ```
 writable_book.json (contains direct Pommel overrides)
 ```
@@ -114,11 +122,11 @@ When facing rendering issues:
 
 ## Success Criteria
 
-- ✅ **Main hand visibility**: Books show 3D open models when held
-- ✅ **Offhand functionality**: Books show 3D closed models in offhand  
-- ✅ **Ground display**: Books show 2D textures on ground
-- ✅ **GUI sprites**: Enchanted books show correct 2D sprites in inventory
-- ✅ **Animation preservation**: Dynamic effects (lightning, etc.) work in 3D models
+- ✓ **Main hand visibility**: Books show 3D open models when held
+- ✓ **Offhand functionality**: Books show 3D closed models in offhand
+- ✓ **Ground display**: Books show 2D textures on ground
+- ✓ **GUI sprites**: Enchanted books show correct 2D sprites in inventory
+- ✓ **Animation preservation**: Dynamic effects (lightning, etc.) work in 3D models
 
 ## Lessons Learned
 

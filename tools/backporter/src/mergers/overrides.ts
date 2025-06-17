@@ -51,7 +51,7 @@ export class OverridesMerger implements RequestMerger {
     };
 
     console.log(
-      `🔄 Merged ${requests.length} pommel-model requests into 1 (${uniqueOverrides.length} overrides, priority ${highestPriority})`
+      `↻ Merged ${requests.length} pommel-model requests into 1 (${uniqueOverrides.length} overrides, priority ${highestPriority})`
     );
 
     return base;

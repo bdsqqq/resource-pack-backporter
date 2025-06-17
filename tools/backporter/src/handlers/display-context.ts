@@ -16,7 +16,7 @@ export class DisplayContextHandler implements ItemHandler {
     const contextMappings = this.extractContextMappings(jsonNode);
 
     if (Object.keys(contextMappings).length === 0) {
-      console.log(`⚠️  No context mappings found for ${context.itemId}`);
+      console.log(`⚠ No context mappings found for ${context.itemId}`);
       return [];
     }
 
@@ -97,7 +97,7 @@ export class DisplayContextHandler implements ItemHandler {
     // Check if this has nested component selections - if so, skip it
     if (this.hasNestedComponentSelections(selector)) {
       console.log(
-        `🔍 Skipping complex nested component selection for display context handler`
+        `◉ Skipping complex nested component selection for display context handler`
       );
       return mappings;
     }
@@ -190,7 +190,7 @@ export class DisplayContextHandler implements ItemHandler {
           }
         }
       } catch (error) {
-        console.log(`⚠️  Error reading model for texture: ${error.message}`);
+        console.log(`⚠ Error reading model for texture: ${error.message}`);
       }
     }
 

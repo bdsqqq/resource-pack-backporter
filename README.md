@@ -4,15 +4,15 @@ comprehensive toolbox for minecraft resource pack development, testing, and depl
 
 ## tools overview
 
-### 🔄 [backporter](tools/backporter/)
+### ↻ [backporter](tools/backporter/)
 
 transforms modern minecraft resource packs (1.21.4+) to work with older versions (1.21.1) by converting conditional item models to pommel predicates and cit properties.
 
-### 🔍 [linter](tools/linter/)
+### ◉ [linter](tools/linter/)
 
 static validation tool that catches json syntax errors, missing texture references, and pack structure issues before deployment.
 
-### 🛠️ utility modules
+### ⚙ utility modules
 
 - **[file-utils](tools/file-utils/)**: filesystem traversal and asset discovery
 - **[json-utils](tools/json-utils/)**: json validation with detailed error reporting

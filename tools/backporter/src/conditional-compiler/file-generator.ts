@@ -44,7 +44,7 @@ export class BackportFileGenerator {
     const content = JSON.stringify(target.content, null, 2);
     await writeFile(filePath, content, 'utf-8');
     
-    console.log(`✅ Generated Pommel model: ${target.file}`);
+    console.log(`✓ Generated Pommel model: ${target.file}`);
   }
 
   private async writeCITProperty(target: OutputTarget): Promise<void> {
@@ -60,7 +60,7 @@ export class BackportFileGenerator {
     const content = lines.join('\n') + '\n';
     await writeFile(filePath, content, 'utf-8');
     
-    console.log(`✅ Generated CIT property: ${target.file}`);
+    console.log(`✓ Generated CIT property: ${target.file}`);
   }
 
   private async copyEnhancedModel(target: OutputTarget): Promise<void> {
@@ -71,9 +71,9 @@ export class BackportFileGenerator {
     if (existsSync(sourceFile)) {
       await this.ensureDirectory(destFile);
       await copyFile(sourceFile, destFile);
-      console.log(`✅ Copied enhanced 3D model: ${target.file}`);
+      console.log(`✓ Copied enhanced 3D model: ${target.file}`);
     } else {
-      console.warn(`⚠️  Enhanced model not found in source: ${target.file}`);
+      console.warn(`⚠ Enhanced model not found in source: ${target.file}`);
     }
   }
 
@@ -90,9 +90,9 @@ export class BackportFileGenerator {
     if (existsSync(sourceFile)) {
       await this.ensureDirectory(destFile);
       await copyFile(sourceFile, destFile);
-      console.log(`✅ Preserved 3D model: ${originalFileName} → ${target.file}`);
+      console.log(`✓ Preserved 3D model: ${originalFileName} → ${target.file}`);
     } else {
-      console.warn(`⚠️  Original 3D model not found: ${originalFileName}`);
+      console.warn(`⚠ Original 3D model not found: ${originalFileName}`);
     }
   }
 
@@ -104,9 +104,9 @@ export class BackportFileGenerator {
     if (existsSync(sourceFile)) {
       await this.ensureDirectory(destFile);
       await copyFile(sourceFile, destFile);
-      console.log(`✅ Copied texture: ${target.file}`);
+      console.log(`✓ Copied texture: ${target.file}`);
     } else {
-      console.warn(`⚠️  Texture not found in source: ${target.file}`);
+      console.warn(`⚠ Texture not found in source: ${target.file}`);
     }
   }
 

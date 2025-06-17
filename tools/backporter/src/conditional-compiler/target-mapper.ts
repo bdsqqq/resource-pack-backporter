@@ -753,7 +753,7 @@ export class TargetSystemMapper {
           }
         }
       } catch (error) {
-        console.log(`⚠️  Error reading GUI model for texture: ${error.message}`);
+        console.log(`⚠ Error reading GUI model for texture: ${error.message}`);
       }
     }
 

@@ -19,7 +19,7 @@ export class StoredEnchanmentsHandler implements ItemHandler {
     );
 
     if (enchantmentVariants.length === 0) {
-      console.log(`⚠️  No enchantment variants found for ${context.itemId}`);
+      console.log(`⚠ No enchantment variants found for ${context.itemId}`);
       return [];
     }
 
@@ -170,7 +170,7 @@ export class StoredEnchanmentsHandler implements ItemHandler {
         }
       } catch (error) {
         console.log(
-          `⚠️  Error reading model for enchantment texture: ${error.message}`
+          `⚠ Error reading model for enchantment texture: ${error.message}`
         );
       }
     }

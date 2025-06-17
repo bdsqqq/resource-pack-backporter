@@ -70,10 +70,10 @@ export class ModelCompatibilityProcessor {
 
       if (hasChanges) {
         await writeFile(modelPath, JSON.stringify(model, null, "\t"));
-        console.log(`✅ Fixed model compatibility: ${modelPath}`);
+        console.log(`✓ Fixed model compatibility: ${modelPath}`);
       }
     } catch (error) {
-      console.log(`⚠️  Error processing model ${modelPath}: ${error.message}`);
+      console.log(`⚠ Error processing model ${modelPath}: ${error.message}`);
       // Skip files that can't be processed
     }
   }
@@ -104,11 +104,11 @@ export class ModelCompatibilityProcessor {
     }
     
     if (errors.length > 0) {
-      console.error(`❌ Template file validation failed: ${modelPath}`);
+      console.error(`✗ Template file validation failed: ${modelPath}`);
       errors.forEach(error => console.error(`   - ${error}`));
       throw new Error(`Template file validation failed: ${modelPath}`);
     } else {
-      console.log(`✅ Template file validation passed: ${modelPath}`);
+      console.log(`✓ Template file validation passed: ${modelPath}`);
     }
   }
 }

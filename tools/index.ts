@@ -35,7 +35,7 @@ async function main() {
       break;
 
     default:
-      console.error(`❌ Unknown command: ${command}`);
+      console.error(`✗ Unknown command: ${command}`);
       printHelp();
       process?.exit?.(1);
   }
@@ -43,7 +43,7 @@ async function main() {
 
 function printHelp() {
   console.log(`
-🛠️  Minecraft Resource Pack Tools
+⚙  Minecraft Resource Pack Tools
 
 Usage: bun run tools/index.ts <command> [options]
 
@@ -69,7 +69,7 @@ Or use the direct commands:
 // Run if this is the main module
 if (import.meta.main) {
   main().catch((error) => {
-    console.error("❌ Tool failed:", error.message);
+    console.error("✗ Tool failed:", error.message);
     process?.exit?.(1);
   });
 }

@@ -23,7 +23,7 @@ export class BackportCoordinator {
   ): Promise<void> {
     this.verbose = options.verbose || false;
 
-    console.log("🔍 Analyzing resource pack structure...");
+    console.log("◉ Analyzing resource pack structure...");
 
     // Clear output directory if requested
     if (options.clearOutput !== false) {
@@ -40,7 +40,7 @@ export class BackportCoordinator {
       this.verbose
     );
 
-    console.log(`📁 Found ${this.packStructure.itemFiles.length} item files`);
+    console.log(`▸ Found ${this.packStructure.itemFiles.length} item files`);
     console.log(
       `🎨 Found ${this.packStructure.textureFiles.length} texture files`
     );
@@ -67,7 +67,7 @@ export class BackportCoordinator {
     const compatibilityProcessor = new ModelCompatibilityProcessor();
     await compatibilityProcessor.fixModelCompatibility(outputDir);
 
-    console.log("✅ Backport complete!");
+    console.log("✓ Backport complete!");
   }
 
   private async processItemFile(
@@ -79,7 +79,7 @@ export class BackportCoordinator {
     const analysis = await this.introspector.analyzeComponent(itemFilePath);
     const itemId = analysis.itemId;
 
-    console.log(`🔄 Processing ${itemId}...`);
+    console.log(`↻ Processing ${itemId}...`);
     if (this.verbose) {
       console.log(
         `  Components: ${analysis.componentsUsed.join(", ") || "none"}`
@@ -116,13 +116,13 @@ export class BackportCoordinator {
     }
 
     if (appliedHandlers.length === 0) {
-      console.log(`⚠️  No handler could process ${itemId}`);
+      console.log(`⚠ No handler could process ${itemId}`);
     } else if (this.verbose) {
       console.log(`  Applied handlers: ${appliedHandlers.join(", ")}`);
     }
 
     if (allRequests.length === 0) {
-      console.log(`⚠️  No handlers processed ${itemId}`);
+      console.log(`⚠ No handlers processed ${itemId}`);
     } else {
       console.log(`📝 Generated ${allRequests.length} write requests`);
       fileManager.addRequests(allRequests);
@@ -156,7 +156,7 @@ export class BackportCoordinator {
     const packMetaPath = join(inputDir, "pack.mcmeta");
     if (fs.existsSync(packMetaPath)) {
       await copyFile(packMetaPath, join(outputDir, "pack.mcmeta"));
-      console.log("✅ Copied pack.mcmeta");
+      console.log("✓ Copied pack.mcmeta");
     }
   }
 
@@ -187,10 +187,10 @@ export class BackportCoordinator {
         await mkdir(dirname(destFile), { recursive: true });
         await copyFile(sourceFile, destFile);
       } catch (error) {
-        console.log(`⚠️  Failed to copy ${sourceFile}: ${error.message}`);
+        console.log(`⚠ Failed to copy ${sourceFile}: ${error.message}`);
       }
     }
 
-    console.log(`✅ Copied ${filesToCopy.length} base asset files`);
+    console.log(`✓ Copied ${filesToCopy.length} base asset files`);
   }
 }

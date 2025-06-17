@@ -13,12 +13,12 @@ class TestDisplayContextStrategy {
     packStructure: ResourcePackStructure,
     modelMappings: { [context: string]: string }
   ): string {
-    console.log(`🔍 determineTextureRef called for ${itemId}`);
-    console.log("🔍 modelMappings:", modelMappings);
+    console.log(`◉ determineTextureRef called for ${itemId}`);
+    console.log("◉ modelMappings:", modelMappings);
 
     // Extract texture from the GUI model specified in the pack
     const guiModel = modelMappings.gui || modelMappings.fixed;
-    console.log(`🔍 guiModel: ${guiModel}`);
+    console.log(`◉ guiModel: ${guiModel}`);
     if (guiModel) {
       // Try to read the actual model file to get its texture
       const modelPath = guiModel.replace(
@@ -53,7 +53,7 @@ class TestDisplayContextStrategy {
             normalizedFile.endsWith(`/${normalizedModelFile}`));
         if (matches) {
           console.log(
-            `🔍 FOUND MATCH: ${normalizedFile} for ${normalizedModelFile}`
+            `◉ FOUND MATCH: ${normalizedFile} for ${normalizedModelFile}`
           );
         }
         return matches;
@@ -62,19 +62,19 @@ class TestDisplayContextStrategy {
         try {
           // Read the model file synchronously to get texture
           const fs = require("node:fs");
-          console.log(`🔍 About to read file: ${found}`);
+          console.log(`◉ About to read file: ${found}`);
           const modelContent = JSON.parse(fs.readFileSync(found, "utf-8"));
-          console.log("🔍 File content:", modelContent);
+          console.log("◉ File content:", modelContent);
           if (modelContent.textures?.layer0) {
             console.log(
-              `🔍 Extracted texture: ${modelContent.textures.layer0}`
+              `◉ Extracted texture: ${modelContent.textures.layer0}`
             );
             return modelContent.textures.layer0;
           }
-          console.log("🔍 No layer0 texture found in model file");
+          console.log("◉ No layer0 texture found in model file");
         } catch (error) {
           console.log(
-            `🔍 Error reading model file: ${(error as Error).message}`
+            `◉ Error reading model file: ${(error as Error).message}`
           );
           // Fallback if model can't be read
         }

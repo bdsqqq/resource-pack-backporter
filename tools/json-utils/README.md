@@ -161,7 +161,7 @@ async function lintpack(packDir: string) {
   for (const model of models) {
     const result = await validateJson(join(packDir, model));
     if (!result.valid) {
-      console.error(`❌ ${model}: ${result.error}`);
+      console.error(`✗ ${model}: ${result.error}`);
     }
   }
 }

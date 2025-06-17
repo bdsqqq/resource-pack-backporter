@@ -16,7 +16,7 @@ export class TextureCopyWriter implements FileWriter {
 
     if (!sourceContent.sourcePath) {
       console.error(
-        `❌ No source path provided for texture copy: ${request.path}`
+        `✗ No source path provided for texture copy: ${request.path}`
       );
       return;
     }
@@ -27,10 +27,10 @@ export class TextureCopyWriter implements FileWriter {
     try {
       // Copy the texture file
       await copyFile(sourceContent.sourcePath, fullPath);
-      console.log(`✅ Copied texture: ${request.path}`);
+      console.log(`✓ Copied texture: ${request.path}`);
     } catch (error) {
       console.error(
-        `❌ Failed to copy texture ${request.path}: ${error.message}`
+        `✗ Failed to copy texture ${request.path}: ${error.message}`
       );
     }
   }

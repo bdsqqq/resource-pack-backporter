@@ -17,7 +17,7 @@ export class WritableBookContentHandler implements ItemHandler {
 
     if (Object.keys(contextMappings).length === 0) {
       console.log(
-        `⚠️  No context mappings found for writable book ${context.itemId}`
+        `⚠ No context mappings found for writable book ${context.itemId}`
       );
       return [];
     }
@@ -237,7 +237,7 @@ export class WritableBookContentHandler implements ItemHandler {
         }
       } catch (error) {
         console.log(
-          `⚠️  Error reading book model for texture: ${error.message}`
+          `⚠ Error reading book model for texture: ${error.message}`
         );
       }
     }

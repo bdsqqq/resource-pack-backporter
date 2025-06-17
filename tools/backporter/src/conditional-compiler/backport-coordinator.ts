@@ -51,7 +51,7 @@ export class ConditionalBackportCoordinator {
 
     // Find and process item files
     const itemFiles = await this.findItemFiles(inputDir);
-    console.log(`📁 Found ${itemFiles.length} item files to process`);
+    console.log(`▸ Found ${itemFiles.length} item files to process`);
 
     for (const itemFile of itemFiles) {
       await this.processItemFile(itemFile, inputDir);
@@ -60,7 +60,7 @@ export class ConditionalBackportCoordinator {
     // Apply post-processing
     await this.applyPostProcessing(outputDir);
 
-    console.log("✅ Conditional compiler backport complete!");
+    console.log("✓ Conditional compiler backport complete!");
   }
 
   private async findItemFiles(inputDir: string): Promise<string[]> {
@@ -68,7 +68,7 @@ export class ConditionalBackportCoordinator {
     const itemFiles: string[] = [];
 
     if (!existsSync(itemsDir)) {
-      console.warn("⚠️  No items directory found in source pack");
+      console.warn("⚠ No items directory found in source pack");
       return itemFiles;
     }
 
@@ -89,7 +89,7 @@ export class ConditionalBackportCoordinator {
     sourceDir: string
   ): Promise<void> {
     const itemId = basename(itemFilePath, ".json");
-    console.log(`🔄 Processing ${itemId}...`);
+    console.log(`↻ Processing ${itemId}...`);
 
     try {
       // Read and parse the item JSON
@@ -97,7 +97,7 @@ export class ConditionalBackportCoordinator {
 
       // Check if this item uses the new conditional selector format
       if (!this.hasConditionalSelectors(itemJson)) {
-        console.log(`⏭️  Skipping ${itemId} - no conditional selectors`);
+        console.log(`»  Skipping ${itemId} - no conditional selectors`);
         return;
       }
 
@@ -127,7 +127,7 @@ export class ConditionalBackportCoordinator {
       // Generate all output files
       await this.fileGenerator!.generateAllFiles(targets);
     } catch (error: any) {
-      console.error(`❌ Failed to process ${itemId}:`, error.message);
+      console.error(`✗ Failed to process ${itemId}:`, error.message);
       if (this.verbose) {
         console.error(error.stack);
       }
@@ -179,11 +179,11 @@ export class ConditionalBackportCoordinator {
             await copyFile(fullPath, outputPath);
           }
 
-          console.log(`✅ Copied ${entry}`);
+          console.log(`✓ Copied ${entry}`);
         }
       }
     } catch (error) {
-      console.warn(`⚠️  Could not copy pack files: ${error.message}`);
+      console.warn(`⚠ Could not copy pack files: ${error.message}`);
     }
   }
 
@@ -220,7 +220,7 @@ export class ConditionalBackportCoordinator {
     } catch (error) {
       // If parsing fails, just copy the file as-is
       console.warn(
-        `⚠️  Could not update pack.mcmeta description, copying as-is: ${error.message}`
+        `⚠ Could not update pack.mcmeta description, copying as-is: ${error.message}`
       );
       await copyFile(inputPath, outputPath);
     }
@@ -258,7 +258,7 @@ export class ConditionalBackportCoordinator {
       }
     }
 
-    console.log(`✅ Copied ${copiedFiles} base asset files`);
+    console.log(`✓ Copied ${copiedFiles} base asset files`);
   }
 
   private async copyDirectoryRecursive(
@@ -302,9 +302,9 @@ export class ConditionalBackportCoordinator {
       const compatibilityProcessor = new ModelCompatibilityProcessor();
       await compatibilityProcessor.fixModelCompatibility(outputDir);
 
-      console.log("✅ Post-processing complete");
+      console.log("✓ Post-processing complete");
     } catch (error: any) {
-      console.warn("⚠️  Post-processing failed:", error.message);
+      console.warn("⚠ Post-processing failed:", error.message);
     }
   }
 }

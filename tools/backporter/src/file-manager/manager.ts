@@ -65,14 +65,14 @@ export class FileManagerImpl implements FileManager {
       const merger = mergers.find((m) => m.canMerge(requests));
       if (merger) {
         console.log(
-          `🔄 Merging ${requests.length} requests for ${key} using ${merger.name}`
+          `↻ Merging ${requests.length} requests for ${key} using ${merger.name}`
         );
         const merged = merger.merge(requests);
         mergedRequests.push(merged);
       } else {
         // No merger found, use highest priority request
         console.warn(
-          `⚠️  No merger for ${key}, using highest priority request`
+          `⚠ No merger for ${key}, using highest priority request`
         );
         const sorted = requests.sort(
           (a, b) => (b.priority || 0) - (a.priority || 0)
@@ -89,16 +89,16 @@ export class FileManagerImpl implements FileManager {
     const writer = writers.find((w) => w.canWrite(request));
 
     if (!writer) {
-      console.error(`❌ No writer found for request type: ${request.type}`);
+      console.error(`✗ No writer found for request type: ${request.type}`);
       return;
     }
 
     try {
       await writer.write(request, this.outputDir);
-      console.log(`✅ Wrote ${request.type}: ${request.path}`);
+      console.log(`✓ Wrote ${request.type}: ${request.path}`);
     } catch (error) {
       console.error(
-        `❌ Failed to write ${request.type}: ${request.path}`,
+        `✗ Failed to write ${request.type}: ${request.path}`,
         error
       );
       throw error;

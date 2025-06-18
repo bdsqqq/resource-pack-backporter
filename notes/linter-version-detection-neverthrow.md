@@ -7,15 +7,17 @@ source: debugging-session
 
 ---
 
-Critical lesson from 3-phase linter overhaul: **Version precision is everything** - pack targeting 1.21.5 but validating against 1.20.x vanilla assets caused massive false positives. 
+**Smart Defaults, Full Control - Respect Underlying Systems**
 
-Key implementation insights:
-- Use exact pack format version detection, not hardcoded versions
-- Implement neverthrow Result<T,E> pattern instead of throwing exceptions for type-safe error handling
-- Replace console outputs with structured logging/tracing for production systems
-- Add support for special references like `builtin/entity` in validation logic
-- Create autonomous asset generation vs manual maintenance
+Critical lesson from 3-phase linter overhaul: **Respect Minecraft's version system** - pack targeting 1.21.5 but validating against 1.20.x vanilla assets caused massive false positives.
 
-The transformation: broken linter with false positives → robust validation framework with zero manual maintenance. Type-safe error handling prevents entire classes of runtime failures while structured logging enables proper debugging.
+Key implementation patterns:
+- **Respect underlying systems**: Use exact pack format version detection, match Minecraft's conventions
+- **Smart defaults**: Autonomous asset generation, zero configuration required
+- **Hide complexity**: neverthrow Result<T,E> pattern internally, simple validation API externally  
+- **Structure teaches usage**: Structured logging/tracing guides proper debugging patterns
+- **Full control**: Support for special references like `builtin/entity` when needed
 
-Actionable pattern: Always validate against the exact target version, return Results instead of throwing, and instrument properly from the start.
+The transformation: broken linter with false positives → robust validation framework with zero manual maintenance. Complex version detection and error handling hidden behind simple `validateResourcePack()` API.
+
+**Actionable pattern**: Make the underlying system (Minecraft) your ally, not your enemy. Hide complex validation logic behind simple interfaces while preserving access to full power when needed.

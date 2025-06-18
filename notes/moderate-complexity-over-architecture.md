@@ -7,15 +7,15 @@ source: debugging-session
 
 ---
 
-**Avoid Over-Architecture - Embrace Moderate Complexity Solutions**
+**Hide Complexity Behind Simplicity - Don't Over-Architect**
 
-When facing complex problems, resist jumping to elaborate architectural solutions. The resource pack backporter issue appeared to need a "Conditional Decomposition Compiler" with AST parsing and multi-target compilation, but the actual fix was just:
+When facing complex problems, resist creating new abstractions that fight existing systems. The resource pack backporter issue appeared to need a "Conditional Decomposition Compiler" with AST parsing, but the actual fix respected the existing architecture:
 
 1. **One-line model copy fix** - Remove unnecessary filtering
 2. **30-line handler enhancement** - Add missing Pommel model generation
 
-The existing Strategy Pattern architecture was sound - it just needed better handler implementations, not fundamental redesign. 
+The existing Strategy Pattern architecture was sound - it just needed better implementations, not new abstractions.
 
-**Actionable principle**: Between "simple bug fix" and "complete rewrite" lies the sweet spot of moderate complexity solutions. Before designing complex systems, verify if the current architecture can be improved with targeted enhancements rather than replaced entirely.
+**Actionable principle**: Complex implementation is fine if it maintains a simple consumer experience. Before creating new architectural layers, verify if existing patterns can be enhanced to handle the complexity internally.
 
-**Application**: When debugging shows missing functionality, first check if existing patterns can be extended before creating new architectural layers.
+**Application**: When debugging shows missing functionality, extend existing systems rather than building parallel abstractions. Let the API structure guide consumers toward correct patterns while hiding implementation complexity.

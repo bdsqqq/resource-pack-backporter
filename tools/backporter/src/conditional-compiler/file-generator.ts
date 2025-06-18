@@ -84,28 +84,79 @@ export class BackportFileGenerator {
     target: OutputTarget,
     parentSpan?: any
   ): Promise<void> {
+    const writeSpan =
+      parentSpan?.startChild("Write Pommel Model") ||
+      this.tracer?.startSpan("Write Pommel Model");
     const filePath = join(this.outputDir, "assets", "minecraft", target.file);
-    await this.ensureDirectory(filePath);
 
-    const content = JSON.stringify(target.content, null, 2);
-    await writeFile(filePath, content, "utf-8");
+    writeSpan?.setAttributes({
+      targetFile: target.file,
+      filePath,
+      contentSize: JSON.stringify(target.content).length,
+    });
+
+    try {
+      writeSpan?.debug("Ensuring directory exists");
+      await this.ensureDirectory(filePath, writeSpan);
+
+      writeSpan?.debug("Writing pommel model content");
+      const content = JSON.stringify(target.content, null, 2);
+      await writeFile(filePath, content, "utf-8");
+
+      writeSpan?.info("Pommel model written successfully");
+      writeSpan?.end({ success: true, fileSize: content.length });
+    } catch (error: any) {
+      writeSpan?.error("Failed to write pommel model", {
+        error: error.message,
+        stack: error.stack,
+      });
+      writeSpan?.end({ success: false, error: error.message });
+      throw error;
+    }
   }
 
   private async writeCITProperty(
     target: OutputTarget,
     parentSpan?: any
   ): Promise<void> {
+    const writeSpan =
+      parentSpan?.startChild("Write CIT Property") ||
+      this.tracer?.startSpan("Write CIT Property");
     const filePath = join(this.outputDir, "assets", "minecraft", target.file);
-    await this.ensureDirectory(filePath);
 
-    // Convert content object to .properties format
-    const lines: string[] = [];
-    for (const [key, value] of Object.entries(target.content)) {
-      lines.push(`${key}=${value}`);
+    writeSpan?.setAttributes({
+      targetFile: target.file,
+      filePath,
+      propertyCount: Object.keys(target.content).length,
+    });
+
+    try {
+      writeSpan?.debug("Ensuring directory exists");
+      await this.ensureDirectory(filePath, writeSpan);
+
+      writeSpan?.debug("Converting content to .properties format");
+      // Convert content object to .properties format
+      const lines: string[] = [];
+      for (const [key, value] of Object.entries(target.content)) {
+        lines.push(`${key}=${value}`);
+      }
+
+      const content = lines.join("\n") + "\n";
+      writeSpan?.debug("Writing CIT property file", {
+        lineCount: lines.length,
+      });
+      await writeFile(filePath, content, "utf-8");
+
+      writeSpan?.info("CIT property written successfully");
+      writeSpan?.end({ success: true, propertyCount: lines.length });
+    } catch (error: any) {
+      writeSpan?.error("Failed to write CIT property", {
+        error: error.message,
+        stack: error.stack,
+      });
+      writeSpan?.end({ success: false, error: error.message });
+      throw error;
     }
-
-    const content = lines.join("\n") + "\n";
-    await writeFile(filePath, content, "utf-8");
   }
 
   private async copyEnhancedModel(
@@ -127,7 +178,7 @@ export class BackportFileGenerator {
 
     try {
       if (existsSync(sourceFile)) {
-        await this.ensureDirectory(destFile);
+        await this.ensureDirectory(destFile, span);
         await copyFile(sourceFile, destFile);
         span?.info("Enhanced model copied successfully");
         span?.end({ success: true });
@@ -153,6 +204,10 @@ export class BackportFileGenerator {
     target: OutputTarget,
     parentSpan?: any
   ): Promise<void> {
+    const preserveSpan =
+      parentSpan?.startChild("Copy Preserved 3D Model") ||
+      this.tracer?.startSpan("Copy Preserved 3D Model");
+
     // Preserve original 3D model by copying and renaming it
     // Target file is the new name (e.g. music_disc_13_3d.json)
     // Source is the original name (e.g. music_disc_13.json)
@@ -167,12 +222,38 @@ export class BackportFileGenerator {
       originalFileName
     );
 
-    if (existsSync(sourceFile)) {
-      await this.ensureDirectory(destFile);
-      await copyFile(sourceFile, destFile);
-      // File preserved successfully
-    } else {
-      throw new Error(`Original 3D model not found: ${originalFileName}`);
+    preserveSpan?.setAttributes({
+      targetFile: target.file,
+      originalFileName,
+      sourceFile,
+      destFile,
+    });
+
+    try {
+      preserveSpan?.debug("Checking if original 3D model exists");
+      if (existsSync(sourceFile)) {
+        preserveSpan?.debug("Ensuring destination directory exists");
+        await this.ensureDirectory(destFile, preserveSpan);
+
+        preserveSpan?.debug("Copying original 3D model to preserved name");
+        await copyFile(sourceFile, destFile);
+
+        preserveSpan?.info("3D model preserved successfully");
+        preserveSpan?.end({ success: true });
+      } else {
+        preserveSpan?.error("Original 3D model not found", {
+          originalFileName,
+        });
+        preserveSpan?.end({ success: false, error: "file_not_found" });
+        throw new Error(`Original 3D model not found: ${originalFileName}`);
+      }
+    } catch (error: any) {
+      preserveSpan?.error("Failed to preserve 3D model", {
+        error: error.message,
+        stack: error.stack,
+      });
+      preserveSpan?.end({ success: false, error: error.message });
+      throw error;
     }
   }
 
@@ -180,22 +261,74 @@ export class BackportFileGenerator {
     target: OutputTarget,
     parentSpan?: any
   ): Promise<void> {
+    const textureSpan =
+      parentSpan?.startChild("Copy Texture") ||
+      this.tracer?.startSpan("Copy Texture");
+
     // Copy texture files from source to output
     const sourceFile = join(this.sourceDir, "assets", "minecraft", target.file);
     const destFile = join(this.outputDir, "assets", "minecraft", target.file);
 
-    if (existsSync(sourceFile)) {
-      await this.ensureDirectory(destFile);
-      await copyFile(sourceFile, destFile);
-      // Texture copied successfully
-    } else {
-      throw new Error(`Texture not found in source: ${target.file}`);
+    textureSpan?.setAttributes({
+      targetFile: target.file,
+      sourceFile,
+      destFile,
+    });
+
+    try {
+      textureSpan?.debug("Checking if texture exists in source");
+      if (existsSync(sourceFile)) {
+        textureSpan?.debug("Ensuring destination directory exists");
+        await this.ensureDirectory(destFile, textureSpan);
+
+        textureSpan?.debug("Copying texture file");
+        await copyFile(sourceFile, destFile);
+
+        textureSpan?.info("Texture copied successfully");
+        textureSpan?.end({ success: true });
+      } else {
+        textureSpan?.error("Texture not found in source", {
+          targetFile: target.file,
+        });
+        textureSpan?.end({ success: false, error: "file_not_found" });
+        throw new Error(`Texture not found in source: ${target.file}`);
+      }
+    } catch (error: any) {
+      textureSpan?.error("Failed to copy texture", {
+        error: error.message,
+        stack: error.stack,
+      });
+      textureSpan?.end({ success: false, error: error.message });
+      throw error;
     }
   }
 
-  private async ensureDirectory(filePath: string): Promise<void> {
+  private async ensureDirectory(
+    filePath: string,
+    parentSpan?: any
+  ): Promise<void> {
+    const dirSpan =
+      parentSpan?.startChild("Ensure Directory") ||
+      this.tracer?.startSpan("Ensure Directory");
     const dir = dirname(filePath);
-    await mkdir(dir, { recursive: true });
+
+    dirSpan?.setAttributes({
+      filePath,
+      directory: dir,
+    });
+
+    try {
+      dirSpan?.debug("Creating directory recursively", { dir });
+      await mkdir(dir, { recursive: true });
+      dirSpan?.end({ success: true });
+    } catch (error: any) {
+      dirSpan?.error("Failed to create directory", {
+        error: error.message,
+        stack: error.stack,
+      });
+      dirSpan?.end({ success: false, error: error.message });
+      throw error;
+    }
   }
 
   // Utility method for preserving animation data

@@ -437,12 +437,6 @@ describe("Books Resource Pack Regression Tests", () => {
       expect(writableBookModel.overrides).toBeDefined();
       expect(writableBookModel.overrides.length).toBeGreaterThan(3); // Multiple conditions
 
-      // Check what predicates are actually generated
-      console.log(
-        "Writable book overrides:",
-        JSON.stringify(writableBookModel.overrides, null, 2)
-      );
-
       // Should include Pommel predicates (writable_book_content may not be supported yet)
       const hasPommelPredicate = writableBookModel.overrides.some(
         (o: any) => o.predicate && o.predicate["pommel:is_ground"]

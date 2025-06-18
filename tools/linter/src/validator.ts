@@ -1,6 +1,6 @@
 import { validateJson } from "@json-utils/index";
 import { walkModels, walkTextures } from "@file-utils/index";
-import { resolveTexturePath } from "@mc-paths/index";
+import { resolveTexturePath, resolveModelPath } from "@mc-paths/index";
 import type { StructuredTracer } from "@logger/index";
 import { Result, ok } from "neverthrow";
 import { join } from "node:path";
@@ -160,18 +160,34 @@ export async function validateResourcePack(
       // Validate parent model reference
       if (modelData.parent && typeof modelData.parent === "string") {
         const parentRef = modelData.parent;
-        const modelPathResult = await resolveTexturePath(packDir, parentRef); // reusing texture path resolver logic
+        const modelPathResult = await resolveModelPath(packDir, parentRef);
 
         if (modelPathResult.isOk()) {
           const modelPath = modelPathResult.value;
-          if (!modelPath.exists && modelPath.namespace === "minecraft") {
-            if (!isVanillaModel(parentRef)) {
+          if (!modelPath.exists) {
+            // Check if it's a builtin reference first
+            if (parentRef.startsWith("builtin/")) {
+              // builtin/ references are special minecraft model references - they're valid
+              if (verbose) {
+                validationSpan?.debug(
+                  `Builtin model reference: ${parentRef} (referenced in ${modelFile})`
+                );
+              }
+            } else if (modelPath.namespace === "minecraft") {
+              // Only flag as error if it's not a valid vanilla model
+              if (!isVanillaModel(parentRef)) {
+                errors.push(
+                  `Invalid model reference: ${parentRef} does not exist in the pack or vanilla Minecraft (referenced in ${modelFile})`
+                );
+              } else if (verbose) {
+                validationSpan?.debug(
+                  `Vanilla model reference: ${parentRef} (referenced in ${modelFile})`
+                );
+              }
+            } else {
+              // Custom model that should exist but doesn't
               errors.push(
-                `Invalid vanilla model reference: ${parentRef} does not exist in Minecraft (referenced in ${modelFile})`
-              );
-            } else if (verbose) {
-              validationSpan?.debug(
-                `Vanilla model reference: ${parentRef} (referenced in ${modelFile})`
+                `Missing model: ${parentRef} (referenced in ${modelFile})`
               );
             }
           }
@@ -203,9 +219,9 @@ export async function validateResourcePack(
                 );
               }
             } else {
-              // Invalid vanilla texture reference - this is an error
+              // Invalid texture reference - doesn't exist in pack or vanilla
               errors.push(
-                `Invalid vanilla texture reference: ${ref} does not exist in Minecraft (referenced in ${modelFile})`
+                `Invalid texture reference: ${ref} does not exist in the pack or vanilla Minecraft (referenced in ${modelFile})`
               );
             }
           } else {

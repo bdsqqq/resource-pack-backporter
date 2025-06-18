@@ -31,13 +31,15 @@ async function main() {
   const coordinator = new ConditionalBackportCoordinator(tracer);
   try {
     await coordinator.backport(inputDir, outputDir, { verbose });
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    const errorStack = error instanceof Error ? error.stack : undefined;
     const errorSpan = tracer.startSpan("Backport Error");
     errorSpan.error("Backport failed", {
-      error: error.message,
-      stack: error.stack,
+      error: errorMessage,
+      stack: errorStack,
     });
-    errorSpan.end({ success: false, error: error.message });
+    errorSpan.end({ success: false, error: errorMessage });
     process?.exit?.(1);
   }
 }

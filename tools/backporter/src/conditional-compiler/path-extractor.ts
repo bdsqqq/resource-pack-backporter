@@ -1,13 +1,31 @@
 import type { ExecutionPath } from "./index";
 
+type MinecraftModelNode = {
+  type?: string;
+  model?: string | MinecraftModelNode;
+  property?: string;
+  component?: string;
+  cases?: Array<{ when: unknown; model: string | MinecraftModelNode }>;
+  fallback?: string | MinecraftModelNode;
+  predicate?: string;
+  on_true?: string | MinecraftModelNode;
+  on_false?: string | MinecraftModelNode;
+  [key: string]: unknown;
+};
+
+type ItemModel = {
+  model?: string | MinecraftModelNode;
+  [key: string]: unknown;
+};
+
 interface ConditionChainItem {
   property: string;
   component?: string;
-  when: any;
+  when: unknown;
 }
 
 export class ConditionalPathExtractor {
-  extractAllPaths(sourceModel: any): ExecutionPath[] {
+  extractAllPaths(sourceModel: ItemModel): ExecutionPath[] {
     if (!sourceModel?.model) {
       throw new Error("Invalid source model: missing model property");
     }
@@ -15,7 +33,7 @@ export class ConditionalPathExtractor {
     return this.traverseSelector(sourceModel.model, []);
   }
 
-  private traverseSelector(node: any, currentConditions: ConditionChainItem[]): ExecutionPath[] {
+  private traverseSelector(node: string | MinecraftModelNode, currentConditions: ConditionChainItem[]): ExecutionPath[] {
     // Handle direct model references
     if (typeof node === "string") {
       return [
@@ -164,7 +182,7 @@ export class ConditionalPathExtractor {
     return merged;
   }
 
-  private parseEnchantment(when: any): { type: string; level: number } | undefined {
+  private parseEnchantment(when: unknown): { type: string; level: number } | undefined {
     if (!when || typeof when !== "object") return undefined;
 
     // Handle single enchantment object: { "minecraft:channeling": 1 }

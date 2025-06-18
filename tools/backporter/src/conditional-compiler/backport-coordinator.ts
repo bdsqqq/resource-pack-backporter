@@ -2,7 +2,7 @@ import { existsSync } from "node:fs";
 import { copyFile, mkdir, readdir, readFile, stat, writeFile } from "node:fs/promises";
 import { basename, dirname, join } from "node:path";
 import type { BackportOptions } from "@backporter/coordination";
-import type { StructuredTracer } from "@logger/index";
+import type { StructuredTracer, Span } from "@logger/index";
 import { BackportFileGenerator } from "./file-generator";
 import { ConditionalPathExtractor } from "./path-extractor";
 import { TargetSystemMapper } from "./target-mapper";
@@ -71,17 +71,19 @@ export class ConditionalBackportCoordinator {
       await this.applyPostProcessing(outputDir, backportSpan);
 
       backportSpan.end({ success: true, itemsProcessed: itemFiles.length });
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      const errorStack = error instanceof Error ? error.stack : undefined;
       backportSpan.error("Backport failed", {
-        error: error.message,
-        stack: error.stack,
+        error: errorMessage,
+        stack: errorStack,
       });
-      backportSpan.end({ success: false, error: error.message });
+      backportSpan.end({ success: false, error: errorMessage });
       throw error;
     }
   }
 
-  private async findItemFiles(inputDir: string, parentSpan: any): Promise<string[]> {
+  private async findItemFiles(inputDir: string, parentSpan: Span): Promise<string[]> {
     const findSpan = parentSpan.startChild("Find Item Files");
     const itemsDir = join(inputDir, "assets", "minecraft", "items");
     const itemFiles: string[] = [];
@@ -112,7 +114,7 @@ export class ConditionalBackportCoordinator {
   private async processItemFile(
     itemFilePath: string,
     _sourceDir: string,
-    parentSpan: any
+    parentSpan: Span
   ): Promise<void> {
     const itemId = basename(itemFilePath, ".json");
     const itemSpan = parentSpan.startChild(`Process Item: ${itemId}`);
@@ -159,12 +161,14 @@ export class ConditionalBackportCoordinator {
         pathsExtracted: paths.length,
         targetsGenerated: targets.length,
       });
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      const errorStack = error instanceof Error ? error.stack : undefined;
       itemSpan.error(`Failed to process ${itemId}`, {
-        error: error.message,
-        stack: error.stack,
+        error: errorMessage,
+        stack: errorStack,
       });
-      itemSpan.end({ success: false, error: error.message });
+      itemSpan.end({ success: false, error: errorMessage });
       throw error;
     }
   }
@@ -179,7 +183,7 @@ export class ConditionalBackportCoordinator {
   private async copyBaseAssets(
     inputDir: string,
     outputDir: string,
-    parentSpan: any
+    parentSpan: Span
   ): Promise<void> {
     const copySpan = parentSpan.startChild("Copy Base Assets");
     copySpan.setAttributes({ inputDir, outputDir });
@@ -196,17 +200,19 @@ export class ConditionalBackportCoordinator {
       await this.copyMinecraftAssets(inputDir, outputDir, copySpan);
 
       copySpan.end({ success: true });
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      const errorStack = error instanceof Error ? error.stack : undefined;
       copySpan.error("Failed to copy base assets", {
-        error: error.message,
-        stack: error.stack,
+        error: errorMessage,
+        stack: errorStack,
       });
-      copySpan.end({ success: false, error: error.message });
+      copySpan.end({ success: false, error: errorMessage });
       throw error;
     }
   }
 
-  private async copyPackFiles(inputDir: string, outputDir: string, parentSpan: any): Promise<void> {
+  private async copyPackFiles(inputDir: string, outputDir: string, parentSpan: Span): Promise<void> {
     const packSpan = parentSpan.startChild("Copy Pack Files");
 
     try {
@@ -234,18 +240,20 @@ export class ConditionalBackportCoordinator {
 
             copiedCount++;
             fileSpan.end({ success: true });
-          } catch (error: any) {
-            fileSpan.error("Failed to copy file", { error: error.message });
-            fileSpan.end({ success: false, error: error.message });
+          } catch (error: unknown) {
+            const errorMessage = error instanceof Error ? error.message : String(error);
+            fileSpan.error("Failed to copy file", { error: errorMessage });
+            fileSpan.end({ success: false, error: errorMessage });
           }
         }
       }
 
       packSpan.info("Pack files copied", { copiedCount });
       packSpan.end({ success: true, copiedCount });
-    } catch (error: any) {
-      packSpan.error("Could not copy pack files", { error: error.message });
-      packSpan.end({ success: false, error: error.message });
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      packSpan.error("Could not copy pack files", { error: errorMessage });
+      packSpan.end({ success: false, error: errorMessage });
     }
   }
 
@@ -288,7 +296,7 @@ export class ConditionalBackportCoordinator {
   private async copyMinecraftAssets(
     inputDir: string,
     outputDir: string,
-    parentSpan: any
+    parentSpan: Span
   ): Promise<void> {
     const assetsDir = join(inputDir, "assets", "minecraft");
     if (!existsSync(assetsDir)) return;
@@ -348,7 +356,7 @@ export class ConditionalBackportCoordinator {
     return copiedFiles;
   }
 
-  private async applyPostProcessing(outputDir: string, parentSpan: any): Promise<void> {
+  private async applyPostProcessing(outputDir: string, parentSpan: Span): Promise<void> {
     const postSpan = parentSpan.startChild("Post-Processing");
     postSpan.setAttributes({ outputDir });
 
@@ -360,12 +368,14 @@ export class ConditionalBackportCoordinator {
 
       postSpan.info("Model compatibility fixes applied");
       postSpan.end({ success: true });
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      const errorStack = error instanceof Error ? error.stack : undefined;
       postSpan.error("Post-processing failed", {
-        error: error.message,
-        stack: error.stack,
+        error: errorMessage,
+        stack: errorStack,
       });
-      postSpan.end({ success: false, error: error.message });
+      postSpan.end({ success: false, error: errorMessage });
     }
   }
 }

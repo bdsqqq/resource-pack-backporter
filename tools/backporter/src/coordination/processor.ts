@@ -3,7 +3,7 @@ import type { ProcessingContext, WriteRequest } from "@backporter/file-manager";
 import { FileManagerImpl } from "@backporter/file-manager";
 import { getHandlers } from "@backporter/handlers";
 import { ResourcePackIntrospector } from "@backporter/introspection";
-import type { StructuredTracer } from "@logger/index";
+import type { StructuredTracer, Span } from "@logger/index";
 import type { BackportOptions } from "./index";
 
 export class BackportCoordinator {
@@ -91,12 +91,14 @@ export class BackportCoordinator {
         success: true,
         itemsProcessed: this.packStructure.itemFiles.length,
       });
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      const errorStack = error instanceof Error ? error.stack : undefined;
       backportSpan?.error("Backport failed", {
-        error: error.message,
-        stack: error.stack,
+        error: errorMessage,
+        stack: errorStack,
       });
-      backportSpan?.end({ success: false, error: error.message });
+      backportSpan?.end({ success: false, error: errorMessage });
       throw error;
     }
   }
@@ -105,7 +107,7 @@ export class BackportCoordinator {
     itemFilePath: string,
     packStructure: any,
     fileManager: FileManagerImpl,
-    parentSpan?: any
+    parentSpan?: Span
   ): Promise<void> {
     // Analyze the item file
     const analysis = await this.introspector.analyzeComponent(itemFilePath);
@@ -156,12 +158,14 @@ export class BackportCoordinator {
             requestsGenerated: requests.length,
           });
           handlerSpan?.end({ success: true, requestCount: requests.length });
-        } catch (error: any) {
+        } catch (error: unknown) {
+          const errorMessage = error instanceof Error ? error.message : String(error);
+          const errorStack = error instanceof Error ? error.stack : undefined;
           handlerSpan?.error("Handler failed", {
-            error: error.message,
-            stack: error.stack,
+            error: errorMessage,
+            stack: errorStack,
           });
-          handlerSpan?.end({ success: false, error: error.message });
+          handlerSpan?.end({ success: false, error: errorMessage });
           throw error;
         }
       }
@@ -190,7 +194,7 @@ export class BackportCoordinator {
   private async copyBaseAssets(
     inputDir: string,
     outputDir: string,
-    parentSpan?: any
+    parentSpan?: Span
   ): Promise<void> {
     const copySpan = parentSpan?.startChild("Copy Base Assets");
     copySpan?.setAttributes({ inputDir, outputDir });
@@ -206,17 +210,19 @@ export class BackportCoordinator {
       await this.copyMinecraftAssets(inputDir, outputDir, copySpan);
 
       copySpan?.end({ success: true });
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      const errorStack = error instanceof Error ? error.stack : undefined;
       copySpan?.error("Failed to copy assets", {
-        error: error.message,
-        stack: error.stack,
+        error: errorMessage,
+        stack: errorStack,
       });
-      copySpan?.end({ success: false, error: error.message });
+      copySpan?.end({ success: false, error: errorMessage });
       throw error;
     }
   }
 
-  private async copyPackMeta(inputDir: string, outputDir: string, parentSpan?: any): Promise<void> {
+  private async copyPackMeta(inputDir: string, outputDir: string, parentSpan?: Span): Promise<void> {
     const fs = require("node:fs");
     const { copyFile } = require("node:fs/promises");
     const { join } = require("node:path");
@@ -231,7 +237,7 @@ export class BackportCoordinator {
   private async copyMinecraftAssets(
     inputDir: string,
     outputDir: string,
-    parentSpan?: any
+    parentSpan?: Span
   ): Promise<void> {
     const fs = require("node:fs");
     const { copyFile, mkdir } = require("node:fs/promises");

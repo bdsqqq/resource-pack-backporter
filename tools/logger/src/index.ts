@@ -1,10 +1,12 @@
+type AttributeValue = string | number | boolean | null | undefined;
+
 export interface SpanContext {
   traceId: string;
   spanId: string;
   parentSpanId?: string;
   operation: string;
   startTime: number;
-  attributes: Record<string, any>;
+  attributes: Record<string, AttributeValue>;
   level: number;
 }
 
@@ -13,7 +15,7 @@ export interface LogEvent {
   level: "info" | "warn" | "error" | "debug";
   message: string;
   spanId?: string;
-  attributes?: Record<string, any>;
+  attributes?: Record<string, AttributeValue>;
 }
 
 export interface TracerConfig {
@@ -24,7 +26,7 @@ export interface TracerConfig {
   enableAxiom?: boolean;
 }
 
-class Span {
+export class Span {
   private context: SpanContext;
   private tracer: StructuredTracer;
   private children: Span[] = [];
@@ -36,12 +38,12 @@ class Span {
     this.tracer = tracer;
   }
 
-  setAttributes(attributes: Record<string, any>): this {
+  setAttributes(attributes: Record<string, AttributeValue>): this {
     Object.assign(this.context.attributes, attributes);
     return this;
   }
 
-  addEvent(level: LogEvent["level"], message: string, attributes?: Record<string, any>): this {
+  addEvent(level: LogEvent["level"], message: string, attributes?: Record<string, AttributeValue>): this {
     const event: LogEvent = {
       timestamp: performance.now(),
       level,
@@ -55,29 +57,29 @@ class Span {
     return this;
   }
 
-  info(message: string, attributes?: Record<string, any>): this {
+  info(message: string, attributes?: Record<string, AttributeValue>): this {
     return this.addEvent("info", message, attributes);
   }
 
-  warn(message: string, attributes?: Record<string, any>): this {
+  warn(message: string, attributes?: Record<string, AttributeValue>): this {
     return this.addEvent("warn", message, attributes);
   }
 
-  error(message: string, attributes?: Record<string, any>): this {
+  error(message: string, attributes?: Record<string, AttributeValue>): this {
     return this.addEvent("error", message, attributes);
   }
 
-  debug(message: string, attributes?: Record<string, any>): this {
+  debug(message: string, attributes?: Record<string, AttributeValue>): this {
     return this.addEvent("debug", message, attributes);
   }
 
-  startChild(operation: string, attributes?: Record<string, any>): Span {
+  startChild(operation: string, attributes?: Record<string, AttributeValue>): Span {
     const childSpan = this.tracer.startSpan(operation, this.context.spanId, attributes);
     this.children.push(childSpan);
     return childSpan;
   }
 
-  end(attributes?: Record<string, any>): void {
+  end(attributes?: Record<string, AttributeValue>): void {
     if (attributes) {
       this.setAttributes(attributes);
     }
@@ -116,7 +118,7 @@ export class StructuredTracer {
     this.traceId = this.generateId();
   }
 
-  startSpan(operation: string, parentSpanId?: string, attributes?: Record<string, any>): Span {
+  startSpan(operation: string, parentSpanId?: string, attributes?: Record<string, AttributeValue>): Span {
     const spanId = this.generateId();
     const level = parentSpanId ? this.getSpanLevel(parentSpanId) + 1 : 0;
 
@@ -306,14 +308,14 @@ export function getTracer(): StructuredTracer {
 }
 
 // Convenience functions
-export function startSpan(operation: string, attributes?: Record<string, any>): Span {
+export function startSpan(operation: string, attributes?: Record<string, AttributeValue>): Span {
   return getTracer().startSpan(operation, undefined, attributes);
 }
 
 export function startChildSpan(
   operation: string,
   parentSpanId: string,
-  attributes?: Record<string, any>
+  attributes?: Record<string, AttributeValue>
 ): Span {
   return getTracer().startSpan(operation, parentSpanId, attributes);
 }

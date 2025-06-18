@@ -1,7 +1,7 @@
 import { existsSync } from "node:fs";
 import { copyFile, mkdir, writeFile } from "node:fs/promises";
 import { dirname, join } from "node:path";
-import type { StructuredTracer } from "@logger/index";
+import type { StructuredTracer, Span } from "@logger/index";
 import type { OutputTarget } from "./index";
 
 export class BackportFileGenerator {
@@ -15,7 +15,7 @@ export class BackportFileGenerator {
     this.tracer = tracer;
   }
 
-  async generateAllFiles(targets: OutputTarget[], parentSpan?: any): Promise<void> {
+  async generateAllFiles(targets: OutputTarget[], parentSpan?: Span): Promise<void> {
     const genSpan =
       parentSpan?.startChild("Generate Files") || this.tracer?.startSpan("Generate Files");
     genSpan?.setAttributes({ targetCount: targets.length });
@@ -53,28 +53,32 @@ export class BackportFileGenerator {
 
           targetSpan?.info("File generated successfully");
           targetSpan?.end({ success: true });
-        } catch (error: any) {
+        } catch (error: unknown) {
+          const errorMessage = error instanceof Error ? error.message : String(error);
+          const errorStack = error instanceof Error ? error.stack : undefined;
           targetSpan?.error("Failed to generate file", {
-            error: error.message,
-            stack: error.stack,
+            error: errorMessage,
+            stack: errorStack,
           });
-          targetSpan?.end({ success: false, error: error.message });
+          targetSpan?.end({ success: false, error: errorMessage });
           throw error;
         }
       }
 
       genSpan?.end({ success: true, filesGenerated: targets.length });
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      const errorStack = error instanceof Error ? error.stack : undefined;
       genSpan?.error("File generation failed", {
-        error: error.message,
-        stack: error.stack,
+        error: errorMessage,
+        stack: errorStack,
       });
-      genSpan?.end({ success: false, error: error.message });
+      genSpan?.end({ success: false, error: errorMessage });
       throw error;
     }
   }
 
-  private async writePommelModel(target: OutputTarget, parentSpan?: any): Promise<void> {
+  private async writePommelModel(target: OutputTarget, parentSpan?: Span): Promise<void> {
     const writeSpan =
       parentSpan?.startChild("Write Pommel Model") || this.tracer?.startSpan("Write Pommel Model");
     const filePath = join(this.outputDir, "assets", "minecraft", target.file);
@@ -95,17 +99,19 @@ export class BackportFileGenerator {
 
       writeSpan?.info("Pommel model written successfully");
       writeSpan?.end({ success: true, fileSize: content.length });
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      const errorStack = error instanceof Error ? error.stack : undefined;
       writeSpan?.error("Failed to write pommel model", {
-        error: error.message,
-        stack: error.stack,
+        error: errorMessage,
+        stack: errorStack,
       });
-      writeSpan?.end({ success: false, error: error.message });
+      writeSpan?.end({ success: false, error: errorMessage });
       throw error;
     }
   }
 
-  private async writeCITProperty(target: OutputTarget, parentSpan?: any): Promise<void> {
+  private async writeCITProperty(target: OutputTarget, parentSpan?: Span): Promise<void> {
     const writeSpan =
       parentSpan?.startChild("Write CIT Property") || this.tracer?.startSpan("Write CIT Property");
     const filePath = join(this.outputDir, "assets", "minecraft", target.file);
@@ -135,17 +141,19 @@ export class BackportFileGenerator {
 
       writeSpan?.info("CIT property written successfully");
       writeSpan?.end({ success: true, propertyCount: lines.length });
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      const errorStack = error instanceof Error ? error.stack : undefined;
       writeSpan?.error("Failed to write CIT property", {
-        error: error.message,
-        stack: error.stack,
+        error: errorMessage,
+        stack: errorStack,
       });
-      writeSpan?.end({ success: false, error: error.message });
+      writeSpan?.end({ success: false, error: errorMessage });
       throw error;
     }
   }
 
-  private async copyEnhancedModel(target: OutputTarget, parentSpan?: any): Promise<void> {
+  private async copyEnhancedModel(target: OutputTarget, parentSpan?: Span): Promise<void> {
     // Enhanced models should already exist in source, just copy them
     const sourceFile = join(this.sourceDir, "assets", "minecraft", target.file);
     const destFile = join(this.outputDir, "assets", "minecraft", target.file);
@@ -173,17 +181,19 @@ export class BackportFileGenerator {
         });
         span?.end({ success: true, skipped: true });
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      const errorStack = error instanceof Error ? error.stack : undefined;
       span?.error("Failed to copy enhanced model", {
-        error: error.message,
-        stack: error.stack,
+        error: errorMessage,
+        stack: errorStack,
       });
-      span?.end({ success: false, error: error.message });
+      span?.end({ success: false, error: errorMessage });
       throw error;
     }
   }
 
-  private async copyPreserved3DModel(target: OutputTarget, parentSpan?: any): Promise<void> {
+  private async copyPreserved3DModel(target: OutputTarget, parentSpan?: Span): Promise<void> {
     const preserveSpan =
       parentSpan?.startChild("Copy Preserved 3D Model") ||
       this.tracer?.startSpan("Copy Preserved 3D Model");
@@ -222,17 +232,19 @@ export class BackportFileGenerator {
         preserveSpan?.end({ success: false, error: "file_not_found" });
         throw new Error(`Original 3D model not found: ${originalFileName}`);
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      const errorStack = error instanceof Error ? error.stack : undefined;
       preserveSpan?.error("Failed to preserve 3D model", {
-        error: error.message,
-        stack: error.stack,
+        error: errorMessage,
+        stack: errorStack,
       });
-      preserveSpan?.end({ success: false, error: error.message });
+      preserveSpan?.end({ success: false, error: errorMessage });
       throw error;
     }
   }
 
-  private async copyTexture(target: OutputTarget, parentSpan?: any): Promise<void> {
+  private async copyTexture(target: OutputTarget, parentSpan?: Span): Promise<void> {
     const textureSpan =
       parentSpan?.startChild("Copy Texture") || this.tracer?.startSpan("Copy Texture");
 
@@ -264,17 +276,19 @@ export class BackportFileGenerator {
         textureSpan?.end({ success: false, error: "file_not_found" });
         throw new Error(`Texture not found in source: ${target.file}`);
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      const errorStack = error instanceof Error ? error.stack : undefined;
       textureSpan?.error("Failed to copy texture", {
-        error: error.message,
-        stack: error.stack,
+        error: errorMessage,
+        stack: errorStack,
       });
-      textureSpan?.end({ success: false, error: error.message });
+      textureSpan?.end({ success: false, error: errorMessage });
       throw error;
     }
   }
 
-  private async ensureDirectory(filePath: string, parentSpan?: any): Promise<void> {
+  private async ensureDirectory(filePath: string, parentSpan?: Span): Promise<void> {
     const dirSpan =
       parentSpan?.startChild("Ensure Directory") || this.tracer?.startSpan("Ensure Directory");
     const dir = dirname(filePath);
@@ -288,12 +302,14 @@ export class BackportFileGenerator {
       dirSpan?.debug("Creating directory recursively", { dir });
       await mkdir(dir, { recursive: true });
       dirSpan?.end({ success: true });
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      const errorStack = error instanceof Error ? error.stack : undefined;
       dirSpan?.error("Failed to create directory", {
-        error: error.message,
-        stack: error.stack,
+        error: errorMessage,
+        stack: errorStack,
       });
-      dirSpan?.end({ success: false, error: error.message });
+      dirSpan?.end({ success: false, error: errorMessage });
       throw error;
     }
   }

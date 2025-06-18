@@ -89,8 +89,9 @@ export async function resolveTexturePath(
       isVanilla,
       isNamespaced,
     });
-  } catch (error: any) {
-    return err(`Failed to resolve texture path for ${textureRef}: ${error.message}`);
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    return err(`Failed to resolve texture path for ${textureRef}: ${errorMessage}`);
   }
 }
 
@@ -128,8 +129,9 @@ export async function resolveModelPath(
       isVanilla,
       isNamespaced,
     });
-  } catch (error: any) {
-    return err(`Failed to resolve model path for ${modelRef}: ${error.message}`);
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    return err(`Failed to resolve model path for ${modelRef}: ${errorMessage}`);
   }
 }
 

@@ -74,12 +74,14 @@ export class ResourcePackIntrospector {
       }
 
       scanSpan?.end({ success: true, entriesProcessed: entries.length });
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      const errorStack = error instanceof Error ? error.stack : undefined;
       scanSpan?.error("Failed to scan directory", {
-        error: error.message,
-        stack: error.stack,
+        error: errorMessage,
+        stack: errorStack,
       });
-      scanSpan?.end({ success: false, error: error.message });
+      scanSpan?.end({ success: false, error: errorMessage });
       throw error;
     }
   }

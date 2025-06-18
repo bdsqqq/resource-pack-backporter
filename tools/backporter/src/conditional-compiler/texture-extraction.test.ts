@@ -113,12 +113,14 @@ class TestDisplayContextStrategy {
       span.info("Using default texture", { defaultTexture });
       span.end({ success: true, texture: defaultTexture });
       return defaultTexture;
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      const errorStack = error instanceof Error ? error.stack : undefined;
       span.error("Failed to determine texture ref", {
-        error: error.message,
-        stack: error.stack,
+        error: errorMessage,
+        stack: errorStack,
       });
-      span.end({ success: false, error: error.message });
+      span.end({ success: false, error: errorMessage });
       throw error;
     }
   }

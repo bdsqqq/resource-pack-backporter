@@ -16,9 +16,28 @@ export interface ExecutionPath {
   isFallback: boolean;
 }
 
+export type PommelModelContent = {
+  parent?: string;
+  textures?: Record<string, string>;
+  overrides?: Array<{
+    predicate: Record<string, number>;
+    model: string;
+  }>;
+  [key: string]: unknown;
+};
+
+export type CITPropertyContent = Record<string, string | number>;
+
+export type ModelContent = {
+  parent?: string;
+  textures?: Record<string, string>;
+  elements?: unknown[];
+  [key: string]: unknown;
+};
+
 export interface OutputTarget {
   type: "pommel" | "cit_property" | "base_texture" | "enhanced_model" | "preserve_3d_model";
   file: string;
-  content: any;
+  content: PommelModelContent | CITPropertyContent | ModelContent | string;
   priority: number;
 }

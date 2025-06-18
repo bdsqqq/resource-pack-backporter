@@ -44,12 +44,14 @@ export class FileManagerImpl implements FileManager {
         originalRequests: this.requests.length,
         mergedRequests: mergedRequests.length,
       });
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      const errorStack = error instanceof Error ? error.stack : undefined;
       span?.error("Failed to write files", {
-        error: error.message,
-        stack: error.stack,
+        error: errorMessage,
+        stack: errorStack,
       });
-      span?.end({ success: false, error: error.message });
+      span?.end({ success: false, error: errorMessage });
       throw error;
     }
   }
@@ -118,12 +120,14 @@ export class FileManagerImpl implements FileManager {
         mergedRequests: mergedRequests.length,
       });
       return mergedRequests;
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      const errorStack = error instanceof Error ? error.stack : undefined;
       mergeSpan?.error("Failed to merge requests", {
-        error: error.message,
-        stack: error.stack,
+        error: errorMessage,
+        stack: errorStack,
       });
-      mergeSpan?.end({ success: false, error: error.message });
+      mergeSpan?.end({ success: false, error: errorMessage });
       throw error;
     }
   }
@@ -150,12 +154,14 @@ export class FileManagerImpl implements FileManager {
       await writer.write(request, this.outputDir);
       writeSpan?.info("File written successfully");
       writeSpan?.end({ success: true });
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      const errorStack = error instanceof Error ? error.stack : undefined;
       writeSpan?.error("Failed to write file", {
-        error: error.message,
-        stack: error.stack,
+        error: errorMessage,
+        stack: errorStack,
       });
-      writeSpan?.end({ success: false, error: error.message });
+      writeSpan?.end({ success: false, error: errorMessage });
       throw error;
     }
   }

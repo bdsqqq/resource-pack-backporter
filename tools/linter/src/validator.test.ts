@@ -200,6 +200,9 @@ describe("validateResourcePack", () => {
       },
     };
 
+    // Create the texture file so the namespace warning can trigger
+    writeFileSync(join(TEST_PACK_DIR, "assets", "minecraft", "textures", "item", "book.png"), "fake texture");
+
     writeFileSync(
       join(TEST_PACK_DIR, "assets", "minecraft", "models", "item", "test.json"),
       JSON.stringify(nonNamespacedModel, null, 2)

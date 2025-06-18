@@ -1,7 +1,7 @@
 import { existsSync } from "node:fs";
 import { readdir, readFile, writeFile } from "node:fs/promises";
 import { join } from "node:path";
-import type { StructuredTracer } from "@logger/index";
+import type { StructuredTracer, Span } from "@logger/index";
 
 export class ModelCompatibilityProcessor {
   private tracer?: StructuredTracer;
@@ -24,17 +24,19 @@ export class ModelCompatibilityProcessor {
 
       await this.fixModelsInDirectory(modelsDir, span);
       span?.end({ success: true });
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      const errorStack = error instanceof Error ? error.stack : undefined;
       span?.error("Model compatibility processing failed", {
-        error: error.message,
-        stack: error.stack,
+        error: errorMessage,
+        stack: errorStack,
       });
-      span?.end({ success: false, error: error.message });
+      span?.end({ success: false, error: errorMessage });
       throw error;
     }
   }
 
-  private async fixModelsInDirectory(dir: string, parentSpan?: any): Promise<void> {
+  private async fixModelsInDirectory(dir: string, parentSpan?: Span): Promise<void> {
     const entries = await readdir(dir, { withFileTypes: true });
 
     for (const entry of entries) {
@@ -48,7 +50,7 @@ export class ModelCompatibilityProcessor {
     }
   }
 
-  private async fixSingleModel(modelPath: string, parentSpan?: any): Promise<void> {
+  private async fixSingleModel(modelPath: string, parentSpan?: Span): Promise<void> {
     const modelSpan = parentSpan?.startChild(`Fix model: ${modelPath.split("/").pop()}`);
     modelSpan?.setAttributes({ modelPath });
 
@@ -105,17 +107,19 @@ export class ModelCompatibilityProcessor {
       } else {
         modelSpan?.end({ success: true, hasChanges: false });
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      const errorStack = error instanceof Error ? error.stack : undefined;
       modelSpan?.error("Error processing model", {
-        error: error.message,
-        stack: error.stack,
+        error: errorMessage,
+        stack: errorStack,
       });
-      modelSpan?.end({ success: false, error: error.message });
+      modelSpan?.end({ success: false, error: errorMessage });
       // Skip files that can't be processed - don't rethrow
     }
   }
 
-  private validateTemplateFile(model: any, modelPath: string, modelSpan?: any): void {
+  private validateTemplateFile(model: any, modelPath: string, modelSpan?: Span): void {
     const errors: string[] = [];
 
     // Template files should NOT have parent field

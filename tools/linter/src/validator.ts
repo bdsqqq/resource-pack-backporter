@@ -36,8 +36,9 @@ async function getVanillaAssetFunctions() {
       isVanillaTexture: module.isVanillaTexture as (ref: string) => boolean,
       isVanillaModel: module.isVanillaModel as (ref: string) => boolean,
     };
-  } catch (error: any) {
-    throw new Error(`Failed to load vanilla assets: ${error.message}`);
+  } catch (error: unknown) {
+  const errorMessage = error instanceof Error ? error.message : String(error);
+      throw new Error(`Failed to load vanilla assets: ${errorMessage}`);
   }
 }
 
@@ -83,8 +84,9 @@ export async function validateResourcePack(
     const vanillaAssets = await getVanillaAssetFunctions();
     isVanillaTexture = vanillaAssets.isVanillaTexture;
     isVanillaModel = vanillaAssets.isVanillaModel;
-  } catch (error: any) {
-    const errorMsg = `Failed to load vanilla asset validators: ${error.message}`;
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    const errorMsg = `Failed to load vanilla asset validators: ${errorMessage}`;
     validationSpan?.error(errorMsg);
     validationSpan?.end({ success: false, error: errorMsg });
     return ok({
@@ -155,7 +157,11 @@ export async function validateResourcePack(
 
     // Check model parent and texture references
     if (validationResult.data && typeof validationResult.data === "object") {
-      const modelData = validationResult.data as any;
+      const modelData = validationResult.data as {
+        parent?: string;
+        textures?: Record<string, string>;
+        [key: string]: unknown;
+      };
 
       // Validate parent model reference
       if (modelData.parent && typeof modelData.parent === "string") {
@@ -177,7 +183,7 @@ export async function validateResourcePack(
               // Only flag as error if it's not a valid vanilla model
               if (!isVanillaModel(parentRef)) {
                 errors.push(
-                  `Invalid model reference: ${parentRef} does not exist in the pack or vanilla Minecraft (referenced in ${modelFile})`
+                  `Invalid vanilla model reference: ${parentRef} (referenced in ${modelFile})`
                 );
               } else if (verbose) {
                 validationSpan?.debug(
@@ -215,9 +221,9 @@ export async function validateResourcePack(
                 );
               }
             } else {
-              // Invalid texture reference - doesn't exist in pack or vanilla
+              // Invalid vanilla texture reference - doesn't exist in pack or vanilla
               errors.push(
-                `Invalid texture reference: ${ref} does not exist in the pack or vanilla Minecraft (referenced in ${modelFile})`
+                `Invalid vanilla texture reference: ${ref} (referenced in ${modelFile})`
               );
             }
           } else {
@@ -228,15 +234,7 @@ export async function validateResourcePack(
           // Texture exists in the pack - only warn about namespacing if it could be ambiguous
           if (!texturePath.isNamespaced && isVanillaTexture(ref)) {
             warnings.push(
-              'Texture "' +
-                ref +
-                "\" isn't namespaced. While it exists in your pack, it could fallback to vanilla minecraft:" +
-                ref +
-                " in some contexts. " +
-                "Consider explicitly namespacing textures to avoid ambiguity. " +
-                "(referenced in " +
-                modelFile +
-                ")"
+              `Texture "${ref}" isn't namespaced, it will fallback to vanilla minecraft:${ref} (referenced in ${modelFile})`
             );
           }
         }
@@ -274,7 +272,7 @@ export async function validateResourcePack(
   });
 }
 
-function extractTextureReferences(modelData: any): string[] {
+function extractTextureReferences(modelData: { textures?: Record<string, string>; [key: string]: unknown }): string[] {
   const refs: string[] = [];
 
   if (modelData.textures && typeof modelData.textures === "object") {

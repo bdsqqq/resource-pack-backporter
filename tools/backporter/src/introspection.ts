@@ -14,7 +14,7 @@ export interface ComponentAnalysis {
 
 export interface ConditionalModel {
   component: string;
-  conditions: any[];
+  conditions: unknown[];
   contextMappings: { [context: string]: string }; // context -> modelPath
 }
 
@@ -158,14 +158,16 @@ export class ResourcePackIntrospector {
   }
 
   private extractComponentInfo(
-    obj: any,
+    obj: unknown,
     analysis: ComponentAnalysis,
     path = "",
     currentContexts: string[] = []
   ) {
     if (typeof obj !== "object" || obj === null) return;
 
-    for (const [key, value] of Object.entries(obj)) {
+    const objectData = obj as Record<string, unknown>;
+
+    for (const [key, value] of Object.entries(objectData)) {
       const currentPath = path ? `${path}.${key}` : key;
 
       // Track components being used
@@ -177,19 +179,19 @@ export class ResourcePackIntrospector {
 
       // Track display context selectors and extract their mappings
       if (key === "property" && value === "minecraft:display_context") {
-        this.extractDisplayContextMappings(obj, analysis, currentContexts);
+        this.extractDisplayContextMappings(objectData, analysis, currentContexts);
         return; // Don't recurse further as we've handled this branch
       }
 
       // Track component selectors within display contexts
-      if (key === "component" && obj.cases) {
-        this.extractConditionalModels(obj, analysis, currentPath, currentContexts);
+      if (key === "component" && this.hasProperty(objectData, "cases")) {
+        this.extractConditionalModels(objectData, analysis, currentPath, currentContexts);
         return; // Don't recurse further as we've handled this branch
       }
 
       // Handle minecraft:condition with on_true/on_false branches
       if (key === "type" && value === "minecraft:condition") {
-        this.extractConditionModels(obj, analysis, currentPath, currentContexts);
+        this.extractConditionModels(objectData, analysis, currentPath, currentContexts);
         return; // Don't recurse further as we've handled this branch
       }
 
@@ -200,48 +202,79 @@ export class ResourcePackIntrospector {
     }
   }
 
+  private hasProperty(obj: Record<string, unknown>, prop: string): boolean {
+    return prop in obj;
+  }
+
+  private isModelObject(value: unknown): value is Record<string, unknown> {
+    return (
+      typeof value === "object" &&
+      value !== null &&
+      typeof (value as Record<string, unknown>).type === "string" &&
+      (value as Record<string, unknown>).type === "minecraft:model"
+    );
+  }
+
+  private hasStringProperty(obj: Record<string, unknown>, prop: string): boolean {
+    return prop in obj && typeof obj[prop] === "string";
+  }
+
   private extractDisplayContextMappings(
-    selectObj: any,
+    selectObj: Record<string, unknown>,
     analysis: ComponentAnalysis,
     _parentContexts: string[]
   ) {
     const explicitContexts = new Set<string>();
 
-    if (selectObj.cases && Array.isArray(selectObj.cases)) {
-      for (const caseObj of selectObj.cases) {
-        if (caseObj.when && caseObj.model) {
-          const contexts = Array.isArray(caseObj.when) ? caseObj.when : [caseObj.when];
+    if (Array.isArray(selectObj.cases)) {
+      for (const caseItem of selectObj.cases) {
+        if (typeof caseItem === "object" && caseItem !== null) {
+          const caseObj = caseItem as Record<string, unknown>;
 
-          // Track explicitly handled contexts
-          for (const context of contexts) {
-            if (typeof context === "string") {
-              explicitContexts.add(context);
-            }
-          }
+          if (caseObj.when && caseObj.model) {
+            const contexts = Array.isArray(caseObj.when) ? caseObj.when : [caseObj.when];
 
-          // Add to global context list
-          for (const context of contexts) {
-            if (typeof context === "string" && !analysis.displayContexts.includes(context)) {
-              analysis.displayContexts.push(context);
-            }
-          }
-
-          // Check if this is a direct model reference (no further component selection)
-          if (caseObj.model.type === "minecraft:model" && caseObj.model.model) {
-            // This is a direct context->model mapping, create a conditional model for it
-            const contextMappings: { [context: string]: string } = {};
+            // Track explicitly handled contexts
             for (const context of contexts) {
-              contextMappings[context] = caseObj.model.model;
+              if (typeof context === "string") {
+                explicitContexts.add(context);
+              }
             }
 
-            analysis.conditionalModels.push({
-              component: "pure_display_context",
-              conditions: [{}], // Empty condition for pure context mapping
-              contextMappings,
-            });
-          } else if (typeof caseObj.model === "object") {
-            // Recurse into the model with the current contexts
-            this.extractComponentInfo(caseObj.model, analysis, "", contexts);
+            // Add to global context list
+            for (const context of contexts) {
+              if (typeof context === "string" && !analysis.displayContexts.includes(context)) {
+                analysis.displayContexts.push(context);
+              }
+            }
+
+            // Check if this is a direct model reference (no further component selection)
+            if (
+              this.isModelObject(caseObj.model) &&
+              this.hasStringProperty(caseObj.model as Record<string, unknown>, "model")
+            ) {
+              // This is a direct context->model mapping, create a conditional model for it
+              const contextMappings: { [context: string]: string } = {};
+              const modelPath = (caseObj.model as Record<string, unknown>).model as string;
+
+              for (const context of contexts) {
+                if (typeof context === "string") {
+                  contextMappings[context] = modelPath;
+                }
+              }
+
+              analysis.conditionalModels.push({
+                component: "pure_display_context",
+                conditions: [{}], // Empty condition for pure context mapping
+                contextMappings,
+              });
+            } else if (typeof caseObj.model === "object") {
+              // Recurse into the model with the current contexts
+              const stringContexts = contexts.filter(
+                (ctx): ctx is string => typeof ctx === "string"
+              );
+              this.extractComponentInfo(caseObj.model, analysis, "", stringContexts);
+            }
           }
         }
       }
@@ -250,8 +283,8 @@ export class ResourcePackIntrospector {
     // Handle fallback case - infer missing standard contexts
     if (
       selectObj.fallback &&
-      selectObj.fallback.type === "minecraft:model" &&
-      selectObj.fallback.model
+      this.isModelObject(selectObj.fallback) &&
+      this.hasStringProperty(selectObj.fallback as Record<string, unknown>, "model")
     ) {
       const standardContexts = [
         "gui",
@@ -276,8 +309,11 @@ export class ResourcePackIntrospector {
 
         // Create context mappings for fallback contexts
         const fallbackContextMappings: { [context: string]: string } = {};
-        for (const context of missingContexts) {
-          fallbackContextMappings[context] = selectObj.fallback.model;
+        const fallbackObj = selectObj.fallback as Record<string, unknown>;
+        if (typeof fallbackObj.model === "string") {
+          for (const context of missingContexts) {
+            fallbackContextMappings[context] = fallbackObj.model;
+          }
         }
 
         analysis.conditionalModels.push({
@@ -290,44 +326,57 @@ export class ResourcePackIntrospector {
   }
 
   private extractConditionalModels(
-    selectObj: any,
+    selectObj: Record<string, unknown>,
     analysis: ComponentAnalysis,
     _path: string,
     parentContexts: string[] = []
   ) {
-    const component = selectObj.component || "unknown";
+    const component = typeof selectObj.component === "string" ? selectObj.component : "unknown";
 
-    if (selectObj.cases && Array.isArray(selectObj.cases)) {
-      for (const caseObj of selectObj.cases) {
-        if (caseObj.when && caseObj.model) {
-          const conditions = Array.isArray(caseObj.when) ? caseObj.when : [caseObj.when];
-          const modelPath = caseObj.model.model || caseObj.model;
+    if (Array.isArray(selectObj.cases)) {
+      for (const caseItem of selectObj.cases) {
+        if (typeof caseItem === "object" && caseItem !== null) {
+          const caseObj = caseItem as Record<string, unknown>;
 
-          // Build context mappings - each condition gets mapped to specific contexts with specific models
-          const contextMappings: { [context: string]: string } = {};
-          for (const context of parentContexts) {
-            contextMappings[context] = modelPath;
+          if (caseObj.when && caseObj.model) {
+            const conditions = Array.isArray(caseObj.when) ? caseObj.when : [caseObj.when];
+
+            let modelPath: string;
+            if (typeof caseObj.model === "string") {
+              modelPath = caseObj.model;
+            } else if (typeof caseObj.model === "object" && caseObj.model !== null) {
+              const modelObj = caseObj.model as Record<string, unknown>;
+              modelPath = typeof modelObj.model === "string" ? modelObj.model : "";
+            } else {
+              modelPath = "";
+            }
+
+            // Build context mappings - each condition gets mapped to specific contexts with specific models
+            const contextMappings: { [context: string]: string } = {};
+            for (const context of parentContexts) {
+              contextMappings[context] = modelPath;
+            }
+
+            analysis.conditionalModels.push({
+              component,
+              conditions,
+              contextMappings,
+            });
           }
-
-          analysis.conditionalModels.push({
-            component,
-            conditions,
-            contextMappings,
-          });
         }
       }
     }
   }
 
   private extractConditionModels(
-    condition: any,
+    condition: Record<string, unknown>,
     analysis: ComponentAnalysis,
     _path: string,
     currentContexts: string[]
   ) {
     // Handle minecraft:condition with on_true/on_false branches
     // Add the component being used to analysis
-    if (condition.property === "minecraft:component" && condition.predicate) {
+    if (condition.property === "minecraft:component" && typeof condition.predicate === "string") {
       if (!analysis.componentsUsed.includes(condition.predicate)) {
         analysis.componentsUsed.push(condition.predicate);
       }
@@ -343,25 +392,29 @@ export class ResourcePackIntrospector {
   }
 
   private extractModelsFromBranch(
-    branch: any,
+    branch: unknown,
     analysis: ComponentAnalysis,
     currentContexts: string[]
   ) {
-    if (branch.type === "minecraft:model" && branch.model) {
-      // Build context mappings for all current contexts
-      const contextMappings: { [context: string]: string } = {};
-      for (const context of currentContexts) {
-        contextMappings[context] = branch.model;
-      }
+    if (typeof branch === "object" && branch !== null) {
+      const branchObj = branch as Record<string, unknown>;
 
-      analysis.conditionalModels.push({
-        component: "pure_display_context", // This is just for context switching
-        conditions: [], // No additional conditions for simple model refs
-        contextMappings,
-      });
-    } else if (typeof branch === "object") {
-      // Recurse to find nested models
-      this.extractComponentInfo(branch, analysis, "", currentContexts);
+      if (branchObj.type === "minecraft:model" && typeof branchObj.model === "string") {
+        // Build context mappings for all current contexts
+        const contextMappings: { [context: string]: string } = {};
+        for (const context of currentContexts) {
+          contextMappings[context] = branchObj.model;
+        }
+
+        analysis.conditionalModels.push({
+          component: "pure_display_context", // This is just for context switching
+          conditions: [], // No additional conditions for simple model refs
+          contextMappings,
+        });
+      } else {
+        // Recurse to find nested models
+        this.extractComponentInfo(branchObj, analysis, "", currentContexts);
+      }
     }
   }
 }

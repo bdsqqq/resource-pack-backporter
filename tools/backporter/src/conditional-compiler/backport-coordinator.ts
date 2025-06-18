@@ -2,7 +2,7 @@ import { existsSync } from "node:fs";
 import { copyFile, mkdir, readdir, readFile, stat, writeFile } from "node:fs/promises";
 import { basename, dirname, join } from "node:path";
 import type { BackportOptions } from "@backporter/coordination";
-import type { StructuredTracer, Span } from "@logger/index";
+import type { Span, StructuredTracer } from "@logger/index";
 import { BackportFileGenerator } from "./file-generator";
 import { ConditionalPathExtractor } from "./path-extractor";
 import { TargetSystemMapper } from "./target-mapper";
@@ -105,7 +105,7 @@ export class ConditionalBackportCoordinator {
 
     findSpan.info("Found item files", {
       count: itemFiles.length,
-      files: itemFiles.map((f) => basename(f)),
+      files: itemFiles.map((f) => basename(f)).join(", "),
     });
     findSpan.end({ itemsFound: itemFiles.length });
     return itemFiles;
@@ -142,7 +142,7 @@ export class ConditionalBackportCoordinator {
           target: path.targetModel,
         }));
         itemSpan.debug("Sample execution paths", {
-          samplePaths,
+          samplePaths: JSON.stringify(samplePaths),
           totalPaths: paths.length,
         });
       }
@@ -173,11 +173,15 @@ export class ConditionalBackportCoordinator {
     }
   }
 
-  private hasConditionalSelectors(itemJson: any): boolean {
-    if (!itemJson?.model) return false;
+  private hasConditionalSelectors(itemJson: unknown): boolean {
+    if (typeof itemJson !== "object" || itemJson === null) return false;
 
+    const json = itemJson as Record<string, unknown>;
+    if (!json.model || typeof json.model !== "object" || json.model === null) return false;
+
+    const model = json.model as Record<string, unknown>;
     // Check if the model uses the new selector format
-    return itemJson.model.type === "minecraft:select";
+    return model.type === "minecraft:select";
   }
 
   private async copyBaseAssets(
@@ -212,7 +216,11 @@ export class ConditionalBackportCoordinator {
     }
   }
 
-  private async copyPackFiles(inputDir: string, outputDir: string, parentSpan: Span): Promise<void> {
+  private async copyPackFiles(
+    inputDir: string,
+    outputDir: string,
+    parentSpan: Span
+  ): Promise<void> {
     const packSpan = parentSpan.startChild("Copy Pack Files");
 
     try {
@@ -272,7 +280,7 @@ export class ConditionalBackportCoordinator {
         } else if (Array.isArray(packData.pack.description)) {
           // Handle text component format - check if attribution already exists
           const hasAttribution = packData.pack.description.some(
-            (item: any) => typeof item === "string" && item.includes("↺_backported_by_@bdsqqq")
+            (item: unknown) => typeof item === "string" && item.includes("↺_backported_by_@bdsqqq")
           );
           if (!hasAttribution) {
             packData.pack.description.push(attribution);

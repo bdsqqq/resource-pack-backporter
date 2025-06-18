@@ -2,15 +2,18 @@
 
 export type MergeStrategy = "replace" | "merge-overrides" | "merge-properties" | "append";
 
-export type WriteRequestContent = {
-  parent?: string;
-  textures?: Record<string, string>;
-  overrides?: Array<{
-    predicate: Record<string, number>;
-    model: string;
-  }>;
-  [key: string]: unknown;
-} | Record<string, string | number> | string;
+export type WriteRequestContent =
+  | {
+      parent?: string;
+      textures?: Record<string, string>;
+      overrides?: Array<{
+        predicate: Record<string, number>;
+        model: string;
+      }>;
+      [key: string]: unknown;
+    }
+  | Record<string, string | number>
+  | string;
 
 export interface WriteRequest {
   type: "pommel-model" | "cit-properties" | "vanilla-model" | "texture-copy";

@@ -8,6 +8,17 @@ interface FileWriter {
   write(request: WriteRequest, outputDir: string): Promise<void>;
 }
 
+interface CITPropertiesContent {
+  type?: string;
+  items?: string;
+  model?: string;
+  texture?: string;
+  nbt?: Record<string, unknown>;
+  enchantments?: string;
+  enchantmentIDs?: string;
+  enchantmentLevels?: string;
+}
+
 export class CITPropertiesWriter implements FileWriter {
   name = "cit-properties";
 
@@ -28,8 +39,12 @@ export class CITPropertiesWriter implements FileWriter {
     await writeFile(fullPath, propertiesContent);
   }
 
-  private formatCITProperties(content: any): string {
+  private formatCITProperties(content: unknown): string {
     const lines: string[] = [];
+
+    if (!this.isCITPropertiesContent(content)) {
+      return "\n";
+    }
 
     // Basic properties
     if (content.type) lines.push(`type=${content.type}`);
@@ -56,25 +71,33 @@ export class CITPropertiesWriter implements FileWriter {
     return `${lines.join("\n")}\n`;
   }
 
-  private formatNBTProperties(nbt: any, lines: string[], prefix = "nbt"): void {
+  private isCITPropertiesContent(value: unknown): value is CITPropertiesContent {
+    return typeof value === "object" && value !== null;
+  }
+
+  private formatNBTProperties(nbt: Record<string, unknown>, lines: string[], prefix = "nbt"): void {
     for (const [key, value] of Object.entries(nbt)) {
       const fullKey = `${prefix}.${key}`;
 
       if (Array.isArray(value)) {
         // Handle arrays like StoredEnchantments
-        value.forEach((item, index) => {
-          if (typeof item === "object") {
-            this.formatNBTProperties(item, lines, `${fullKey}.[${index}]`);
+        value.forEach((item: unknown, index: number) => {
+          if (typeof item === "object" && item !== null) {
+            this.formatNBTProperties(
+              item as Record<string, unknown>,
+              lines,
+              `${fullKey}.[${index}]`
+            );
           } else {
-            lines.push(`${fullKey}.[${index}]=${item}`);
+            lines.push(`${fullKey}.[${index}]=${String(item)}`);
           }
         });
       } else if (typeof value === "object" && value !== null) {
         // Handle nested objects
-        this.formatNBTProperties(value, lines, fullKey);
+        this.formatNBTProperties(value as Record<string, unknown>, lines, fullKey);
       } else {
         // Handle primitive values
-        lines.push(`${fullKey}=${value}`);
+        lines.push(`${fullKey}=${String(value)}`);
       }
     }
   }

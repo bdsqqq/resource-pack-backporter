@@ -15,6 +15,10 @@ export class FileManagerImpl implements FileManager {
     this.tracer = tracer;
   }
 
+  get getOutputDir(): string {
+    return this.outputDir;
+  }
+
   addRequests(requests: WriteRequest[]): void {
     this.requests.push(...requests);
   }
@@ -85,7 +89,10 @@ export class FileManagerImpl implements FileManager {
     try {
       for (const [key, requests] of requestsByPath) {
         if (requests.length === 1) {
-          mergedRequests.push(requests[0]);
+          const singleRequest = requests[0];
+          if (singleRequest) {
+            mergedRequests.push(singleRequest);
+          }
           continue;
         }
 
@@ -108,8 +115,9 @@ export class FileManagerImpl implements FileManager {
             requestCount: requests.length,
           });
           const sorted = requests.sort((a, b) => (b.priority || 0) - (a.priority || 0));
-          if (sorted.length > 0) {
-            mergedRequests.push(sorted[0]);
+          const highestPriority = sorted[0];
+          if (highestPriority) {
+            mergedRequests.push(highestPriority);
           }
         }
       }

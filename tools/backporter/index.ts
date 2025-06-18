@@ -35,7 +35,7 @@ export async function main() {
     inputDir,
     outputDir,
     verbose,
-    args: allArgs,
+    args: allArgs.join(" "),
   });
 
   try {
@@ -43,12 +43,14 @@ export async function main() {
     await coordinator.backport(inputDir, outputDir, { verbose });
     mainSpan.end({ success: true });
     await tracer.flush();
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : String(error);
+    const stack = error instanceof Error ? error.stack : undefined;
     mainSpan.error("Backport failed", {
-      error: error.message,
-      stack: error.stack,
+      error: message,
+      stack,
     });
-    mainSpan.end({ success: false, error: error.message });
+    mainSpan.end({ success: false, error: message });
     await tracer.flush();
     process?.exit?.(1);
   }

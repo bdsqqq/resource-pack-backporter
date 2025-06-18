@@ -29,7 +29,7 @@ export async function main() {
     packDir,
     verbose,
     fix,
-    args: allArgs,
+    args: allArgs.join(" "),
   });
 
   const validationResult = await validateResourcePack(packDir, { verbose, fix }, tracer);

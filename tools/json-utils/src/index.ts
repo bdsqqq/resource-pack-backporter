@@ -3,7 +3,7 @@ import { err, ok, type Result } from "neverthrow";
 
 export interface ValidationResult {
   isValid: boolean;
-  data?: any;
+  data?: unknown;
   error?: string;
   line?: number;
   column?: number;
@@ -19,9 +19,10 @@ export async function validateJson(filePath: string): Promise<Result<ValidationR
         isValid: true,
         data,
       });
-    } catch (parseError: any) {
+    } catch (parseError: unknown) {
       // Extract line/column info from JSON parse error if available
-      const match = parseError.message.match(/at position (\d+)/);
+      const errorMessage = parseError instanceof Error ? parseError.message : String(parseError);
+      const match = errorMessage.match(/at position (\d+)/);
       let line: number | undefined;
       let column: number | undefined;
 
@@ -35,13 +36,14 @@ export async function validateJson(filePath: string): Promise<Result<ValidationR
 
       return ok({
         isValid: false,
-        error: parseError.message,
+        error: errorMessage,
         line,
         column,
       });
     }
-  } catch (fileError: any) {
-    return err(`Failed to read file ${filePath}: ${fileError.message}`);
+  } catch (fileError: unknown) {
+    const message = fileError instanceof Error ? fileError.message : String(fileError);
+    return err(`Failed to read file ${filePath}: ${message}`);
   }
 }
 

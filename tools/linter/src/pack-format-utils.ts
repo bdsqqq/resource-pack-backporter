@@ -117,9 +117,10 @@ async function fetchGitHubTree(
     span?.end({ success: true, itemCount: filteredItems.length });
 
     return filteredItems;
-  } catch (error: any) {
-    span?.error(`Failed to fetch from GitHub: ${error.message}`);
-    span?.end({ success: false, error: error.message });
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : String(error);
+    span?.error(`Failed to fetch from GitHub: ${message}`);
+    span?.end({ success: false, error: message });
     throw error;
   }
 }
@@ -391,9 +392,10 @@ export function isVanillaModel(modelRef: string): boolean {
       version,
       totalAssets: blockTextures.size + itemTextures.size + blockModels.size + itemModels.size,
     });
-  } catch (error: any) {
-    span?.error(`Failed to generate vanilla assets: ${error.message}`);
-    span?.end({ success: false, error: error.message });
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : String(error);
+    span?.error(`Failed to generate vanilla assets: ${message}`);
+    span?.end({ success: false, error: message });
     throw error;
   }
 }
@@ -434,8 +436,9 @@ export async function ensureVanillaAssetsGenerated(
     try {
       const packMetaContent = await Bun.file(packMetaPath).text();
       packMeta = JSON.parse(packMetaContent);
-    } catch (parseError: any) {
-      const error = `Failed to parse pack.mcmeta: ${parseError.message}`;
+    } catch (parseError: unknown) {
+      const message = parseError instanceof Error ? parseError.message : String(parseError);
+      const error = `Failed to parse pack.mcmeta: ${message}`;
       span?.error(error);
       span?.end({ success: false, error });
       return err(error);
@@ -471,14 +474,17 @@ export async function ensureVanillaAssetsGenerated(
       span?.info("Vanilla assets generated successfully");
       span?.end({ success: true, generated: true });
       return ok(true); // successfully generated
-    } catch (generationError: any) {
-      const error = `Asset generation failed: ${generationError.message}`;
+    } catch (generationError: unknown) {
+      const message =
+        generationError instanceof Error ? generationError.message : String(generationError);
+      const error = `Asset generation failed: ${message}`;
       span?.error(error);
       span?.end({ success: false, error });
       return err(error);
     }
-  } catch (error: any) {
-    const errorMsg = `Unexpected error in vanilla asset generation: ${error.message}`;
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : String(error);
+    const errorMsg = `Unexpected error in vanilla asset generation: ${message}`;
     span?.error(errorMsg);
     span?.end({ success: false, error: errorMsg });
     return err(errorMsg);

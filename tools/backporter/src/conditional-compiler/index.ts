@@ -38,6 +38,6 @@ export type ModelContent = {
 export interface OutputTarget {
   type: "pommel" | "cit_property" | "base_texture" | "enhanced_model" | "preserve_3d_model";
   file: string;
-  content: PommelModelContent | CITPropertyContent | ModelContent | string;
+  content: PommelModelContent | CITPropertyContent | ModelContent | string | null;
   priority: number;
 }

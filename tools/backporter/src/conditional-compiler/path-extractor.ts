@@ -33,7 +33,10 @@ export class ConditionalPathExtractor {
     return this.traverseSelector(sourceModel.model, []);
   }
 
-  private traverseSelector(node: string | MinecraftModelNode, currentConditions: ConditionChainItem[]): ExecutionPath[] {
+  private traverseSelector(
+    node: string | MinecraftModelNode,
+    currentConditions: ConditionChainItem[]
+  ): ExecutionPath[] {
     // Handle direct model references
     if (typeof node === "string") {
       return [

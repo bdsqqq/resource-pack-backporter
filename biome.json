@@ -7,7 +7,14 @@
   },
   "files": {
     "ignoreUnknown": false,
-    "includes": ["**", "!**/node_modules", "!**/dist", "!**/test-fixtures", "!**/assets/**"]
+    "includes": [
+      "**",
+      "!**/node_modules",
+      "!**/dist",
+      "!**/test-fixtures",
+      "!**/assets/**",
+      "!**/*.generated.*"
+    ]
   },
   "formatter": {
     "enabled": true,

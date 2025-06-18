@@ -2,10 +2,15 @@
 
 import type { ProcessingContext, WriteRequest } from "@backporter/file-manager";
 
+// Type for JSON nodes that we can safely process
+export type JsonNode = {
+  [key: string]: unknown;
+};
+
 export interface ItemHandler {
   name: string;
-  canHandle(jsonNode: any, context: ProcessingContext): boolean;
-  process(jsonNode: any, context: ProcessingContext): WriteRequest[];
+  canHandle(jsonNode: JsonNode, context: ProcessingContext): boolean;
+  process(jsonNode: JsonNode, context: ProcessingContext): WriteRequest[];
 }
 
 import { BaseItemHandler } from "./base-item";

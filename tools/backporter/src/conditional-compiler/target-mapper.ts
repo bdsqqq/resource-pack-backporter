@@ -8,6 +8,15 @@ interface GroupedPaths {
   base: ExecutionPath[];
 }
 
+interface ModelOverride {
+  predicate: Record<string, number>;
+  model: string;
+}
+
+interface PackStructure {
+  textureFiles?: string[];
+}
+
 export class TargetSystemMapper {
   private sourceDir?: string;
   private tracer?: StructuredTracer;
@@ -138,16 +147,19 @@ export class TargetSystemMapper {
     for (const path of enchantmentPaths) {
       if (path.conditions.enchantment) {
         const key = `${path.conditions.enchantment.type}_${path.conditions.enchantment.level}`;
-        if (!enchantmentGroups.has(key)) {
-          enchantmentGroups.set(key, []);
+        const existing = enchantmentGroups.get(key);
+        if (existing) {
+          existing.push(path);
+        } else {
+          enchantmentGroups.set(key, [path]);
         }
-        enchantmentGroups.get(key)?.push(path);
       }
     }
 
     // Generate a model file for each enchantment
     for (const [enchantmentKey, enchantmentPaths] of enchantmentGroups) {
-      const enchantment = enchantmentPaths[0].conditions.enchantment!;
+      const enchantment = enchantmentPaths[0].conditions.enchantment;
+      if (!enchantment) continue;
 
       // Create Pommel overrides for this specific enchantment
       const overrides = this.createPommelOverrides(pommelPaths, enchantment);
@@ -183,8 +195,8 @@ export class TargetSystemMapper {
   private createPommelOverrides(
     pommelPaths: ExecutionPath[],
     enchantment: { type: string; level: number }
-  ): any[] {
-    const overrides: any[] = [];
+  ): ModelOverride[] {
+    const overrides: ModelOverride[] = [];
 
     // Convert display contexts to Pommel predicates
     const contextMapping = {
@@ -240,8 +252,8 @@ export class TargetSystemMapper {
     return this.deduplicateOverrides(overrides);
   }
 
-  private createRegularBookOverrides(pommelPaths: ExecutionPath[]): any[] {
-    const overrides: any[] = [];
+  private createRegularBookOverrides(pommelPaths: ExecutionPath[]): ModelOverride[] {
+    const overrides: ModelOverride[] = [];
 
     // Convert display contexts to Pommel predicates
     const contextMapping = {
@@ -339,7 +351,7 @@ export class TargetSystemMapper {
   }
 
   private generatePommelModel_UNUSED(paths: ExecutionPath[], itemId: string): OutputTarget {
-    const overrides: any[] = [];
+    const overrides: ModelOverride[] = [];
 
     // Convert display contexts to Pommel predicates
     const contextMapping = {
@@ -478,13 +490,13 @@ export class TargetSystemMapper {
     );
   }
 
-  private deduplicateOverrides(overrides: any[]): any[] {
+  private deduplicateOverrides(overrides: ModelOverride[]): ModelOverride[] {
     // Based on Pommel source analysis: when item is in offhand, BOTH
     // pommel:is_held and pommel:is_offhand return 1.0 simultaneously.
     // The reference pack uses duplicates to ensure correct model priority.
     // Pattern: 1x ground, 2x held, 3x offhand (offhand needs higher priority)
 
-    const result: any[] = [];
+    const result: ModelOverride[] = [];
 
     // Add ground predicate once
     const groundOverride = overrides.find((o) => o.predicate["pommel:is_ground"]);
@@ -516,8 +528,8 @@ export class TargetSystemMapper {
 
     if (result.length < 6) {
       debugSpan?.debug("Debug override details", {
-        overridesFound: overrides.map((o: any) => Object.keys(o.predicate)[0]),
-        resultPredicates: result.map((o: any) => Object.keys(o.predicate)[0]),
+        overridesFound: overrides.map((o) => Object.keys(o.predicate)[0]).join(", "),
+        resultPredicates: result.map((o) => Object.keys(o.predicate)[0]).join(", "),
       });
     }
     debugSpan?.end({ success: true });
@@ -702,8 +714,8 @@ export class TargetSystemMapper {
     pommelPaths: ExecutionPath[],
     _allPaths: ExecutionPath[],
     preservedModelName?: string | null
-  ): any[] {
-    const overrides: any[] = [];
+  ): ModelOverride[] {
+    const overrides: ModelOverride[] = [];
 
     // Map ground context to ground model
     const groundPath = pommelPaths.find((path) =>
@@ -770,7 +782,7 @@ export class TargetSystemMapper {
     }
   }
 
-  private textureExists(texturePath: string, packStructure?: any): boolean {
+  private textureExists(texturePath: string, packStructure?: PackStructure): boolean {
     if (!packStructure?.textureFiles) return false;
 
     // Convert texture reference to file path

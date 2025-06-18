@@ -2,6 +2,11 @@ import { readdir, stat } from "node:fs/promises";
 import { extname, join } from "node:path";
 import { err, ok, type Result } from "neverthrow";
 
+// Type guard for NodeJS system errors
+function isNodeError(error: unknown): error is NodeJS.ErrnoException {
+  return error instanceof Error && "code" in error;
+}
+
 export async function walkModels(dir: string): Promise<Result<string[], string>> {
   try {
     const files = await walkDirectory(
@@ -9,8 +14,9 @@ export async function walkModels(dir: string): Promise<Result<string[], string>>
       (file) => extname(file) === ".json" && file.includes("/models/")
     );
     return ok(files);
-  } catch (error: any) {
-    return err(`Failed to walk models in ${dir}: ${error.message}`);
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : String(error);
+    return err(`Failed to walk models in ${dir}: ${message}`);
   }
 }
 
@@ -21,8 +27,9 @@ export async function walkTextures(dir: string): Promise<Result<string[], string
       (file) => extname(file) === ".png" && file.includes("/textures/")
     );
     return ok(files);
-  } catch (error: any) {
-    return err(`Failed to walk textures in ${dir}: ${error.message}`);
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : String(error);
+    return err(`Failed to walk textures in ${dir}: ${message}`);
   }
 }
 
@@ -30,8 +37,9 @@ export async function walkAssets(dir: string): Promise<Result<string[], string>>
   try {
     const files = await walkDirectory(dir, () => true);
     return ok(files);
-  } catch (error: any) {
-    return err(`Failed to walk assets in ${dir}: ${error.message}`);
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : String(error);
+    return err(`Failed to walk assets in ${dir}: ${message}`);
   }
 }
 
@@ -42,8 +50,9 @@ export async function walkBlockstates(dir: string): Promise<Result<string[], str
       (file) => extname(file) === ".json" && file.includes("/blockstates/")
     );
     return ok(files);
-  } catch (error: any) {
-    return err(`Failed to walk blockstates in ${dir}: ${error.message}`);
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : String(error);
+    return err(`Failed to walk blockstates in ${dir}: ${message}`);
   }
 }
 
@@ -69,9 +78,9 @@ async function walkDirectory(dir: string, filter: (file: string) => boolean): Pr
         files.push(fullPath);
       }
     }
-  } catch (error: any) {
+  } catch (error: unknown) {
     // If directory doesn't exist or can't be read, return empty array
-    if (error.code === "ENOENT" || error.code === "EACCES") {
+    if (isNodeError(error) && (error.code === "ENOENT" || error.code === "EACCES")) {
       return [];
     }
     throw error;

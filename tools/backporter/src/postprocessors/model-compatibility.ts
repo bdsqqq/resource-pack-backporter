@@ -1,13 +1,36 @@
 import { existsSync } from "node:fs";
 import { readdir, readFile, writeFile } from "node:fs/promises";
 import { join } from "node:path";
-import type { StructuredTracer, Span } from "@logger/index";
+import type { Span, StructuredTracer } from "@logger/index";
+
+interface MinecraftModelElement {
+  readonly from?: number[];
+  readonly to?: number[];
+  readonly [key: string]: unknown;
+}
+
+interface MinecraftModel {
+  readonly parent?: string;
+  readonly credit?: string;
+  readonly texture_size?: number[];
+  readonly elements?: MinecraftModelElement[];
+  readonly display?: Record<string, unknown>;
+  readonly [key: string]: unknown;
+}
 
 export class ModelCompatibilityProcessor {
   private tracer?: StructuredTracer;
 
   constructor(tracer?: StructuredTracer) {
     this.tracer = tracer;
+  }
+
+  private isMinecraftModel(obj: unknown): obj is MinecraftModel {
+    return typeof obj === "object" && obj !== null;
+  }
+
+  private isModelElement(obj: unknown): obj is MinecraftModelElement {
+    return typeof obj === "object" && obj !== null;
   }
 
   async fixModelCompatibility(outputDir: string): Promise<void> {
@@ -56,7 +79,15 @@ export class ModelCompatibilityProcessor {
 
     try {
       const content = await readFile(modelPath, "utf-8");
-      const model = JSON.parse(content);
+      const parsedContent: unknown = JSON.parse(content);
+
+      if (!this.isMinecraftModel(parsedContent)) {
+        modelSpan?.warn("Skipping invalid model file");
+        modelSpan?.end({ success: true, hasChanges: false });
+        return;
+      }
+
+      const model = { ...parsedContent };
       let hasChanges = false;
 
       // CRITICAL: Do not modify template files - they must remain standalone
@@ -86,15 +117,23 @@ export class ModelCompatibilityProcessor {
       }
 
       // Fix zero-thickness elements
-      if (model.elements) {
+      if (model.elements && Array.isArray(model.elements)) {
         for (const element of model.elements) {
-          if (!element.from || !element.to) continue;
-
-          for (let axis = 0; axis < 3; axis++) {
-            if (element.from[axis] === element.to[axis]) {
-              modelSpan?.info("Fixed zero-thickness element", { axis });
-              element.to[axis] = element.to[axis] + 0.01;
-              hasChanges = true;
+          if (
+            this.isModelElement(element) &&
+            element.from &&
+            element.to &&
+            Array.isArray(element.from) &&
+            Array.isArray(element.to)
+          ) {
+            for (let axis = 0; axis < 3; axis++) {
+              const fromValue = element.from?.[axis];
+              const toValue = element.to?.[axis];
+              if (fromValue !== undefined && toValue !== undefined && fromValue === toValue) {
+                modelSpan?.info("Fixed zero-thickness element", { axis });
+                (element.to as number[])[axis] = toValue + 0.01;
+                hasChanges = true;
+              }
             }
           }
         }
@@ -119,7 +158,7 @@ export class ModelCompatibilityProcessor {
     }
   }
 
-  private validateTemplateFile(model: any, modelPath: string, modelSpan?: Span): void {
+  private validateTemplateFile(model: MinecraftModel, modelPath: string, modelSpan?: Span): void {
     const errors: string[] = [];
 
     // Template files should NOT have parent field
@@ -146,7 +185,7 @@ export class ModelCompatibilityProcessor {
 
     if (errors.length > 0) {
       modelSpan?.error("Template file validation failed", {
-        errors,
+        errors: errors.join(", "),
         validationErrors: errors.length,
       });
       throw new Error(`Template file validation failed: ${modelPath}`);

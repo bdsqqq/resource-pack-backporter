@@ -37,8 +37,8 @@ async function getVanillaAssetFunctions() {
       isVanillaModel: module.isVanillaModel as (ref: string) => boolean,
     };
   } catch (error: unknown) {
-  const errorMessage = error instanceof Error ? error.message : String(error);
-      throw new Error(`Failed to load vanilla assets: ${errorMessage}`);
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    throw new Error(`Failed to load vanilla assets: ${errorMessage}`);
   }
 }
 
@@ -198,7 +198,7 @@ export async function validateResourcePack(
         }
       }
 
-      const textureRefs = extractTextureReferences(validationResult.data);
+      const textureRefs = extractTextureReferences(modelData);
 
       for (const ref of textureRefs) {
         const texturePathResult = await resolveTexturePath(packDir, ref);
@@ -222,9 +222,7 @@ export async function validateResourcePack(
               }
             } else {
               // Invalid vanilla texture reference - doesn't exist in pack or vanilla
-              errors.push(
-                `Invalid vanilla texture reference: ${ref} (referenced in ${modelFile})`
-              );
+              errors.push(`Invalid vanilla texture reference: ${ref} (referenced in ${modelFile})`);
             }
           } else {
             // Custom texture that should exist but doesn't
@@ -272,7 +270,10 @@ export async function validateResourcePack(
   });
 }
 
-function extractTextureReferences(modelData: { textures?: Record<string, string>; [key: string]: unknown }): string[] {
+function extractTextureReferences(modelData: {
+  textures?: Record<string, string>;
+  [key: string]: unknown;
+}): string[] {
   const refs: string[] = [];
 
   if (modelData.textures && typeof modelData.textures === "object") {

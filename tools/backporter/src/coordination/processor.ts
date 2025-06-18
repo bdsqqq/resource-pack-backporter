@@ -1,14 +1,18 @@
 import { mkdir } from "node:fs/promises";
-import type { ProcessingContext, WriteRequest } from "@backporter/file-manager";
+import type {
+  ProcessingContext,
+  ResourcePackStructure,
+  WriteRequest,
+} from "@backporter/file-manager";
 import { FileManagerImpl } from "@backporter/file-manager";
 import { getHandlers } from "@backporter/handlers";
 import { ResourcePackIntrospector } from "@backporter/introspection";
-import type { StructuredTracer, Span } from "@logger/index";
+import type { Span, StructuredTracer } from "@logger/index";
 import type { BackportOptions } from "./index";
 
 export class BackportCoordinator {
   private introspector: ResourcePackIntrospector;
-  private packStructure: any;
+  private packStructure: ResourcePackStructure | null = null;
   private verbose = false;
   private tracer?: StructuredTracer;
 
@@ -105,7 +109,7 @@ export class BackportCoordinator {
 
   private async processItemFile(
     itemFilePath: string,
-    packStructure: any,
+    packStructure: ResourcePackStructure,
     fileManager: FileManagerImpl,
     parentSpan?: Span
   ): Promise<void> {
@@ -116,8 +120,8 @@ export class BackportCoordinator {
     const itemSpan = parentSpan?.startChild(`Process ${itemId}`);
     itemSpan?.setAttributes({
       itemId,
-      componentsUsed: analysis.componentsUsed,
-      displayContexts: analysis.displayContexts,
+      componentsUsed: analysis.componentsUsed.join(", "),
+      displayContexts: analysis.displayContexts.join(", "),
     });
 
     if (this.verbose) {
@@ -132,7 +136,7 @@ export class BackportCoordinator {
       itemId,
       itemPath: itemFilePath,
       packStructure,
-      outputDir: fileManager.outputDir, // Access private field for now
+      outputDir: fileManager.getOutputDir,
     };
 
     // Load the item JSON for processing
@@ -222,7 +226,11 @@ export class BackportCoordinator {
     }
   }
 
-  private async copyPackMeta(inputDir: string, outputDir: string, parentSpan?: Span): Promise<void> {
+  private async copyPackMeta(
+    inputDir: string,
+    outputDir: string,
+    parentSpan?: Span
+  ): Promise<void> {
     const fs = require("node:fs");
     const { copyFile } = require("node:fs/promises");
     const { join } = require("node:path");

@@ -1,7 +1,7 @@
 import { existsSync } from "node:fs";
 import { copyFile, mkdir, writeFile } from "node:fs/promises";
 import { dirname, join } from "node:path";
-import type { StructuredTracer, Span } from "@logger/index";
+import type { Span, StructuredTracer } from "@logger/index";
 import type { OutputTarget } from "./index";
 
 export class BackportFileGenerator {
@@ -119,7 +119,7 @@ export class BackportFileGenerator {
     writeSpan?.setAttributes({
       targetFile: target.file,
       filePath,
-      propertyCount: Object.keys(target.content).length,
+      propertyCount: target.content ? Object.keys(target.content).length : 0,
     });
 
     try {
@@ -129,8 +129,10 @@ export class BackportFileGenerator {
       writeSpan?.debug("Converting content to .properties format");
       // Convert content object to .properties format
       const lines: string[] = [];
-      for (const [key, value] of Object.entries(target.content)) {
-        lines.push(`${key}=${value}`);
+      if (target.content && typeof target.content === "object") {
+        for (const [key, value] of Object.entries(target.content)) {
+          lines.push(`${key}=${value}`);
+        }
       }
 
       const content = `${lines.join("\n")}\n`;
@@ -315,27 +317,45 @@ export class BackportFileGenerator {
   }
 
   // Utility method for preserving animation data
-  async preserveAnimationData(sourceModel: any, targetModel: any): Promise<any> {
+  async preserveAnimationData(sourceModel: unknown, targetModel: unknown): Promise<unknown> {
+    if (
+      typeof sourceModel !== "object" ||
+      sourceModel === null ||
+      typeof targetModel !== "object" ||
+      targetModel === null
+    ) {
+      return targetModel;
+    }
+
+    const source = sourceModel as Record<string, unknown>;
+    const target = targetModel as Record<string, unknown>;
+
     // Copy animation-related properties
-    if (sourceModel.textures) {
-      targetModel.textures = {
-        ...sourceModel.textures,
-        ...targetModel.textures,
+    if (source.textures && typeof source.textures === "object") {
+      target.textures = {
+        ...(source.textures as Record<string, unknown>),
+        ...((target.textures as Record<string, unknown>) || {}),
       };
     }
 
-    if (sourceModel.elements) {
-      targetModel.elements = sourceModel.elements.map((element: any) => ({
-        ...element,
-        light_emission: element.light_emission, // Preserve lighting effects
-      }));
+    if (source.elements && Array.isArray(source.elements)) {
+      target.elements = source.elements.map((element: unknown) => {
+        if (typeof element === "object" && element !== null) {
+          const el = element as Record<string, unknown>;
+          return {
+            ...el,
+            light_emission: el.light_emission, // Preserve lighting effects
+          };
+        }
+        return element;
+      });
     }
 
     // Preserve display transformations for proper 3D rendering
-    if (sourceModel.display) {
-      targetModel.display = sourceModel.display;
+    if (source.display) {
+      target.display = source.display;
     }
 
-    return targetModel;
+    return target;
   }
 }

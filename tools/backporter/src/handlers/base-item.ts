@@ -1,16 +1,16 @@
 import type { ProcessingContext, WriteRequest } from "@backporter/file-manager";
-import type { ItemHandler } from "@backporter/handlers";
+import type { ItemHandler, JsonNode } from "@backporter/handlers";
 
 export class BaseItemHandler implements ItemHandler {
   name = "base-item";
 
-  canHandle(_jsonNode: any, _context: ProcessingContext): boolean {
+  canHandle(_jsonNode: JsonNode, _context: ProcessingContext): boolean {
     // This is a fallback handler - it always can handle any item
     // But it should run last (lowest priority)
     return true;
   }
 
-  process(jsonNode: any, context: ProcessingContext): WriteRequest[] {
+  process(jsonNode: JsonNode, context: ProcessingContext): WriteRequest[] {
     // For base items, we just need to copy the vanilla model structure
     // and ensure textures are available
     const requests: WriteRequest[] = [];
@@ -36,7 +36,10 @@ export class BaseItemHandler implements ItemHandler {
       requests.push({
         type: "texture-copy",
         path: textureRef.path,
-        content: textureRef,
+        content: {
+          sourcePath: textureRef.sourcePath,
+          itemId: textureRef.itemId,
+        },
         merge: "replace",
         priority: 0,
       });
@@ -45,41 +48,45 @@ export class BaseItemHandler implements ItemHandler {
     return requests;
   }
 
-  private hasComplexComponents(jsonNode: any): boolean {
+  private hasComplexComponents(jsonNode: JsonNode): boolean {
     // Check if this item has component-based selections or display contexts
     // that would be handled by specialized handlers
     return this.hasComponentSelection(jsonNode) || this.hasDisplayContextSelection(jsonNode);
   }
 
-  private hasComponentSelection(obj: any): boolean {
+  private hasComponentSelection(obj: unknown): boolean {
     if (typeof obj !== "object" || obj === null) return false;
 
+    const record = obj as Record<string, unknown>;
+
     // Look for component-based selections
-    if (obj.component && typeof obj.component === "string") return true;
+    if (record.component && typeof record.component === "string") return true;
 
     // Recursively search
-    for (const value of Object.values(obj)) {
+    for (const value of Object.values(record)) {
       if (this.hasComponentSelection(value)) return true;
     }
 
     return false;
   }
 
-  private hasDisplayContextSelection(obj: any): boolean {
+  private hasDisplayContextSelection(obj: unknown): boolean {
     if (typeof obj !== "object" || obj === null) return false;
 
+    const record = obj as Record<string, unknown>;
+
     // Look for display context selections
-    if (obj.property === "minecraft:display_context") return true;
+    if (record.property === "minecraft:display_context") return true;
 
     // Recursively search
-    for (const value of Object.values(obj)) {
+    for (const value of Object.values(record)) {
       if (this.hasDisplayContextSelection(value)) return true;
     }
 
     return false;
   }
 
-  private buildBaseModel(context: ProcessingContext): any {
+  private buildBaseModel(context: ProcessingContext): Record<string, unknown> {
     // Create a basic generated item model
     return {
       parent: "minecraft:item/generated",

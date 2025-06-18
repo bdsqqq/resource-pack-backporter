@@ -43,7 +43,11 @@ export class Span {
     return this;
   }
 
-  addEvent(level: LogEvent["level"], message: string, attributes?: Record<string, AttributeValue>): this {
+  addEvent(
+    level: LogEvent["level"],
+    message: string,
+    attributes?: Record<string, AttributeValue>
+  ): this {
     const event: LogEvent = {
       timestamp: performance.now(),
       level,
@@ -118,7 +122,11 @@ export class StructuredTracer {
     this.traceId = this.generateId();
   }
 
-  startSpan(operation: string, parentSpanId?: string, attributes?: Record<string, AttributeValue>): Span {
+  startSpan(
+    operation: string,
+    parentSpanId?: string,
+    attributes?: Record<string, AttributeValue>
+  ): Span {
     const spanId = this.generateId();
     const level = parentSpanId ? this.getSpanLevel(parentSpanId) + 1 : 0;
 

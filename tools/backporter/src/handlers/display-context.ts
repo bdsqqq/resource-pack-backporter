@@ -1,15 +1,15 @@
 import type { ProcessingContext, WriteRequest } from "@backporter/file-manager";
-import type { ItemHandler } from "@backporter/handlers";
+import type { ItemHandler, JsonNode } from "@backporter/handlers";
 
 export class DisplayContextHandler implements ItemHandler {
   name = "display-context";
 
-  canHandle(jsonNode: any, _context: ProcessingContext): boolean {
+  canHandle(jsonNode: JsonNode, _context: ProcessingContext): boolean {
     // Check if this item has display context switching
     return this.hasDisplayContextSelection(jsonNode);
   }
 
-  process(jsonNode: any, context: ProcessingContext): WriteRequest[] {
+  process(jsonNode: JsonNode, context: ProcessingContext): WriteRequest[] {
     // Extract context mappings from the JSON
     const contextMappings = this.extractContextMappings(jsonNode);
 
@@ -34,20 +34,23 @@ export class DisplayContextHandler implements ItemHandler {
     ];
   }
 
-  private hasDisplayContextSelection(jsonNode: any): boolean {
+  private hasDisplayContextSelection(jsonNode: JsonNode): boolean {
     return this.findDisplayContextSelector(jsonNode) !== null;
   }
 
-  private findDisplayContextSelector(obj: any): any {
+  private findDisplayContextSelector(obj: unknown): unknown {
     if (typeof obj !== "object" || obj === null) return null;
 
+    // Type guard for object with string properties
+    const record = obj as Record<string, unknown>;
+
     // Look for display context selection
-    if (obj.property === "minecraft:display_context" && obj.cases) {
-      return obj;
+    if (record.property === "minecraft:display_context" && record.cases) {
+      return record;
     }
 
     // Recursively search
-    for (const value of Object.values(obj)) {
+    for (const value of Object.values(record)) {
       const found = this.findDisplayContextSelector(value);
       if (found) return found;
     }
@@ -55,11 +58,18 @@ export class DisplayContextHandler implements ItemHandler {
     return null;
   }
 
-  private hasNestedComponentSelections(selector: any): boolean {
-    // Check if any case contains component-based selections
-    if (!selector.cases || !Array.isArray(selector.cases)) return false;
+  private hasNestedComponentSelections(selector: unknown): boolean {
+    if (typeof selector !== "object" || selector === null) return false;
 
-    for (const caseObj of selector.cases) {
+    const record = selector as Record<string, unknown>;
+
+    // Check if any case contains component-based selections
+    if (!record.cases || !Array.isArray(record.cases)) return false;
+
+    for (const caseItem of record.cases) {
+      if (typeof caseItem !== "object" || caseItem === null) continue;
+
+      const caseObj = caseItem as Record<string, unknown>;
       if (caseObj.model && typeof caseObj.model === "object") {
         // Check if the model contains component selections
         if (this.containsComponentSelection(caseObj.model)) {
@@ -71,21 +81,25 @@ export class DisplayContextHandler implements ItemHandler {
     return false;
   }
 
-  private containsComponentSelection(obj: any): boolean {
+  private containsComponentSelection(obj: unknown): boolean {
     if (typeof obj !== "object" || obj === null) return false;
 
+    const record = obj as Record<string, unknown>;
+
     // Look for component-based selections
-    if (obj.component && typeof obj.component === "string") return true;
+    if (record.component && typeof record.component === "string") return true;
 
     // Recursively search
-    for (const value of Object.values(obj)) {
+    for (const value of Object.values(record)) {
       if (this.containsComponentSelection(value)) return true;
     }
 
     return false;
   }
 
-  private extractContextMappings(jsonNode: any): { [context: string]: string } {
+  private extractContextMappings(jsonNode: JsonNode): {
+    [context: string]: string;
+  } {
     const mappings: { [context: string]: string } = {};
     const selector = this.findDisplayContextSelector(jsonNode);
 
@@ -96,12 +110,19 @@ export class DisplayContextHandler implements ItemHandler {
       return mappings;
     }
 
+    if (typeof selector !== "object" || selector === null) return mappings;
+
+    const selectorRecord = selector as Record<string, unknown>;
+
     // Process cases
-    if (selector.cases && Array.isArray(selector.cases)) {
-      for (const caseObj of selector.cases) {
+    if (selectorRecord.cases && Array.isArray(selectorRecord.cases)) {
+      for (const caseItem of selectorRecord.cases) {
+        if (typeof caseItem !== "object" || caseItem === null) continue;
+
+        const caseObj = caseItem as Record<string, unknown>;
         if (caseObj.when && caseObj.model) {
           const contexts = Array.isArray(caseObj.when) ? caseObj.when : [caseObj.when];
-          const modelPath = caseObj.model.model || caseObj.model;
+          const modelPath = this.extractModelPath(caseObj.model);
 
           for (const context of contexts) {
             if (typeof context === "string") {
@@ -113,29 +134,51 @@ export class DisplayContextHandler implements ItemHandler {
     }
 
     // Process fallback
-    if (selector.fallback?.model) {
-      const fallbackModel = selector.fallback.model;
+    if (
+      selectorRecord.fallback &&
+      typeof selectorRecord.fallback === "object" &&
+      selectorRecord.fallback !== null
+    ) {
+      const fallback = selectorRecord.fallback as Record<string, unknown>;
+      if (fallback.model) {
+        const fallbackModel = this.extractModelPath(fallback.model);
 
-      // Add fallback for contexts not explicitly handled
-      const standardContexts = [
-        "gui",
-        "fixed",
-        "ground",
-        "firstperson_righthand",
-        "thirdperson_righthand",
-        "firstperson_lefthand",
-        "thirdperson_lefthand",
-        "head",
-      ];
+        // Add fallback for contexts not explicitly handled
+        const standardContexts = [
+          "gui",
+          "fixed",
+          "ground",
+          "firstperson_righthand",
+          "thirdperson_righthand",
+          "firstperson_lefthand",
+          "thirdperson_lefthand",
+          "head",
+        ];
 
-      for (const context of standardContexts) {
-        if (!mappings[context]) {
-          mappings[context] = fallbackModel;
+        for (const context of standardContexts) {
+          if (!mappings[context]) {
+            mappings[context] = fallbackModel;
+          }
         }
       }
     }
 
     return mappings;
+  }
+
+  private extractModelPath(model: unknown): string {
+    if (typeof model === "string") {
+      return model;
+    }
+
+    if (typeof model === "object" && model !== null) {
+      const modelRecord = model as Record<string, unknown>;
+      if (modelRecord.model && typeof modelRecord.model === "string") {
+        return modelRecord.model;
+      }
+    }
+
+    return "";
   }
 
   private extractTexture(
@@ -186,11 +229,17 @@ export class DisplayContextHandler implements ItemHandler {
     return `minecraft:item/${context.itemId}`;
   }
 
-  private buildPommelModel(contextMappings: { [context: string]: string }, texture: string): any {
-    const overrides = [];
+  private buildPommelModel(
+    contextMappings: { [context: string]: string },
+    texture: string
+  ): Record<string, unknown> {
+    const overrides: Array<{
+      predicate: Record<string, number>;
+      model: string;
+    }> = [];
 
     // Map contexts to Pommel predicates
-    const contextToPredicates: { [context: string]: any } = {
+    const contextToPredicates: { [context: string]: Record<string, number> } = {
       firstperson_righthand: { "pommel:is_held": 1.0 },
       thirdperson_righthand: { "pommel:is_held": 1.0 },
       firstperson_lefthand: { "pommel:is_offhand": 1.0 },

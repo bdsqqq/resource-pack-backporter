@@ -1,15 +1,33 @@
 import type { ProcessingContext, WriteRequest } from "@backporter/file-manager";
-import type { ItemHandler } from "@backporter/handlers";
+import type { ItemHandler, JsonNode } from "@backporter/handlers";
 
 export class StoredEnchanmentsHandler implements ItemHandler {
   name = "stored-enchantments";
 
-  canHandle(jsonNode: any, _context: ProcessingContext): boolean {
+  private isObject(value: unknown): value is Record<string, unknown> {
+    return typeof value === "object" && value !== null && !Array.isArray(value);
+  }
+
+  private hasProperty<K extends string>(
+    obj: Record<string, unknown>,
+    key: K
+  ): obj is Record<string, unknown> & Record<K, unknown> {
+    return key in obj;
+  }
+
+  private hasStringProperty<K extends string>(
+    obj: Record<string, unknown>,
+    key: K
+  ): obj is Record<string, unknown> & Record<K, string> {
+    return key in obj && typeof obj[key] === "string";
+  }
+
+  canHandle(jsonNode: JsonNode, _context: ProcessingContext): boolean {
     // Check if this item has stored_enchantments component
     return this.hasStoredEnchantments(jsonNode);
   }
 
-  process(jsonNode: any, context: ProcessingContext): WriteRequest[] {
+  process(jsonNode: JsonNode, context: ProcessingContext): WriteRequest[] {
     // Extract enchantment variants from the JSON
     const enchantmentVariants = this.extractEnchantmentVariants(jsonNode, context);
 
@@ -43,15 +61,19 @@ export class StoredEnchanmentsHandler implements ItemHandler {
     return requests;
   }
 
-  private hasStoredEnchantments(jsonNode: any): boolean {
+  private hasStoredEnchantments(jsonNode: JsonNode): boolean {
     return this.findStoredEnchantmentsSelector(jsonNode) !== null;
   }
 
-  private findStoredEnchantmentsSelector(obj: any): any {
-    if (typeof obj !== "object" || obj === null) return null;
+  private findStoredEnchantmentsSelector(obj: unknown): unknown {
+    if (!this.isObject(obj)) return null;
 
     // Look for stored_enchantments component selection
-    if (obj.component === "minecraft:stored_enchantments" && obj.cases) {
+    if (
+      this.hasStringProperty(obj, "component") &&
+      obj.component === "minecraft:stored_enchantments" &&
+      this.hasProperty(obj, "cases")
+    ) {
       return obj;
     }
 
@@ -65,45 +87,54 @@ export class StoredEnchanmentsHandler implements ItemHandler {
   }
 
   private extractEnchantmentVariants(
-    jsonNode: any,
+    jsonNode: JsonNode,
     context: ProcessingContext
   ): EnchantmentVariant[] {
     const variants: EnchantmentVariant[] = [];
     const selector = this.findStoredEnchantmentsSelector(jsonNode);
 
-    if (!selector || !selector.cases) return variants;
+    if (!this.isObject(selector) || !Array.isArray(selector.cases)) return variants;
 
     // Process cases to extract enchantment conditions
     for (const caseObj of selector.cases) {
-      if (caseObj.when && caseObj.model) {
-        const conditions = Array.isArray(caseObj.when) ? caseObj.when : [caseObj.when];
-        const modelPath = caseObj.model.model || caseObj.model;
+      if (
+        !this.isObject(caseObj) ||
+        !this.hasProperty(caseObj, "when") ||
+        !this.hasProperty(caseObj, "model")
+      ) {
+        continue;
+      }
 
-        for (const condition of conditions) {
-          if (typeof condition === "object") {
-            // Extract enchantment and level from condition
-            for (const [enchantment, level] of Object.entries(condition)) {
-              if (typeof enchantment === "string" && typeof level === "number") {
-                const enchantmentName = enchantment.replace("minecraft:", "");
-                const variantName = `${enchantmentName}_${level}`;
+      const conditions = Array.isArray(caseObj.when) ? caseObj.when : [caseObj.when];
+      const modelPath =
+        this.isObject(caseObj.model) && this.hasStringProperty(caseObj.model, "model")
+          ? caseObj.model.model
+          : caseObj.model;
 
-                // Find texture for this variant
-                const texture = this.determineEnchantmentTexture(
-                  enchantmentName,
-                  level,
-                  modelPath,
-                  context
-                );
+      for (const condition of conditions) {
+        if (!this.isObject(condition)) continue;
 
-                variants.push({
-                  name: variantName,
-                  enchantment,
-                  level,
-                  modelPath,
-                  texture,
-                });
-              }
-            }
+        // Extract enchantment and level from condition
+        for (const [enchantment, level] of Object.entries(condition)) {
+          if (typeof enchantment === "string" && typeof level === "number") {
+            const enchantmentName = enchantment.replace("minecraft:", "");
+            const variantName = `${enchantmentName}_${level}`;
+
+            // Find texture for this variant
+            const texture = this.determineEnchantmentTexture(
+              enchantmentName,
+              level,
+              typeof modelPath === "string" ? modelPath : "",
+              context
+            );
+
+            variants.push({
+              name: variantName,
+              enchantment,
+              level,
+              modelPath: typeof modelPath === "string" ? modelPath : "",
+              texture,
+            });
           }
         }
       }
@@ -208,7 +239,10 @@ export class StoredEnchanmentsHandler implements ItemHandler {
     return `${enchantmentName}_${level}`;
   }
 
-  private buildCITProperties(variant: EnchantmentVariant, context: ProcessingContext): any {
+  private buildCITProperties(
+    variant: EnchantmentVariant,
+    context: ProcessingContext
+  ): Record<string, unknown> {
     // CIT properties format should match OptiFine expectations
     return {
       type: "item",
@@ -219,7 +253,10 @@ export class StoredEnchanmentsHandler implements ItemHandler {
     };
   }
 
-  private buildPommelModel(variant: EnchantmentVariant, _context: ProcessingContext): any {
+  private buildPommelModel(
+    variant: EnchantmentVariant,
+    _context: ProcessingContext
+  ): Record<string, unknown> {
     // Get the base enchantment name for 3D model references
     const enchantmentName = variant.enchantment.replace("minecraft:", "");
 

@@ -1,15 +1,15 @@
 import type { ProcessingContext, WriteRequest } from "@backporter/file-manager";
-import type { ItemHandler } from "@backporter/handlers";
+import type { ItemHandler, JsonNode } from "@backporter/handlers";
 
 export class WritableBookContentHandler implements ItemHandler {
   name = "writable-book-content";
 
-  canHandle(jsonNode: any, _context: ProcessingContext): boolean {
+  canHandle(jsonNode: JsonNode, _context: ProcessingContext): boolean {
     // Check if this item has writable_book_content component
     return this.hasWritableBookContent(jsonNode);
   }
 
-  process(jsonNode: any, context: ProcessingContext): WriteRequest[] {
+  process(jsonNode: JsonNode, context: ProcessingContext): WriteRequest[] {
     // Extract context mappings from the JSON
     const contextMappings = this.extractContextMappings(jsonNode, context);
 
@@ -34,23 +34,26 @@ export class WritableBookContentHandler implements ItemHandler {
     ];
   }
 
-  private hasWritableBookContent(jsonNode: any): boolean {
+  private hasWritableBookContent(jsonNode: JsonNode): boolean {
     return this.findWritableBookContentSelector(jsonNode) !== null;
   }
 
-  private findWritableBookContentSelector(obj: any): any {
+  private findWritableBookContentSelector(obj: unknown): unknown {
     if (typeof obj !== "object" || obj === null) return null;
+
+    // Type guard for object with string properties
+    const record = obj as Record<string, unknown>;
 
     // Look for writable_book_content component
     if (
-      obj.component === "minecraft:writable_book_content" ||
-      obj.predicate === "minecraft:writable_book_content"
+      record.component === "minecraft:writable_book_content" ||
+      record.predicate === "minecraft:writable_book_content"
     ) {
-      return obj;
+      return record;
     }
 
     // Recursively search
-    for (const value of Object.values(obj)) {
+    for (const value of Object.values(record)) {
       const found = this.findWritableBookContentSelector(value);
       if (found) return found;
     }
@@ -59,7 +62,7 @@ export class WritableBookContentHandler implements ItemHandler {
   }
 
   private extractContextMappings(
-    jsonNode: any,
+    jsonNode: JsonNode,
     _context: ProcessingContext
   ): { [context: string]: string } {
     const mappings: { [context: string]: string } = {};
@@ -68,10 +71,12 @@ export class WritableBookContentHandler implements ItemHandler {
     // The writable book content component is typically nested within display context selection
     const displayContextSelector = this.findDisplayContextSelector(jsonNode);
 
-    if (displayContextSelector) {
+    if (displayContextSelector && typeof displayContextSelector === "object") {
+      const selector = displayContextSelector as Record<string, unknown>;
       // Process cases to find writable book content conditions
-      if (displayContextSelector.cases && Array.isArray(displayContextSelector.cases)) {
-        for (const caseObj of displayContextSelector.cases) {
+      if (selector.cases && Array.isArray(selector.cases)) {
+        for (const caseItem of selector.cases) {
+          const caseObj = caseItem as Record<string, unknown>;
           if (caseObj.when && caseObj.model) {
             const contexts = Array.isArray(caseObj.when) ? caseObj.when : [caseObj.when];
 
@@ -89,8 +94,8 @@ export class WritableBookContentHandler implements ItemHandler {
       }
 
       // Handle fallback
-      if (displayContextSelector.fallback) {
-        const fallbackModel = this.extractModelFromBookContent(displayContextSelector.fallback);
+      if (selector.fallback) {
+        const fallbackModel = this.extractModelFromBookContent(selector.fallback);
         if (fallbackModel) {
           const standardContexts = [
             "gui",
@@ -130,14 +135,16 @@ export class WritableBookContentHandler implements ItemHandler {
     return mappings;
   }
 
-  private findDisplayContextSelector(obj: any): any {
+  private findDisplayContextSelector(obj: unknown): unknown {
     if (typeof obj !== "object" || obj === null) return null;
 
-    if (obj.property === "minecraft:display_context" && obj.cases) {
-      return obj;
+    const record = obj as Record<string, unknown>;
+
+    if (record.property === "minecraft:display_context" && record.cases) {
+      return record;
     }
 
-    for (const value of Object.values(obj)) {
+    for (const value of Object.values(record)) {
       const found = this.findDisplayContextSelector(value);
       if (found) return found;
     }
@@ -145,35 +152,41 @@ export class WritableBookContentHandler implements ItemHandler {
     return null;
   }
 
-  private extractModelFromBookContent(modelObj: any): string | null {
+  private extractModelFromBookContent(modelObj: unknown): string | null {
     if (typeof modelObj === "string") {
       return modelObj;
     }
 
-    if (modelObj.type === "minecraft:model" && modelObj.model) {
-      return modelObj.model;
+    if (typeof modelObj !== "object" || modelObj === null) {
+      return null;
+    }
+
+    const record = modelObj as Record<string, unknown>;
+
+    if (record.type === "minecraft:model" && record.model) {
+      return record.model as string;
     }
 
     // Handle condition logic for book content
     if (
-      modelObj.type === "minecraft:condition" &&
-      modelObj.predicate === "minecraft:writable_book_content"
+      record.type === "minecraft:condition" &&
+      record.predicate === "minecraft:writable_book_content"
     ) {
       // For conditions, we prefer the on_false model (closed book) as it's more common
-      if (modelObj.on_false?.model) {
-        return modelObj.on_false.model;
+      const onFalse = record.on_false as Record<string, unknown> | undefined;
+      if (onFalse?.model) {
+        return onFalse.model as string;
       }
-      if (modelObj.on_true?.model) {
-        return modelObj.on_true.model;
+      const onTrue = record.on_true as Record<string, unknown> | undefined;
+      if (onTrue?.model) {
+        return onTrue.model as string;
       }
     }
 
     // Recursively search for models
-    if (typeof modelObj === "object") {
-      for (const value of Object.values(modelObj)) {
-        const found = this.extractModelFromBookContent(value);
-        if (found) return found;
-      }
+    for (const value of Object.values(record)) {
+      const found = this.extractModelFromBookContent(value);
+      if (found) return found;
     }
 
     return null;
@@ -229,11 +242,11 @@ export class WritableBookContentHandler implements ItemHandler {
   private buildWritableBookPommelModel(
     contextMappings: { [context: string]: string },
     texture: string
-  ): any {
-    const overrides = [];
+  ): Record<string, unknown> {
+    const overrides: Array<{ predicate: Record<string, number>; model: string }> = [];
 
     // Map contexts to Pommel predicates
-    const contextToPredicates: { [context: string]: any } = {
+    const contextToPredicates: { [context: string]: Record<string, number> } = {
       firstperson_righthand: { "pommel:is_held": 1.0 },
       thirdperson_righthand: { "pommel:is_held": 1.0 },
       firstperson_lefthand: { "pommel:is_offhand": 1.0 },
@@ -264,27 +277,35 @@ export class WritableBookContentHandler implements ItemHandler {
     };
   }
 
-  private extractSimpleModelPath(modelPath: any): string {
+  private extractSimpleModelPath(modelPath: unknown): string {
     // If it's already a string, return as-is
     if (typeof modelPath === "string") {
       return modelPath;
     }
 
+    if (typeof modelPath !== "object" || modelPath === null) {
+      return "minecraft:item/books_3d/writable_book_3d_contents_open";
+    }
+
+    const record = modelPath as Record<string, unknown>;
+
     // If it's a complex condition object, extract the preferred model
-    if (typeof modelPath === "object" && modelPath.type === "minecraft:condition") {
+    if (record.type === "minecraft:condition") {
       // For writable book content, prefer the "closed book" state (on_false)
-      if (modelPath.on_false?.type === "minecraft:model" && modelPath.on_false.model) {
-        return modelPath.on_false.model;
+      const onFalse = record.on_false as Record<string, unknown> | undefined;
+      if (onFalse?.type === "minecraft:model" && onFalse.model) {
+        return onFalse.model as string;
       }
       // Fallback to on_true if needed
-      if (modelPath.on_true?.type === "minecraft:model" && modelPath.on_true.model) {
-        return modelPath.on_true.model;
+      const onTrue = record.on_true as Record<string, unknown> | undefined;
+      if (onTrue?.type === "minecraft:model" && onTrue.model) {
+        return onTrue.model as string;
       }
     }
 
     // If it's a direct model object
-    if (typeof modelPath === "object" && modelPath.type === "minecraft:model" && modelPath.model) {
-      return modelPath.model;
+    if (record.type === "minecraft:model" && record.model) {
+      return record.model as string;
     }
 
     // Fallback - return a default model path

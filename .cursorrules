@@ -1,0 +1,59 @@
+# Cursor Rules
+
+## Core Design Philosophy
+
+- **Respect underlying systems** - Match existing APIs, conventions, and naming. Don't create abstractions that fight what you're building on top of.
+- **Hide complexity behind simplicity** - Complex implementation is fine if it creates a simple consumer experience. Make simple things simple, complex things possible.
+- **Structure teaches usage** - Use compound components and logical grouping so the API shape guides consumers toward correct patterns.
+- **Smart defaults, full control** - Provide sensible defaults that work without configuration, but preserve access to full underlying power.
+
+## Language & Runtime
+
+- **TypeScript with Bun runtime** - Use Bun APIs over Node.js equivalents
+- **Strict TypeScript** - No `any` in source code, prefer proper types
+- **Import patterns** - Use `node:` prefix for Node imports, path aliases for project imports
+- **Error handling** - Use `neverthrow` Result<T,E> pattern instead of throwing exceptions
+
+## Code Style
+
+- **Biome formatting** - 2 spaces, 100 char lines, double quotes, semicolons, ES5 trailing commas
+- **Naming conventions** - kebab-case files, PascalCase classes, camelCase variables/functions
+- **Modern syntax** - Template literals over concatenation, `const` over `let`
+- **Clean imports** - Auto-organize imports, prefer specific imports over namespace imports
+
+## Architecture Patterns
+
+- **Conditional compiler architecture** - Coordinators orchestrate handlers that process inputs and emit outputs
+- **Structured logging** - Use tracers with spans, avoid console outputs in production
+- **Type-safe error handling** - Return Results instead of throwing, handle errors explicitly
+- **Colocated tests** - Test files next to source files with `.test.ts` suffix
+- **Path aliases** - Use `@toolname/*` imports for clean module references
+
+## File Organization
+
+- Source code in `src/` with modular structure (handlers/, coordination/, etc.)
+- Tests colocated with source files
+- Tools in `tools/` directory with individual packages
+- Shared utilities in dedicated modules (file-utils/, json-utils/, etc.)
+
+## Documentation
+
+- **Concise over verbose** - Prefer actionable insights over lengthy analysis
+- **Structured metadata** - Use consistent frontmatter format for notes
+- **Git preserves history** - Aggressive cleanup is fine, delete obsolete files
+- **API documentation** - Focus on usage patterns and examples
+
+## Testing
+
+- **Comprehensive coverage** - Unit tests for handlers, integration tests for full pipelines
+- **Real instrumentation** - Use actual tracers in tests, not mocks
+- **Isolated testing** - Each component should be testable in isolation
+- **Regression prevention** - Add tests for critical bugs once fixed
+
+## Best Practices
+
+- **Delegate complex tasks** - Use sub-agents for multi-step operations
+- **Systematic approach** - Plan tasks with todo lists, mark items complete
+- **Critical evaluation** - Express tradeoffs, don't blindly agree
+- **Incremental changes** - Avoid massive refactors unless explicitly requested
+- **Respect existing patterns** - Extend current architecture rather than replacing it

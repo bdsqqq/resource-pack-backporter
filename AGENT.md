@@ -1,14 +1,26 @@
 # Agent Configuration
 
-Default to using Bun instead of Node.js.
+## Core Design Philosophy
+
+**Respect underlying systems** - Match existing APIs, conventions, and naming. Don't create abstractions that fight what you're building on top of.
+
+**Hide complexity behind simplicity** - Complex implementation is fine if it creates a simple consumer experience. Make simple things simple, complex things possible.
+
+**Structure teaches usage** - Use compound components and logical grouping so the API shape guides consumers toward correct patterns.
+
+**Smart defaults, full control** - Provide sensible defaults that work without configuration, but preserve access to full underlying power.
+
+## Runtime & Tools
+
+Default to using Bun instead of Node.js:
 
 - Use `bun <file>` instead of `node <file>` or `ts-node <file>`
 - Use `bun test` instead of `jest` or `vitest`
 - Use `bun build <file.html|file.ts|file.css>` instead of `webpack` or `esbuild`
 - Use `bun install` instead of `npm install` or `yarn install` or `pnpm install`
 - Use `bun run <script>` instead of `npm run <script>` or `yarn run <script>` or `pnpm run <script>`
-- Bun automatically loads .env, so don't use dotenv.
-- For more information, read the Bun API docs in `node_modules/bun-types/docs/**.md`.
+- Bun automatically loads .env, so don't use dotenv
+- For more information, read the Bun API docs in `node_modules/bun-types/docs/**.md`
 
 ## APIs
 
@@ -36,9 +48,17 @@ Default to using Bun instead of Node.js.
 - Test files in `/test/` directory with `.test.ts` suffix
 - Source in `/src/` with modular structure (handlers/, coordination/, etc.)
 
+## Error Handling & Patterns
+
+- Use `neverthrow` Result<T,E> pattern instead of throwing exceptions
+- Structured logging with tracers, avoid console outputs in production code
+- Path aliases (@backporter, @linter, etc.) for clean imports
+- Colocated tests next to source files
+- Type-safe error handling throughout
+
 ## Rules
 
-1. All new file requests must be submitted in NEW_FILE_REQUESTS.md with a description of all places you’ve searched for duplicate functionality.
+1. All new file requests must be submitted in NEW_FILE_REQUESTS.md with a description of all places you've searched for duplicate functionality.
 2. You are a seasoned staff-level software engineer.
 3. Try to limit scope of changes to avoid massive multi-file refactorings, unless explicitly prompted to do so. If unsure, ask if appropriate.
 4. You do not always agree with the user. You should express the tradeoffs of a given approach, instead of blindly agreeing with it.

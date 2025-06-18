@@ -1,67 +1,152 @@
 import { existsSync } from "node:fs";
 import { join } from "node:path";
+import { Result, ok, err } from "neverthrow";
 
 export interface PathResolution {
   exists: boolean;
-  fullPath?: string;
-  namespace?: string;
-  path?: string;
+  fullPath: string;
+  namespace: string;
+  path: string;
+  isVanilla: boolean;
+  isNamespaced: boolean;
 }
 
-export function resolveTexturePath(
+// dynamic vanilla asset loaders with fallbacks
+let cachedVanillaFunctions: {
+  isVanillaTexture: (ref: string) => boolean;
+  isVanillaModel: (ref: string) => boolean;
+} | null = null;
+
+async function getVanillaAssetFunctions(): Promise<{
+  isVanillaTexture: (ref: string) => boolean;
+  isVanillaModel: (ref: string) => boolean;
+}> {
+  if (cachedVanillaFunctions) {
+    return cachedVanillaFunctions;
+  }
+
+  try {
+    const modulePath = join(
+      process.cwd(),
+      "tools",
+      "mc-paths",
+      "src",
+      "vanilla-assets.generated.ts"
+    );
+    if (existsSync(modulePath)) {
+      const module = await import(modulePath);
+      cachedVanillaFunctions = {
+        isVanillaTexture: module.isVanillaTexture,
+        isVanillaModel: module.isVanillaModel,
+      };
+      return cachedVanillaFunctions;
+    }
+  } catch {
+    // fallback if import fails
+  }
+
+  // fallback functions when generated assets don't exist
+  // optimistic approach - assume minecraft: references are valid
+  cachedVanillaFunctions = {
+    isVanillaTexture: (ref: string) => ref.startsWith("minecraft:"),
+    isVanillaModel: (ref: string) => ref.startsWith("minecraft:"),
+  };
+
+  return cachedVanillaFunctions;
+}
+
+export async function resolveTexturePath(
   packDir: string,
   textureRef: string
-): PathResolution {
-  // Handle namespace:path format (e.g., "minecraft:item/book")
-  let namespace = "minecraft";
-  let path = textureRef;
+): Promise<Result<PathResolution, string>> {
+  try {
+    const { isVanillaTexture } = await getVanillaAssetFunctions();
 
-  if (textureRef.includes(":")) {
-    const parts = textureRef.split(":", 2);
-    namespace = parts[0] || "minecraft";
-    path = parts[1] || textureRef;
+    // Check if texture reference is properly namespaced
+    const isNamespaced = textureRef.includes(":");
+
+    // Handle namespace:path format (e.g., "minecraft:item/book")
+    let namespace = "minecraft";
+    let path = textureRef;
+
+    if (isNamespaced) {
+      const parts = textureRef.split(":", 2);
+      namespace = parts[0] || "minecraft";
+      path = parts[1] || textureRef;
+    }
+
+    // Check if it's a vanilla texture
+    const isVanilla = isVanillaTexture(textureRef);
+
+    // Construct the full path
+    const fullPath = join(
+      packDir,
+      "assets",
+      namespace,
+      "textures",
+      `${path}.png`
+    );
+
+    return ok({
+      exists: existsSync(fullPath),
+      fullPath,
+      namespace,
+      path,
+      isVanilla,
+      isNamespaced,
+    });
+  } catch (error: any) {
+    return err(
+      `Failed to resolve texture path for ${textureRef}: ${error.message}`
+    );
   }
-
-  // Construct the full path
-  const fullPath = join(
-    packDir,
-    "assets",
-    namespace,
-    "textures",
-    `${path}.png`
-  );
-
-  return {
-    exists: existsSync(fullPath),
-    fullPath,
-    namespace,
-    path,
-  };
 }
 
-export function resolveModelPath(
+export async function resolveModelPath(
   packDir: string,
   modelRef: string
-): PathResolution {
-  // Handle namespace:path format (e.g., "minecraft:item/book")
-  let namespace = "minecraft";
-  let path = modelRef;
+): Promise<Result<PathResolution, string>> {
+  try {
+    const { isVanillaModel } = await getVanillaAssetFunctions();
 
-  if (modelRef.includes(":")) {
-    const parts = modelRef.split(":", 2);
-    namespace = parts[0] || "minecraft";
-    path = parts[1] || modelRef;
+    // Check if model reference is properly namespaced
+    const isNamespaced = modelRef.includes(":");
+
+    // Handle namespace:path format (e.g., "minecraft:item/book")
+    let namespace = "minecraft";
+    let path = modelRef;
+
+    if (isNamespaced) {
+      const parts = modelRef.split(":", 2);
+      namespace = parts[0] || "minecraft";
+      path = parts[1] || modelRef;
+    }
+
+    // Check if it's a vanilla model
+    const isVanilla = isVanillaModel(modelRef);
+
+    // Construct the full path
+    const fullPath = join(
+      packDir,
+      "assets",
+      namespace,
+      "models",
+      `${path}.json`
+    );
+
+    return ok({
+      exists: existsSync(fullPath),
+      fullPath,
+      namespace,
+      path,
+      isVanilla,
+      isNamespaced,
+    });
+  } catch (error: any) {
+    return err(
+      `Failed to resolve model path for ${modelRef}: ${error.message}`
+    );
   }
-
-  // Construct the full path
-  const fullPath = join(packDir, "assets", namespace, "models", `${path}.json`);
-
-  return {
-    exists: existsSync(fullPath),
-    fullPath,
-    namespace,
-    path,
-  };
 }
 
 export function resolveBlockstatePath(
@@ -92,6 +177,8 @@ export function resolveBlockstatePath(
     fullPath,
     namespace,
     path,
+    isVanilla: false,
+    isNamespaced: path.includes(":"),
   };
 }
 

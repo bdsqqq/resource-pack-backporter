@@ -34,14 +34,24 @@ async function main() {
       printHelp();
       break;
 
-    default:
-      console.error(`✗ Unknown command: ${command}`);
+    default: {
+      const { createTracer } = await import("@logger/index");
+      const tracer = createTracer({
+        serviceName: "tools-dispatcher",
+        enableConsole: true,
+      });
+      const errorSpan = tracer.startSpan("Unknown Command Error");
+      errorSpan.error(`Unknown command: ${command}`, { command });
+      errorSpan.end({ success: false });
       printHelp();
       process?.exit?.(1);
+      break;
+    }
   }
 }
 
 function printHelp() {
+  // Simple help output - no need for instrumentation here
   console.log(`
 ⚙  Minecraft Resource Pack Tools
 
@@ -68,8 +78,18 @@ Or use the direct commands:
 
 // Run if this is the main module
 if (import.meta.main) {
-  main().catch((error) => {
-    console.error("✗ Tool failed:", error.message);
+  main().catch(async (error) => {
+    const { createTracer } = await import("@logger/index");
+    const tracer = createTracer({
+      serviceName: "tools-main",
+      enableConsole: true,
+    });
+    const errorSpan = tracer.startSpan("Tool Execution Error");
+    errorSpan.error("Tool failed", {
+      error: error.message,
+      stack: error.stack,
+    });
+    errorSpan.end({ success: false });
     process?.exit?.(1);
   });
 }

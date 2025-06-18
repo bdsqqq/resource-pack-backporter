@@ -78,8 +78,9 @@ async function generatePackOutputName(inputDir: string): Promise<string> {
     if (!packName) packName = "unknown_pack";
 
     return `↺--${packName}`;
-  } catch (error) {
-    console.warn("⚠ Could not parse folder name, using default name:", error);
+  } catch {
+    // Fallback parsing - just use default name silently
+    // afaict this is not critical enough to warrant instrumentation
   }
 
   return "↺--backported_pack";

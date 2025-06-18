@@ -2,6 +2,9 @@ import { validateJson } from "@json-utils/index";
 import { walkModels, walkTextures } from "@file-utils/index";
 import { resolveTexturePath } from "@mc-paths/index";
 import type { StructuredTracer } from "@logger/index";
+import { Result, ok } from "neverthrow";
+import { join } from "node:path";
+import { ensureVanillaAssetsGenerated } from "./pack-format-utils";
 
 export interface ValidationOptions {
   verbose?: boolean;
@@ -18,11 +21,31 @@ export interface ValidationResult {
   };
 }
 
+// dynamic import helper for vanilla assets
+async function getVanillaAssetFunctions() {
+  try {
+    const modulePath = join(
+      process.cwd(),
+      "tools",
+      "mc-paths",
+      "src",
+      "vanilla-assets.generated.ts"
+    );
+    const module = await import(modulePath);
+    return {
+      isVanillaTexture: module.isVanillaTexture as (ref: string) => boolean,
+      isVanillaModel: module.isVanillaModel as (ref: string) => boolean,
+    };
+  } catch (error: any) {
+    throw new Error(`Failed to load vanilla assets: ${error.message}`);
+  }
+}
+
 export async function validateResourcePack(
   packDir: string,
   options: ValidationOptions = {},
   tracer?: StructuredTracer
-): Promise<ValidationResult> {
+): Promise<Result<ValidationResult, string>> {
   const { verbose = false } = options;
   const errors: string[] = [];
   const warnings: string[] = [];
@@ -32,25 +55,86 @@ export async function validateResourcePack(
   validationSpan?.setAttributes({ packDir, verbose });
   validationSpan?.info("Starting pack validation");
 
-  // Check pack.mcmeta exists and is valid
-  try {
-    const packMeta = await validateJson(`${packDir}/pack.mcmeta`);
-    if (!packMeta.isValid) {
-      errors.push(`Invalid pack.mcmeta: ${packMeta.error}`);
-    } else {
-      if (verbose) {
-        console.log("├─ pack.mcmeta is valid");
-      }
-    }
-    filesChecked++;
-  } catch (error) {
-    errors.push(`Missing or unreadable pack.mcmeta: ${error}`);
+  // ensure vanilla assets are generated before validation
+  const assetsResult = await ensureVanillaAssetsGenerated(packDir, tracer);
+  if (assetsResult.isErr()) {
+    const error = `Failed to ensure vanilla assets: ${assetsResult.error}`;
+    validationSpan?.error(error);
+    validationSpan?.end({ success: false, error });
+    return ok({
+      isValid: false,
+      errors: [error],
+      warnings,
+      stats: { filesChecked: 0, issues: 1 },
+    });
   }
 
+  if (assetsResult.value) {
+    validationSpan?.info("Generated vanilla assets for validation");
+  } else if (verbose) {
+    validationSpan?.debug("Using existing vanilla assets");
+  }
+
+  // load vanilla asset functions after ensuring they exist
+  let isVanillaTexture: (ref: string) => boolean;
+  let isVanillaModel: (ref: string) => boolean;
+
+  try {
+    const vanillaAssets = await getVanillaAssetFunctions();
+    isVanillaTexture = vanillaAssets.isVanillaTexture;
+    isVanillaModel = vanillaAssets.isVanillaModel;
+  } catch (error: any) {
+    const errorMsg = `Failed to load vanilla asset validators: ${error.message}`;
+    validationSpan?.error(errorMsg);
+    validationSpan?.end({ success: false, error: errorMsg });
+    return ok({
+      isValid: false,
+      errors: [errorMsg],
+      warnings,
+      stats: { filesChecked: 0, issues: 1 },
+    });
+  }
+
+  // Check pack.mcmeta exists and is valid
+  const packMetaResult = await validateJson(`${packDir}/pack.mcmeta`);
+  if (packMetaResult.isErr()) {
+    errors.push(`pack.mcmeta error: ${packMetaResult.error}`);
+  } else {
+    const validation = packMetaResult.value;
+    if (!validation.isValid) {
+      errors.push(`Invalid pack.mcmeta: ${validation.error}`);
+    } else if (verbose) {
+      validationSpan?.info("pack.mcmeta is valid");
+    }
+  }
+  filesChecked++;
+
   // Find all model files
-  const modelFiles = walkModels(`${packDir}/assets`);
+  const modelFilesResult = await walkModels(`${packDir}/assets`);
+  if (modelFilesResult.isErr()) {
+    errors.push(`Failed to scan models: ${modelFilesResult.error}`);
+    const isValid = errors.length === 0;
+    const issues = errors.length + warnings.length;
+
+    validationSpan?.end({
+      success: isValid,
+      filesChecked,
+      issues,
+      errors: errors.length,
+      warnings: warnings.length,
+    });
+
+    return ok({
+      isValid,
+      errors,
+      warnings,
+      stats: { filesChecked, issues },
+    });
+  }
+
+  const modelFiles = modelFilesResult.value;
   if (verbose) {
-    console.log(`├─ Found ${modelFiles.length} model files`);
+    validationSpan?.info(`Found ${modelFiles.length} model files`);
   }
 
   // Validate each model file
@@ -58,19 +142,91 @@ export async function validateResourcePack(
     filesChecked++;
 
     const validation = await validateJson(modelFile);
-    if (!validation.isValid) {
-      errors.push(`Invalid JSON in ${modelFile}: ${validation.error}`);
+    if (validation.isErr()) {
+      errors.push(`Failed to read ${modelFile}: ${validation.error}`);
       continue;
     }
 
-    // Check texture references in model files
-    if (validation.data && typeof validation.data === "object") {
-      const textureRefs = extractTextureReferences(validation.data);
+    const validationResult = validation.value;
+    if (!validationResult.isValid) {
+      errors.push(`Invalid JSON in ${modelFile}: ${validationResult.error}`);
+      continue;
+    }
+
+    // Check model parent and texture references
+    if (validationResult.data && typeof validationResult.data === "object") {
+      const modelData = validationResult.data as any;
+
+      // Validate parent model reference
+      if (modelData.parent && typeof modelData.parent === "string") {
+        const parentRef = modelData.parent;
+        const modelPathResult = await resolveTexturePath(packDir, parentRef); // reusing texture path resolver logic
+
+        if (modelPathResult.isOk()) {
+          const modelPath = modelPathResult.value;
+          if (!modelPath.exists && modelPath.namespace === "minecraft") {
+            if (!isVanillaModel(parentRef)) {
+              errors.push(
+                `Invalid vanilla model reference: ${parentRef} does not exist in Minecraft (referenced in ${modelFile})`
+              );
+            } else if (verbose) {
+              validationSpan?.debug(
+                `Vanilla model reference: ${parentRef} (referenced in ${modelFile})`
+              );
+            }
+          }
+        }
+      }
+
+      const textureRefs = extractTextureReferences(validationResult.data);
 
       for (const ref of textureRefs) {
-        const texturePath = resolveTexturePath(packDir, ref);
+        const texturePathResult = await resolveTexturePath(packDir, ref);
+        if (texturePathResult.isErr()) {
+          errors.push(
+            `Error resolving texture ${ref}: ${texturePathResult.error}`
+          );
+          continue;
+        }
+
+        const texturePath = texturePathResult.value;
+
+        // Check texture existence and validity
         if (!texturePath.exists) {
-          errors.push(`Missing texture: ${ref} (referenced in ${modelFile})`);
+          // Check if it's a minecraft namespace reference
+          if (texturePath.namespace === "minecraft") {
+            if (isVanillaTexture(ref)) {
+              // Valid vanilla texture - this is expected to not exist in resource pack
+              if (verbose) {
+                validationSpan?.debug(
+                  `Vanilla texture reference: ${ref} (referenced in ${modelFile})`
+                );
+              }
+            } else {
+              // Invalid vanilla texture reference - this is an error
+              errors.push(
+                `Invalid vanilla texture reference: ${ref} does not exist in Minecraft (referenced in ${modelFile})`
+              );
+            }
+          } else {
+            // Custom texture that should exist but doesn't
+            errors.push(`Missing texture: ${ref} (referenced in ${modelFile})`);
+          }
+        } else {
+          // Texture exists in the pack - only warn about namespacing if it could be ambiguous
+          if (!texturePath.isNamespaced && isVanillaTexture(ref)) {
+            warnings.push(
+              'Texture "' +
+                ref +
+                "\" isn't namespaced. While it exists in your pack, it could fallback to vanilla minecraft:" +
+                ref +
+                " in some contexts. " +
+                "Consider explicitly namespacing textures to avoid ambiguity. " +
+                "(referenced in " +
+                modelFile +
+                ")"
+            );
+          }
         }
       }
     }
@@ -78,8 +234,12 @@ export async function validateResourcePack(
 
   // Find all texture files and check for unused ones
   if (verbose) {
-    const textureCount = walkTextures(`${packDir}/assets`).length;
-    console.log(`└─ Found ${textureCount} texture files`);
+    const textureCountResult = await walkTextures(`${packDir}/assets`);
+    if (textureCountResult.isOk()) {
+      validationSpan?.info(
+        `Found ${textureCountResult.value.length} texture files`
+      );
+    }
   }
 
   const isValid = errors.length === 0;
@@ -93,7 +253,7 @@ export async function validateResourcePack(
     warnings: warnings.length,
   });
 
-  return {
+  return ok({
     isValid,
     errors,
     warnings,
@@ -101,14 +261,14 @@ export async function validateResourcePack(
       filesChecked,
       issues,
     },
-  };
+  });
 }
 
 function extractTextureReferences(modelData: any): string[] {
   const refs: string[] = [];
 
   if (modelData.textures && typeof modelData.textures === "object") {
-    for (const [key, value] of Object.entries(modelData.textures)) {
+    for (const [_, value] of Object.entries(modelData.textures)) {
       if (typeof value === "string") {
         refs.push(value);
       }

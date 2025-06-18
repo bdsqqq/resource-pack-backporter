@@ -224,9 +224,7 @@ export class WritableBookContentHandler implements ItemHandler {
           const fs = require("node:fs");
           const modelContent = JSON.parse(fs.readFileSync(found, "utf-8"));
           if (modelContent.textures?.layer0) {
-            console.log(
-              `📚 Extracted book texture: ${modelContent.textures.layer0}`
-            );
+            // Debug texture extraction - could add span here if needed
             return modelContent.textures.layer0;
           }
         }

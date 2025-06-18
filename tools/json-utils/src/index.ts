@@ -1,43 +1,49 @@
-import { readFileSync, existsSync } from "node:fs";
+import { readFile } from "node:fs/promises";
+import { Result, ok, err } from "neverthrow";
 
-export interface JsonValidationResult {
+export interface ValidationResult {
   isValid: boolean;
   data?: any;
   error?: string;
+  line?: number;
+  column?: number;
 }
 
 export async function validateJson(
   filePath: string
-): Promise<JsonValidationResult> {
-  if (!existsSync(filePath)) {
-    return {
-      isValid: false,
-      error: "File does not exist",
-    };
-  }
-
+): Promise<Result<ValidationResult, string>> {
   try {
-    const content = readFileSync(filePath, "utf8");
-    const data = JSON.parse(content);
+    const content = await readFile(filePath, "utf-8");
 
-    return {
-      isValid: true,
-      data,
-    };
-  } catch (error: any) {
-    return {
-      isValid: false,
-      error: error.message || "Invalid JSON",
-    };
-  }
-}
+    try {
+      const data = JSON.parse(content);
+      return ok({
+        isValid: true,
+        data,
+      });
+    } catch (parseError: any) {
+      // Extract line/column info from JSON parse error if available
+      const match = parseError.message.match(/at position (\d+)/);
+      let line: number | undefined;
+      let column: number | undefined;
 
-export function parseJsonSync(filePath: string): any {
-  try {
-    const content = readFileSync(filePath, "utf8");
-    return JSON.parse(content);
-  } catch (error) {
-    throw new Error(`Failed to parse JSON from ${filePath}: ${error}`);
+      if (match?.[1]) {
+        const position = Number.parseInt(match[1], 10);
+        const lines = content.substring(0, position).split("\n");
+        line = lines.length;
+        const lastLine = lines[lines.length - 1];
+        column = lastLine ? lastLine.length + 1 : 1;
+      }
+
+      return ok({
+        isValid: false,
+        error: parseError.message,
+        line,
+        column,
+      });
+    }
+  } catch (fileError: any) {
+    return err(`Failed to read file ${filePath}: ${fileError.message}`);
   }
 }
 

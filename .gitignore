@@ -28,3 +28,5 @@ Desktop.ini
 *.temp
 temp/
 tmp/
+# Generated vanilla asset dictionaries (build-time generated)
+tools/mc-paths/src/vanilla-*.generated.ts

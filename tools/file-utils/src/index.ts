@@ -1,85 +1,91 @@
-import { readdirSync, statSync, existsSync } from "node:fs";
+import { readdir, stat } from "node:fs/promises";
 import { join, extname } from "node:path";
+import { Result, ok, err } from "neverthrow";
 
-export function walkAssets(dir: string): string[] {
-  if (!existsSync(dir)) return [];
-
-  const files: string[] = [];
-
+export async function walkModels(
+  dir: string
+): Promise<Result<string[], string>> {
   try {
-    for (const file of readdirSync(dir)) {
-      const full = join(dir, file);
-      if (statSync(full).isDirectory()) {
-        files.push(...walkAssets(full));
-      } else {
-        files.push(full);
-      }
-    }
-  } catch {
-    // Directory doesn't exist or can't be read
+    const files = await walkDirectory(
+      dir,
+      (file) => extname(file) === ".json" && file.includes("/models/")
+    );
+    return ok(files);
+  } catch (error: any) {
+    return err(`Failed to walk models in ${dir}: ${error.message}`);
   }
-
-  return files;
 }
 
-export function walkModels(dir: string): string[] {
-  if (!existsSync(dir)) return [];
-
-  const files: string[] = [];
-
+export async function walkTextures(
+  dir: string
+): Promise<Result<string[], string>> {
   try {
-    for (const file of readdirSync(dir)) {
-      const full = join(dir, file);
-      if (statSync(full).isDirectory()) {
-        files.push(...walkModels(full));
-      } else if (extname(full) === ".json" && full.includes("/models/")) {
-        files.push(full);
-      }
-    }
-  } catch {
-    // Directory doesn't exist or can't be read
+    const files = await walkDirectory(
+      dir,
+      (file) => extname(file) === ".png" && file.includes("/textures/")
+    );
+    return ok(files);
+  } catch (error: any) {
+    return err(`Failed to walk textures in ${dir}: ${error.message}`);
   }
-
-  return files;
 }
 
-export function walkTextures(dir: string): string[] {
-  if (!existsSync(dir)) return [];
-
-  const files: string[] = [];
-
+export async function walkAssets(
+  dir: string
+): Promise<Result<string[], string>> {
   try {
-    for (const file of readdirSync(dir)) {
-      const full = join(dir, file);
-      if (statSync(full).isDirectory()) {
-        files.push(...walkTextures(full));
-      } else if (extname(full) === ".png" && full.includes("/textures/")) {
-        files.push(full);
-      }
-    }
-  } catch {
-    // Directory doesn't exist or can't be read
+    const files = await walkDirectory(dir, () => true);
+    return ok(files);
+  } catch (error: any) {
+    return err(`Failed to walk assets in ${dir}: ${error.message}`);
   }
-
-  return files;
 }
 
-export function walkBlockstates(dir: string): string[] {
-  if (!existsSync(dir)) return [];
+export async function walkBlockstates(
+  dir: string
+): Promise<Result<string[], string>> {
+  try {
+    const files = await walkDirectory(
+      dir,
+      (file) => extname(file) === ".json" && file.includes("/blockstates/")
+    );
+    return ok(files);
+  } catch (error: any) {
+    return err(`Failed to walk blockstates in ${dir}: ${error.message}`);
+  }
+}
 
+async function walkDirectory(
+  dir: string,
+  filter: (file: string) => boolean
+): Promise<string[]> {
   const files: string[] = [];
 
   try {
-    for (const file of readdirSync(dir)) {
-      const full = join(dir, file);
-      if (statSync(full).isDirectory()) {
-        files.push(...walkBlockstates(full));
-      } else if (extname(full) === ".json" && full.includes("/blockstates/")) {
-        files.push(full);
+    const entries = await readdir(dir);
+
+    for (const entry of entries) {
+      const fullPath = join(dir, entry);
+      const stats = await stat(fullPath);
+
+      if (stats.isDirectory()) {
+        // Skip output directories
+        if (entry === "dist" || entry === "build" || entry === "out") {
+          continue;
+        }
+
+        const subFiles = await walkDirectory(fullPath, filter);
+        files.push(...subFiles);
+      } else if (filter(fullPath)) {
+        files.push(fullPath);
       }
     }
-  } catch {
-    // Directory doesn't exist or can't be read
+  } catch (error: any) {
+    // If directory doesn't exist or can't be read, return empty array
+    if (error.code === "ENOENT" || error.code === "EACCES") {
+      return [];
+    }
+    throw error;
   }
 
   return files;

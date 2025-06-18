@@ -10,13 +10,13 @@ transforms modern minecraft resource packs (1.21.4+) to work with older versions
 
 ### ◉ [linter](tools/linter/)
 
-static validation tool that catches json syntax errors, missing texture references, and pack structure issues before deployment.
+static validation tool with auto-generation and comprehensive test coverage that detects pack format, generates vanilla assets, validates json syntax, texture references, model inheritance chains, and pack structure. zero configuration required - perfect for build pipelines.
 
 ### ⚙ utility modules
 
 - **[file-utils](tools/file-utils/)**: filesystem traversal and asset discovery
 - **[json-utils](tools/json-utils/)**: json validation with detailed error reporting
-- **[mc-paths](tools/mc-paths/)**: minecraft-specific path resolution and texture lookups
+- **[mc-paths](tools/mc-paths/)**: minecraft-specific path resolution with dynamically generated vanilla asset validation
 
 ## quick start
 
@@ -128,10 +128,16 @@ tools/
 
 ### linter capabilities
 
+- **automatic vanilla asset generation**: detects pack_format and generates validation for target minecraft version
 - **json syntax validation**: comprehensive error reporting with line/column info
-- **texture reference checking**: validates all model → texture references
-- **missing file detection**: identifies broken asset links
+- **vanilla asset validation**: supports minecraft 1.13-1.21+ with auto-generation
+- **texture reference checking**: validates all model → texture references, distinguishes custom vs vanilla
+- **model inheritance validation**: checks parent model references and chains
+- **missing file detection**: identifies broken asset links with context
+- **namespace warnings**: alerts about non-namespaced references
 - **pack structure validation**: ensures proper minecraft pack format
+- **zero configuration**: works out of the box, perfect for ci/cd pipelines
+- **comprehensive test coverage**: 17+ test cases covering all validation scenarios including auto-generation
 
 ### development experience
 
@@ -143,19 +149,22 @@ tools/
 
 ## testing
 
+comprehensive test coverage across all tools:
+
 ```bash
 # run all tests
 bun test
 
 # run specific tool tests
 bun test tools/backporter/src/
-bun test tools/linter/src/
+bun run test:linter
 
 # run with coverage
 bun test --coverage
 
-# run specific test file
+# run specific test files
 bun test tools/backporter/src/integration.test.ts
+bun test tools/linter/src/validator.test.ts
 ```
 
 ## contributing

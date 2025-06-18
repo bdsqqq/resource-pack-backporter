@@ -1,0 +1,3033 @@
+┌─ Resource Pack Backport
+┌─ Conditional Compiler Backport
+│  ├─ Clear Output Directory
+│  │  ✓ Directory cleared
+│  └─ Clear Output Directory completed [45.3ms]
+│  ├─ Copy Base Assets
+│  │  ✓ Created output directory
+│  │  ├─ Copy Pack Files
+│  │  │  ├─ Copy File: pack.png
+│  │  │  │  ✓ Copied file
+│  │  │  └─ Copy File: pack.png completed [374μs]
+│  │  │  ├─ Copy File: pack.mcmeta
+│  │  │  │  ✓ Updated pack.mcmeta with attribution
+│  │  │  └─ Copy File: pack.mcmeta completed [741μs]
+│  │  │  ✓ Pack files copied
+│  │  └─ Copy Pack Files completed [1.4ms]
+│  │  ✓ Copied base asset files
+│  └─ Copy Base Assets completed [95.2ms]
+│  ├─ Find Item Files
+│  │  ✓ Found item files
+│  └─ Find Item Files completed [183μs]
+│  ├─ Item Processing
+│  │  ├─ Process Item: writable_book
+│  │  │  ✓ Extracted execution paths
+│  │  │  ▪ Sample execution paths
+│  │  │  ✓ Generated output targets
+│  │  │  ├─ Generate Files
+│  │  │  │  ├─ Generate pommel: models/item/writable_book.json
+│  │  │  │  │  ├─ Write Pommel Model
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [57μs]
+│  │  │  │  │  │  ▪ Writing pommel model content
+│  │  │  │  │  │  ✓ Pommel model written successfully
+│  │  │  │  │  └─ Write Pommel Model completed [354μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate pommel: models/item/writable_book.json completed [522μs]
+│  │  │  └─ Generate Files completed [543μs]
+│  │  └─ Process Item: writable_book completed [1.9ms]
+│  │  ├─ Process Item: knowledge_book
+│  │  │  ✓ Extracted execution paths
+│  │  │  ▪ Sample execution paths
+│  │  │  ✓ Generated output targets
+│  │  │  ├─ Generate Files
+│  │  │  │  ├─ Generate pommel: models/item/knowledge_book.json
+│  │  │  │  │  ├─ Write Pommel Model
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [30μs]
+│  │  │  │  │  │  ▪ Writing pommel model content
+│  │  │  │  │  │  ✓ Pommel model written successfully
+│  │  │  │  │  └─ Write Pommel Model completed [201μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate pommel: models/item/knowledge_book.json completed [217μs]
+│  │  │  └─ Generate Files completed [231μs]
+│  │  └─ Process Item: knowledge_book completed [434μs]
+│  │  ├─ Process Item: book
+│  │  │  ✓ Extracted execution paths
+│  │  │  ▪ Sample execution paths
+│  │  │  ✓ Generated output targets
+│  │  │  ├─ Generate Files
+│  │  │  │  ├─ Generate pommel: models/item/book.json
+│  │  │  │  │  ├─ Write Pommel Model
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [44μs]
+│  │  │  │  │  │  ▪ Writing pommel model content
+│  │  │  │  │  │  ✓ Pommel model written successfully
+│  │  │  │  │  └─ Write Pommel Model completed [220μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate pommel: models/item/book.json completed [229μs]
+│  │  │  └─ Generate Files completed [237μs]
+│  │  └─ Process Item: book completed [400μs]
+│  │  ├─ Process Item: written_book
+│  │  │  ✓ Extracted execution paths
+│  │  │  ▪ Sample execution paths
+│  │  │  ✓ Generated output targets
+│  │  │  ├─ Generate Files
+│  │  │  │  ├─ Generate pommel: models/item/written_book.json
+│  │  │  │  │  ├─ Write Pommel Model
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [37μs]
+│  │  │  │  │  │  ▪ Writing pommel model content
+│  │  │  │  │  │  ✓ Pommel model written successfully
+│  │  │  │  │  └─ Write Pommel Model completed [204μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate pommel: models/item/written_book.json completed [226μs]
+│  │  │  └─ Generate Files completed [237μs]
+│  │  └─ Process Item: written_book completed [378μs]
+│  │  ├─ Process Item: enchanted_book
+│  │  │  ✓ Extracted execution paths
+│  │  │  ▪ Sample execution paths
+│  │  │  ✓ Generated output targets
+│  │  │  ├─ Generate Files
+│  │  │  │  ├─ Generate pommel: models/item/enchanted_book.json
+│  │  │  │  │  ├─ Write Pommel Model
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [46μs]
+│  │  │  │  │  │  ▪ Writing pommel model content
+│  │  │  │  │  │  ✓ Pommel model written successfully
+│  │  │  │  │  └─ Write Pommel Model completed [252μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate pommel: models/item/enchanted_book.json completed [269μs]
+│  │  │  │  ├─ Generate cit_property: optifine/cit/aqua_affinity_1.properties
+│  │  │  │  │  ├─ Write CIT Property
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [168μs]
+│  │  │  │  │  │  ▪ Converting content to .properties format
+│  │  │  │  │  │  ▪ Writing CIT property file
+│  │  │  │  │  │  ✓ CIT property written successfully
+│  │  │  │  │  └─ Write CIT Property completed [361μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate cit_property: optifine/cit/aqua_affinity_1.properties completed [676μs]
+│  │  │  │  ├─ Generate cit_property: optifine/cit/bane_of_arthropods_1.properties
+│  │  │  │  │  ├─ Write CIT Property
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [24μs]
+│  │  │  │  │  │  ▪ Converting content to .properties format
+│  │  │  │  │  │  ▪ Writing CIT property file
+│  │  │  │  │  │  ✓ CIT property written successfully
+│  │  │  │  │  └─ Write CIT Property completed [218μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate cit_property: optifine/cit/bane_of_arthropods_1.properties completed [245μs]
+│  │  │  │  ├─ Generate cit_property: optifine/cit/bane_of_arthropods_2.properties
+│  │  │  │  │  ├─ Write CIT Property
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [32μs]
+│  │  │  │  │  │  ▪ Converting content to .properties format
+│  │  │  │  │  │  ▪ Writing CIT property file
+│  │  │  │  │  │  ✓ CIT property written successfully
+│  │  │  │  │  └─ Write CIT Property completed [221μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate cit_property: optifine/cit/bane_of_arthropods_2.properties completed [246μs]
+│  │  │  │  ├─ Generate cit_property: optifine/cit/bane_of_arthropods_3.properties
+│  │  │  │  │  ├─ Write CIT Property
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [33μs]
+│  │  │  │  │  │  ▪ Converting content to .properties format
+│  │  │  │  │  │  ▪ Writing CIT property file
+│  │  │  │  │  │  ✓ CIT property written successfully
+│  │  │  │  │  └─ Write CIT Property completed [180μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate cit_property: optifine/cit/bane_of_arthropods_3.properties completed [192μs]
+│  │  │  │  ├─ Generate cit_property: optifine/cit/bane_of_arthropods_4.properties
+│  │  │  │  │  ├─ Write CIT Property
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [25μs]
+│  │  │  │  │  │  ▪ Converting content to .properties format
+│  │  │  │  │  │  ▪ Writing CIT property file
+│  │  │  │  │  │  ✓ CIT property written successfully
+│  │  │  │  │  └─ Write CIT Property completed [174μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate cit_property: optifine/cit/bane_of_arthropods_4.properties completed [190μs]
+│  │  │  │  ├─ Generate cit_property: optifine/cit/bane_of_arthropods_5.properties
+│  │  │  │  │  ├─ Write CIT Property
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [31μs]
+│  │  │  │  │  │  ▪ Converting content to .properties format
+│  │  │  │  │  │  ▪ Writing CIT property file
+│  │  │  │  │  │  ✓ CIT property written successfully
+│  │  │  │  │  └─ Write CIT Property completed [222μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate cit_property: optifine/cit/bane_of_arthropods_5.properties completed [238μs]
+│  │  │  │  ├─ Generate cit_property: optifine/cit/breach_1.properties
+│  │  │  │  │  ├─ Write CIT Property
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [34μs]
+│  │  │  │  │  │  ▪ Converting content to .properties format
+│  │  │  │  │  │  ▪ Writing CIT property file
+│  │  │  │  │  │  ✓ CIT property written successfully
+│  │  │  │  │  └─ Write CIT Property completed [260μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate cit_property: optifine/cit/breach_1.properties completed [272μs]
+│  │  │  │  ├─ Generate cit_property: optifine/cit/breach_2.properties
+│  │  │  │  │  ├─ Write CIT Property
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [31μs]
+│  │  │  │  │  │  ▪ Converting content to .properties format
+│  │  │  │  │  │  ▪ Writing CIT property file
+│  │  │  │  │  │  ✓ CIT property written successfully
+│  │  │  │  │  └─ Write CIT Property completed [191μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate cit_property: optifine/cit/breach_2.properties completed [202μs]
+│  │  │  │  ├─ Generate cit_property: optifine/cit/breach_3.properties
+│  │  │  │  │  ├─ Write CIT Property
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [28μs]
+│  │  │  │  │  │  ▪ Converting content to .properties format
+│  │  │  │  │  │  ▪ Writing CIT property file
+│  │  │  │  │  │  ✓ CIT property written successfully
+│  │  │  │  │  └─ Write CIT Property completed [151μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate cit_property: optifine/cit/breach_3.properties completed [160μs]
+│  │  │  │  ├─ Generate cit_property: optifine/cit/breach_4.properties
+│  │  │  │  │  ├─ Write CIT Property
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [31μs]
+│  │  │  │  │  │  ▪ Converting content to .properties format
+│  │  │  │  │  │  ▪ Writing CIT property file
+│  │  │  │  │  │  ✓ CIT property written successfully
+│  │  │  │  │  └─ Write CIT Property completed [179μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate cit_property: optifine/cit/breach_4.properties completed [192μs]
+│  │  │  │  ├─ Generate cit_property: optifine/cit/blast_protection_1.properties
+│  │  │  │  │  ├─ Write CIT Property
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [32μs]
+│  │  │  │  │  │  ▪ Converting content to .properties format
+│  │  │  │  │  │  ▪ Writing CIT property file
+│  │  │  │  │  │  ✓ CIT property written successfully
+│  │  │  │  │  └─ Write CIT Property completed [200μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate cit_property: optifine/cit/blast_protection_1.properties completed [216μs]
+│  │  │  │  ├─ Generate cit_property: optifine/cit/blast_protection_2.properties
+│  │  │  │  │  ├─ Write CIT Property
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [32μs]
+│  │  │  │  │  │  ▪ Converting content to .properties format
+│  │  │  │  │  │  ▪ Writing CIT property file
+│  │  │  │  │  │  ✓ CIT property written successfully
+│  │  │  │  │  └─ Write CIT Property completed [223μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate cit_property: optifine/cit/blast_protection_2.properties completed [235μs]
+│  │  │  │  ├─ Generate cit_property: optifine/cit/blast_protection_3.properties
+│  │  │  │  │  ├─ Write CIT Property
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [31μs]
+│  │  │  │  │  │  ▪ Converting content to .properties format
+│  │  │  │  │  │  ▪ Writing CIT property file
+│  │  │  │  │  │  ✓ CIT property written successfully
+│  │  │  │  │  └─ Write CIT Property completed [189μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate cit_property: optifine/cit/blast_protection_3.properties completed [198μs]
+│  │  │  │  ├─ Generate cit_property: optifine/cit/blast_protection_4.properties
+│  │  │  │  │  ├─ Write CIT Property
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [29μs]
+│  │  │  │  │  │  ▪ Converting content to .properties format
+│  │  │  │  │  │  ▪ Writing CIT property file
+│  │  │  │  │  │  ✓ CIT property written successfully
+│  │  │  │  │  └─ Write CIT Property completed [176μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate cit_property: optifine/cit/blast_protection_4.properties completed [186μs]
+│  │  │  │  ├─ Generate cit_property: optifine/cit/channeling_1.properties
+│  │  │  │  │  ├─ Write CIT Property
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [25μs]
+│  │  │  │  │  │  ▪ Converting content to .properties format
+│  │  │  │  │  │  ▪ Writing CIT property file
+│  │  │  │  │  │  ✓ CIT property written successfully
+│  │  │  │  │  └─ Write CIT Property completed [159μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate cit_property: optifine/cit/channeling_1.properties completed [171μs]
+│  │  │  │  ├─ Generate cit_property: optifine/cit/binding_curse_1.properties
+│  │  │  │  │  ├─ Write CIT Property
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [29μs]
+│  │  │  │  │  │  ▪ Converting content to .properties format
+│  │  │  │  │  │  ▪ Writing CIT property file
+│  │  │  │  │  │  ✓ CIT property written successfully
+│  │  │  │  │  └─ Write CIT Property completed [203μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate cit_property: optifine/cit/binding_curse_1.properties completed [211μs]
+│  │  │  │  ├─ Generate cit_property: optifine/cit/density_1.properties
+│  │  │  │  │  ├─ Write CIT Property
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [31μs]
+│  │  │  │  │  │  ▪ Converting content to .properties format
+│  │  │  │  │  │  ▪ Writing CIT property file
+│  │  │  │  │  │  ✓ CIT property written successfully
+│  │  │  │  │  └─ Write CIT Property completed [185μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate cit_property: optifine/cit/density_1.properties completed [192μs]
+│  │  │  │  ├─ Generate cit_property: optifine/cit/density_2.properties
+│  │  │  │  │  ├─ Write CIT Property
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [32μs]
+│  │  │  │  │  │  ▪ Converting content to .properties format
+│  │  │  │  │  │  ▪ Writing CIT property file
+│  │  │  │  │  │  ✓ CIT property written successfully
+│  │  │  │  │  └─ Write CIT Property completed [166μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate cit_property: optifine/cit/density_2.properties completed [178μs]
+│  │  │  │  ├─ Generate cit_property: optifine/cit/density_3.properties
+│  │  │  │  │  ├─ Write CIT Property
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [27μs]
+│  │  │  │  │  │  ▪ Converting content to .properties format
+│  │  │  │  │  │  ▪ Writing CIT property file
+│  │  │  │  │  │  ✓ CIT property written successfully
+│  │  │  │  │  └─ Write CIT Property completed [146μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate cit_property: optifine/cit/density_3.properties completed [153μs]
+│  │  │  │  ├─ Generate cit_property: optifine/cit/density_4.properties
+│  │  │  │  │  ├─ Write CIT Property
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [31μs]
+│  │  │  │  │  │  ▪ Converting content to .properties format
+│  │  │  │  │  │  ▪ Writing CIT property file
+│  │  │  │  │  │  ✓ CIT property written successfully
+│  │  │  │  │  └─ Write CIT Property completed [180μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate cit_property: optifine/cit/density_4.properties completed [192μs]
+│  │  │  │  ├─ Generate cit_property: optifine/cit/density_5.properties
+│  │  │  │  │  ├─ Write CIT Property
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [30μs]
+│  │  │  │  │  │  ▪ Converting content to .properties format
+│  │  │  │  │  │  ▪ Writing CIT property file
+│  │  │  │  │  │  ✓ CIT property written successfully
+│  │  │  │  │  └─ Write CIT Property completed [175μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate cit_property: optifine/cit/density_5.properties completed [185μs]
+│  │  │  │  ├─ Generate cit_property: optifine/cit/depth_strider_1.properties
+│  │  │  │  │  ├─ Write CIT Property
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [33μs]
+│  │  │  │  │  │  ▪ Converting content to .properties format
+│  │  │  │  │  │  ▪ Writing CIT property file
+│  │  │  │  │  │  ✓ CIT property written successfully
+│  │  │  │  │  └─ Write CIT Property completed [728μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate cit_property: optifine/cit/depth_strider_1.properties completed [749μs]
+│  │  │  │  ├─ Generate cit_property: optifine/cit/depth_strider_2.properties
+│  │  │  │  │  ├─ Write CIT Property
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [29μs]
+│  │  │  │  │  │  ▪ Converting content to .properties format
+│  │  │  │  │  │  ▪ Writing CIT property file
+│  │  │  │  │  │  ✓ CIT property written successfully
+│  │  │  │  │  └─ Write CIT Property completed [178μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate cit_property: optifine/cit/depth_strider_2.properties completed [222μs]
+│  │  │  │  ├─ Generate cit_property: optifine/cit/depth_strider_3.properties
+│  │  │  │  │  ├─ Write CIT Property
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [31μs]
+│  │  │  │  │  │  ▪ Converting content to .properties format
+│  │  │  │  │  │  ▪ Writing CIT property file
+│  │  │  │  │  │  ✓ CIT property written successfully
+│  │  │  │  │  └─ Write CIT Property completed [171μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate cit_property: optifine/cit/depth_strider_3.properties completed [213μs]
+│  │  │  │  ├─ Generate cit_property: optifine/cit/efficiency_1.properties
+│  │  │  │  │  ├─ Write CIT Property
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [32μs]
+│  │  │  │  │  │  ▪ Converting content to .properties format
+│  │  │  │  │  │  ▪ Writing CIT property file
+│  │  │  │  │  │  ✓ CIT property written successfully
+│  │  │  │  │  └─ Write CIT Property completed [181μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate cit_property: optifine/cit/efficiency_1.properties completed [202μs]
+│  │  │  │  ├─ Generate cit_property: optifine/cit/efficiency_2.properties
+│  │  │  │  │  ├─ Write CIT Property
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [28μs]
+│  │  │  │  │  │  ▪ Converting content to .properties format
+│  │  │  │  │  │  ▪ Writing CIT property file
+│  │  │  │  │  │  ✓ CIT property written successfully
+│  │  │  │  │  └─ Write CIT Property completed [188μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate cit_property: optifine/cit/efficiency_2.properties completed [200μs]
+│  │  │  │  ├─ Generate cit_property: optifine/cit/efficiency_3.properties
+│  │  │  │  │  ├─ Write CIT Property
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [29μs]
+│  │  │  │  │  │  ▪ Converting content to .properties format
+│  │  │  │  │  │  ▪ Writing CIT property file
+│  │  │  │  │  │  ✓ CIT property written successfully
+│  │  │  │  │  └─ Write CIT Property completed [158μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate cit_property: optifine/cit/efficiency_3.properties completed [169μs]
+│  │  │  │  ├─ Generate cit_property: optifine/cit/efficiency_4.properties
+│  │  │  │  │  ├─ Write CIT Property
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [21μs]
+│  │  │  │  │  │  ▪ Converting content to .properties format
+│  │  │  │  │  │  ▪ Writing CIT property file
+│  │  │  │  │  │  ✓ CIT property written successfully
+│  │  │  │  │  └─ Write CIT Property completed [177μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate cit_property: optifine/cit/efficiency_4.properties completed [185μs]
+│  │  │  │  ├─ Generate cit_property: optifine/cit/efficiency_5.properties
+│  │  │  │  │  ├─ Write CIT Property
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [28μs]
+│  │  │  │  │  │  ▪ Converting content to .properties format
+│  │  │  │  │  │  ▪ Writing CIT property file
+│  │  │  │  │  │  ✓ CIT property written successfully
+│  │  │  │  │  └─ Write CIT Property completed [178μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate cit_property: optifine/cit/efficiency_5.properties completed [191μs]
+│  │  │  │  ├─ Generate cit_property: optifine/cit/feather_falling_1.properties
+│  │  │  │  │  ├─ Write CIT Property
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [19μs]
+│  │  │  │  │  │  ▪ Converting content to .properties format
+│  │  │  │  │  │  ▪ Writing CIT property file
+│  │  │  │  │  │  ✓ CIT property written successfully
+│  │  │  │  │  └─ Write CIT Property completed [148μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate cit_property: optifine/cit/feather_falling_1.properties completed [157μs]
+│  │  │  │  ├─ Generate cit_property: optifine/cit/feather_falling_2.properties
+│  │  │  │  │  ├─ Write CIT Property
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [39μs]
+│  │  │  │  │  │  ▪ Converting content to .properties format
+│  │  │  │  │  │  ▪ Writing CIT property file
+│  │  │  │  │  │  ✓ CIT property written successfully
+│  │  │  │  │  └─ Write CIT Property completed [176μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate cit_property: optifine/cit/feather_falling_2.properties completed [185μs]
+│  │  │  │  ├─ Generate cit_property: optifine/cit/feather_falling_3.properties
+│  │  │  │  │  ├─ Write CIT Property
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [18μs]
+│  │  │  │  │  │  ▪ Converting content to .properties format
+│  │  │  │  │  │  ▪ Writing CIT property file
+│  │  │  │  │  │  ✓ CIT property written successfully
+│  │  │  │  │  └─ Write CIT Property completed [144μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate cit_property: optifine/cit/feather_falling_3.properties completed [152μs]
+│  │  │  │  ├─ Generate cit_property: optifine/cit/feather_falling_4.properties
+│  │  │  │  │  ├─ Write CIT Property
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [28μs]
+│  │  │  │  │  │  ▪ Converting content to .properties format
+│  │  │  │  │  │  ▪ Writing CIT property file
+│  │  │  │  │  │  ✓ CIT property written successfully
+│  │  │  │  │  └─ Write CIT Property completed [153μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate cit_property: optifine/cit/feather_falling_4.properties completed [160μs]
+│  │  │  │  ├─ Generate cit_property: optifine/cit/fire_aspect_1.properties
+│  │  │  │  │  ├─ Write CIT Property
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [25μs]
+│  │  │  │  │  │  ▪ Converting content to .properties format
+│  │  │  │  │  │  ▪ Writing CIT property file
+│  │  │  │  │  │  ✓ CIT property written successfully
+│  │  │  │  │  └─ Write CIT Property completed [141μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate cit_property: optifine/cit/fire_aspect_1.properties completed [149μs]
+│  │  │  │  ├─ Generate cit_property: optifine/cit/fire_aspect_2.properties
+│  │  │  │  │  ├─ Write CIT Property
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [16μs]
+│  │  │  │  │  │  ▪ Converting content to .properties format
+│  │  │  │  │  │  ▪ Writing CIT property file
+│  │  │  │  │  │  ✓ CIT property written successfully
+│  │  │  │  │  └─ Write CIT Property completed [116μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate cit_property: optifine/cit/fire_aspect_2.properties completed [122μs]
+│  │  │  │  ├─ Generate cit_property: optifine/cit/fire_protection_1.properties
+│  │  │  │  │  ├─ Write CIT Property
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [25μs]
+│  │  │  │  │  │  ▪ Converting content to .properties format
+│  │  │  │  │  │  ▪ Writing CIT property file
+│  │  │  │  │  │  ✓ CIT property written successfully
+│  │  │  │  │  └─ Write CIT Property completed [175μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate cit_property: optifine/cit/fire_protection_1.properties completed [188μs]
+│  │  │  │  ├─ Generate cit_property: optifine/cit/fire_protection_2.properties
+│  │  │  │  │  ├─ Write CIT Property
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [30μs]
+│  │  │  │  │  │  ▪ Converting content to .properties format
+│  │  │  │  │  │  ▪ Writing CIT property file
+│  │  │  │  │  │  ✓ CIT property written successfully
+│  │  │  │  │  └─ Write CIT Property completed [178μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate cit_property: optifine/cit/fire_protection_2.properties completed [187μs]
+│  │  │  │  ├─ Generate cit_property: optifine/cit/fire_protection_3.properties
+│  │  │  │  │  ├─ Write CIT Property
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [28μs]
+│  │  │  │  │  │  ▪ Converting content to .properties format
+│  │  │  │  │  │  ▪ Writing CIT property file
+│  │  │  │  │  │  ✓ CIT property written successfully
+│  │  │  │  │  └─ Write CIT Property completed [207μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate cit_property: optifine/cit/fire_protection_3.properties completed [221μs]
+│  │  │  │  ├─ Generate cit_property: optifine/cit/fire_protection_4.properties
+│  │  │  │  │  ├─ Write CIT Property
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [32μs]
+│  │  │  │  │  │  ▪ Converting content to .properties format
+│  │  │  │  │  │  ▪ Writing CIT property file
+│  │  │  │  │  │  ✓ CIT property written successfully
+│  │  │  │  │  └─ Write CIT Property completed [173μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate cit_property: optifine/cit/fire_protection_4.properties completed [180μs]
+│  │  │  │  ├─ Generate cit_property: optifine/cit/flame_1.properties
+│  │  │  │  │  ├─ Write CIT Property
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [28μs]
+│  │  │  │  │  │  ▪ Converting content to .properties format
+│  │  │  │  │  │  ▪ Writing CIT property file
+│  │  │  │  │  │  ✓ CIT property written successfully
+│  │  │  │  │  └─ Write CIT Property completed [161μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate cit_property: optifine/cit/flame_1.properties completed [170μs]
+│  │  │  │  ├─ Generate cit_property: optifine/cit/fortune_1.properties
+│  │  │  │  │  ├─ Write CIT Property
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [39μs]
+│  │  │  │  │  │  ▪ Converting content to .properties format
+│  │  │  │  │  │  ▪ Writing CIT property file
+│  │  │  │  │  │  ✓ CIT property written successfully
+│  │  │  │  │  └─ Write CIT Property completed [183μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate cit_property: optifine/cit/fortune_1.properties completed [199μs]
+│  │  │  │  ├─ Generate cit_property: optifine/cit/fortune_2.properties
+│  │  │  │  │  ├─ Write CIT Property
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [29μs]
+│  │  │  │  │  │  ▪ Converting content to .properties format
+│  │  │  │  │  │  ▪ Writing CIT property file
+│  │  │  │  │  │  ✓ CIT property written successfully
+│  │  │  │  │  └─ Write CIT Property completed [165μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate cit_property: optifine/cit/fortune_2.properties completed [171μs]
+│  │  │  │  ├─ Generate cit_property: optifine/cit/fortune_3.properties
+│  │  │  │  │  ├─ Write CIT Property
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [22μs]
+│  │  │  │  │  │  ▪ Converting content to .properties format
+│  │  │  │  │  │  ▪ Writing CIT property file
+│  │  │  │  │  │  ✓ CIT property written successfully
+│  │  │  │  │  └─ Write CIT Property completed [150μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate cit_property: optifine/cit/fortune_3.properties completed [156μs]
+│  │  │  │  ├─ Generate cit_property: optifine/cit/frost_walker_1.properties
+│  │  │  │  │  ├─ Write CIT Property
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [23μs]
+│  │  │  │  │  │  ▪ Converting content to .properties format
+│  │  │  │  │  │  ▪ Writing CIT property file
+│  │  │  │  │  │  ✓ CIT property written successfully
+│  │  │  │  │  └─ Write CIT Property completed [143μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate cit_property: optifine/cit/frost_walker_1.properties completed [151μs]
+│  │  │  │  ├─ Generate cit_property: optifine/cit/frost_walker_2.properties
+│  │  │  │  │  ├─ Write CIT Property
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [29μs]
+│  │  │  │  │  │  ▪ Converting content to .properties format
+│  │  │  │  │  │  ▪ Writing CIT property file
+│  │  │  │  │  │  ✓ CIT property written successfully
+│  │  │  │  │  └─ Write CIT Property completed [155μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate cit_property: optifine/cit/frost_walker_2.properties completed [162μs]
+│  │  │  │  ├─ Generate cit_property: optifine/cit/impaling_1.properties
+│  │  │  │  │  ├─ Write CIT Property
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [32μs]
+│  │  │  │  │  │  ▪ Converting content to .properties format
+│  │  │  │  │  │  ▪ Writing CIT property file
+│  │  │  │  │  │  ✓ CIT property written successfully
+│  │  │  │  │  └─ Write CIT Property completed [181μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate cit_property: optifine/cit/impaling_1.properties completed [190μs]
+│  │  │  │  ├─ Generate cit_property: optifine/cit/impaling_2.properties
+│  │  │  │  │  ├─ Write CIT Property
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [33μs]
+│  │  │  │  │  │  ▪ Converting content to .properties format
+│  │  │  │  │  │  ▪ Writing CIT property file
+│  │  │  │  │  │  ✓ CIT property written successfully
+│  │  │  │  │  └─ Write CIT Property completed [172μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate cit_property: optifine/cit/impaling_2.properties completed [179μs]
+│  │  │  │  ├─ Generate cit_property: optifine/cit/impaling_3.properties
+│  │  │  │  │  ├─ Write CIT Property
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [21μs]
+│  │  │  │  │  │  ▪ Converting content to .properties format
+│  │  │  │  │  │  ▪ Writing CIT property file
+│  │  │  │  │  │  ✓ CIT property written successfully
+│  │  │  │  │  └─ Write CIT Property completed [170μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate cit_property: optifine/cit/impaling_3.properties completed [176μs]
+│  │  │  │  ├─ Generate cit_property: optifine/cit/impaling_4.properties
+│  │  │  │  │  ├─ Write CIT Property
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [24μs]
+│  │  │  │  │  │  ▪ Converting content to .properties format
+│  │  │  │  │  │  ▪ Writing CIT property file
+│  │  │  │  │  │  ✓ CIT property written successfully
+│  │  │  │  │  └─ Write CIT Property completed [141μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate cit_property: optifine/cit/impaling_4.properties completed [146μs]
+│  │  │  │  ├─ Generate cit_property: optifine/cit/impaling_5.properties
+│  │  │  │  │  ├─ Write CIT Property
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [25μs]
+│  │  │  │  │  │  ▪ Converting content to .properties format
+│  │  │  │  │  │  ▪ Writing CIT property file
+│  │  │  │  │  │  ✓ CIT property written successfully
+│  │  │  │  │  └─ Write CIT Property completed [168μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate cit_property: optifine/cit/impaling_5.properties completed [174μs]
+│  │  │  │  ├─ Generate cit_property: optifine/cit/infinity_1.properties
+│  │  │  │  │  ├─ Write CIT Property
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [27μs]
+│  │  │  │  │  │  ▪ Converting content to .properties format
+│  │  │  │  │  │  ▪ Writing CIT property file
+│  │  │  │  │  │  ✓ CIT property written successfully
+│  │  │  │  │  └─ Write CIT Property completed [181μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate cit_property: optifine/cit/infinity_1.properties completed [186μs]
+│  │  │  │  ├─ Generate cit_property: optifine/cit/knockback_1.properties
+│  │  │  │  │  ├─ Write CIT Property
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [28μs]
+│  │  │  │  │  │  ▪ Converting content to .properties format
+│  │  │  │  │  │  ▪ Writing CIT property file
+│  │  │  │  │  │  ✓ CIT property written successfully
+│  │  │  │  │  └─ Write CIT Property completed [153μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate cit_property: optifine/cit/knockback_1.properties completed [160μs]
+│  │  │  │  ├─ Generate cit_property: optifine/cit/knockback_2.properties
+│  │  │  │  │  ├─ Write CIT Property
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [19μs]
+│  │  │  │  │  │  ▪ Converting content to .properties format
+│  │  │  │  │  │  ▪ Writing CIT property file
+│  │  │  │  │  │  ✓ CIT property written successfully
+│  │  │  │  │  └─ Write CIT Property completed [141μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate cit_property: optifine/cit/knockback_2.properties completed [150μs]
+│  │  │  │  ├─ Generate cit_property: optifine/cit/looting_1.properties
+│  │  │  │  │  ├─ Write CIT Property
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [32μs]
+│  │  │  │  │  │  ▪ Converting content to .properties format
+│  │  │  │  │  │  ▪ Writing CIT property file
+│  │  │  │  │  │  ✓ CIT property written successfully
+│  │  │  │  │  └─ Write CIT Property completed [174μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate cit_property: optifine/cit/looting_1.properties completed [182μs]
+│  │  │  │  ├─ Generate cit_property: optifine/cit/looting_2.properties
+│  │  │  │  │  ├─ Write CIT Property
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [20μs]
+│  │  │  │  │  │  ▪ Converting content to .properties format
+│  │  │  │  │  │  ▪ Writing CIT property file
+│  │  │  │  │  │  ✓ CIT property written successfully
+│  │  │  │  │  └─ Write CIT Property completed [152μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate cit_property: optifine/cit/looting_2.properties completed [159μs]
+│  │  │  │  ├─ Generate cit_property: optifine/cit/looting_3.properties
+│  │  │  │  │  ├─ Write CIT Property
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [33μs]
+│  │  │  │  │  │  ▪ Converting content to .properties format
+│  │  │  │  │  │  ▪ Writing CIT property file
+│  │  │  │  │  │  ✓ CIT property written successfully
+│  │  │  │  │  └─ Write CIT Property completed [188μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate cit_property: optifine/cit/looting_3.properties completed [194μs]
+│  │  │  │  ├─ Generate cit_property: optifine/cit/loyalty_1.properties
+│  │  │  │  │  ├─ Write CIT Property
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [23μs]
+│  │  │  │  │  │  ▪ Converting content to .properties format
+│  │  │  │  │  │  ▪ Writing CIT property file
+│  │  │  │  │  │  ✓ CIT property written successfully
+│  │  │  │  │  └─ Write CIT Property completed [140μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate cit_property: optifine/cit/loyalty_1.properties completed [150μs]
+│  │  │  │  ├─ Generate cit_property: optifine/cit/loyalty_2.properties
+│  │  │  │  │  ├─ Write CIT Property
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [28μs]
+│  │  │  │  │  │  ▪ Converting content to .properties format
+│  │  │  │  │  │  ▪ Writing CIT property file
+│  │  │  │  │  │  ✓ CIT property written successfully
+│  │  │  │  │  └─ Write CIT Property completed [152μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate cit_property: optifine/cit/loyalty_2.properties completed [158μs]
+│  │  │  │  ├─ Generate cit_property: optifine/cit/loyalty_3.properties
+│  │  │  │  │  ├─ Write CIT Property
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [28μs]
+│  │  │  │  │  │  ▪ Converting content to .properties format
+│  │  │  │  │  │  ▪ Writing CIT property file
+│  │  │  │  │  │  ✓ CIT property written successfully
+│  │  │  │  │  └─ Write CIT Property completed [145μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate cit_property: optifine/cit/loyalty_3.properties completed [154μs]
+│  │  │  │  ├─ Generate cit_property: optifine/cit/luck_of_the_sea_1.properties
+│  │  │  │  │  ├─ Write CIT Property
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [20μs]
+│  │  │  │  │  │  ▪ Converting content to .properties format
+│  │  │  │  │  │  ▪ Writing CIT property file
+│  │  │  │  │  │  ✓ CIT property written successfully
+│  │  │  │  │  └─ Write CIT Property completed [144μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate cit_property: optifine/cit/luck_of_the_sea_1.properties completed [150μs]
+│  │  │  │  ├─ Generate cit_property: optifine/cit/luck_of_the_sea_2.properties
+│  │  │  │  │  ├─ Write CIT Property
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [18μs]
+│  │  │  │  │  │  ▪ Converting content to .properties format
+│  │  │  │  │  │  ▪ Writing CIT property file
+│  │  │  │  │  │  ✓ CIT property written successfully
+│  │  │  │  │  └─ Write CIT Property completed [138μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate cit_property: optifine/cit/luck_of_the_sea_2.properties completed [144μs]
+│  │  │  │  ├─ Generate cit_property: optifine/cit/luck_of_the_sea_3.properties
+│  │  │  │  │  ├─ Write CIT Property
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [20μs]
+│  │  │  │  │  │  ▪ Converting content to .properties format
+│  │  │  │  │  │  ▪ Writing CIT property file
+│  │  │  │  │  │  ✓ CIT property written successfully
+│  │  │  │  │  └─ Write CIT Property completed [175μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate cit_property: optifine/cit/luck_of_the_sea_3.properties completed [180μs]
+│  │  │  │  ├─ Generate cit_property: optifine/cit/lure_1.properties
+│  │  │  │  │  ├─ Write CIT Property
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [20μs]
+│  │  │  │  │  │  ▪ Converting content to .properties format
+│  │  │  │  │  │  ▪ Writing CIT property file
+│  │  │  │  │  │  ✓ CIT property written successfully
+│  │  │  │  │  └─ Write CIT Property completed [141μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate cit_property: optifine/cit/lure_1.properties completed [149μs]
+│  │  │  │  ├─ Generate cit_property: optifine/cit/lure_2.properties
+│  │  │  │  │  ├─ Write CIT Property
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [32μs]
+│  │  │  │  │  │  ▪ Converting content to .properties format
+│  │  │  │  │  │  ▪ Writing CIT property file
+│  │  │  │  │  │  ✓ CIT property written successfully
+│  │  │  │  │  └─ Write CIT Property completed [174μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate cit_property: optifine/cit/lure_2.properties completed [180μs]
+│  │  │  │  ├─ Generate cit_property: optifine/cit/lure_3.properties
+│  │  │  │  │  ├─ Write CIT Property
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [25μs]
+│  │  │  │  │  │  ▪ Converting content to .properties format
+│  │  │  │  │  │  ▪ Writing CIT property file
+│  │  │  │  │  │  ✓ CIT property written successfully
+│  │  │  │  │  └─ Write CIT Property completed [169μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate cit_property: optifine/cit/lure_3.properties completed [177μs]
+│  │  │  │  ├─ Generate cit_property: optifine/cit/mending_1.properties
+│  │  │  │  │  ├─ Write CIT Property
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [16μs]
+│  │  │  │  │  │  ▪ Converting content to .properties format
+│  │  │  │  │  │  ▪ Writing CIT property file
+│  │  │  │  │  │  ✓ CIT property written successfully
+│  │  │  │  │  └─ Write CIT Property completed [136μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate cit_property: optifine/cit/mending_1.properties completed [142μs]
+│  │  │  │  ├─ Generate cit_property: optifine/cit/multishot_1.properties
+│  │  │  │  │  ├─ Write CIT Property
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [16μs]
+│  │  │  │  │  │  ▪ Converting content to .properties format
+│  │  │  │  │  │  ▪ Writing CIT property file
+│  │  │  │  │  │  ✓ CIT property written successfully
+│  │  │  │  │  └─ Write CIT Property completed [128μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate cit_property: optifine/cit/multishot_1.properties completed [133μs]
+│  │  │  │  ├─ Generate cit_property: optifine/cit/piercing_1.properties
+│  │  │  │  │  ├─ Write CIT Property
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [20μs]
+│  │  │  │  │  │  ▪ Converting content to .properties format
+│  │  │  │  │  │  ▪ Writing CIT property file
+│  │  │  │  │  │  ✓ CIT property written successfully
+│  │  │  │  │  └─ Write CIT Property completed [139μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate cit_property: optifine/cit/piercing_1.properties completed [146μs]
+│  │  │  │  ├─ Generate cit_property: optifine/cit/piercing_2.properties
+│  │  │  │  │  ├─ Write CIT Property
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [37μs]
+│  │  │  │  │  │  ▪ Converting content to .properties format
+│  │  │  │  │  │  ▪ Writing CIT property file
+│  │  │  │  │  │  ✓ CIT property written successfully
+│  │  │  │  │  └─ Write CIT Property completed [206μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate cit_property: optifine/cit/piercing_2.properties completed [213μs]
+│  │  │  │  ├─ Generate cit_property: optifine/cit/piercing_3.properties
+│  │  │  │  │  ├─ Write CIT Property
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [43μs]
+│  │  │  │  │  │  ▪ Converting content to .properties format
+│  │  │  │  │  │  ▪ Writing CIT property file
+│  │  │  │  │  │  ✓ CIT property written successfully
+│  │  │  │  │  └─ Write CIT Property completed [199μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate cit_property: optifine/cit/piercing_3.properties completed [207μs]
+│  │  │  │  ├─ Generate cit_property: optifine/cit/piercing_4.properties
+│  │  │  │  │  ├─ Write CIT Property
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [42μs]
+│  │  │  │  │  │  ▪ Converting content to .properties format
+│  │  │  │  │  │  ▪ Writing CIT property file
+│  │  │  │  │  │  ✓ CIT property written successfully
+│  │  │  │  │  └─ Write CIT Property completed [174μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate cit_property: optifine/cit/piercing_4.properties completed [182μs]
+│  │  │  │  ├─ Generate cit_property: optifine/cit/power_1.properties
+│  │  │  │  │  ├─ Write CIT Property
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [21μs]
+│  │  │  │  │  │  ▪ Converting content to .properties format
+│  │  │  │  │  │  ▪ Writing CIT property file
+│  │  │  │  │  │  ✓ CIT property written successfully
+│  │  │  │  │  └─ Write CIT Property completed [153μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate cit_property: optifine/cit/power_1.properties completed [160μs]
+│  │  │  │  ├─ Generate cit_property: optifine/cit/power_2.properties
+│  │  │  │  │  ├─ Write CIT Property
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [18μs]
+│  │  │  │  │  │  ▪ Converting content to .properties format
+│  │  │  │  │  │  ▪ Writing CIT property file
+│  │  │  │  │  │  ✓ CIT property written successfully
+│  │  │  │  │  └─ Write CIT Property completed [155μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate cit_property: optifine/cit/power_2.properties completed [162μs]
+│  │  │  │  ├─ Generate cit_property: optifine/cit/power_3.properties
+│  │  │  │  │  ├─ Write CIT Property
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [25μs]
+│  │  │  │  │  │  ▪ Converting content to .properties format
+│  │  │  │  │  │  ▪ Writing CIT property file
+│  │  │  │  │  │  ✓ CIT property written successfully
+│  │  │  │  │  └─ Write CIT Property completed [173μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate cit_property: optifine/cit/power_3.properties completed [180μs]
+│  │  │  │  ├─ Generate cit_property: optifine/cit/power_4.properties
+│  │  │  │  │  ├─ Write CIT Property
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [30μs]
+│  │  │  │  │  │  ▪ Converting content to .properties format
+│  │  │  │  │  │  ▪ Writing CIT property file
+│  │  │  │  │  │  ✓ CIT property written successfully
+│  │  │  │  │  └─ Write CIT Property completed [211μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate cit_property: optifine/cit/power_4.properties completed [224μs]
+│  │  │  │  ├─ Generate cit_property: optifine/cit/power_5.properties
+│  │  │  │  │  ├─ Write CIT Property
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [30μs]
+│  │  │  │  │  │  ▪ Converting content to .properties format
+│  │  │  │  │  │  ▪ Writing CIT property file
+│  │  │  │  │  │  ✓ CIT property written successfully
+│  │  │  │  │  └─ Write CIT Property completed [171μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate cit_property: optifine/cit/power_5.properties completed [178μs]
+│  │  │  │  ├─ Generate cit_property: optifine/cit/projectile_protection_1.properties
+│  │  │  │  │  ├─ Write CIT Property
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [27μs]
+│  │  │  │  │  │  ▪ Converting content to .properties format
+│  │  │  │  │  │  ▪ Writing CIT property file
+│  │  │  │  │  │  ✓ CIT property written successfully
+│  │  │  │  │  └─ Write CIT Property completed [188μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate cit_property: optifine/cit/projectile_protection_1.properties completed [195μs]
+│  │  │  │  ├─ Generate cit_property: optifine/cit/projectile_protection_2.properties
+│  │  │  │  │  ├─ Write CIT Property
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [28μs]
+│  │  │  │  │  │  ▪ Converting content to .properties format
+│  │  │  │  │  │  ▪ Writing CIT property file
+│  │  │  │  │  │  ✓ CIT property written successfully
+│  │  │  │  │  └─ Write CIT Property completed [213μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate cit_property: optifine/cit/projectile_protection_2.properties completed [223μs]
+│  │  │  │  ├─ Generate cit_property: optifine/cit/projectile_protection_3.properties
+│  │  │  │  │  ├─ Write CIT Property
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [28μs]
+│  │  │  │  │  │  ▪ Converting content to .properties format
+│  │  │  │  │  │  ▪ Writing CIT property file
+│  │  │  │  │  │  ✓ CIT property written successfully
+│  │  │  │  │  └─ Write CIT Property completed [149μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate cit_property: optifine/cit/projectile_protection_3.properties completed [158μs]
+│  │  │  │  ├─ Generate cit_property: optifine/cit/projectile_protection_4.properties
+│  │  │  │  │  ├─ Write CIT Property
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [28μs]
+│  │  │  │  │  │  ▪ Converting content to .properties format
+│  │  │  │  │  │  ▪ Writing CIT property file
+│  │  │  │  │  │  ✓ CIT property written successfully
+│  │  │  │  │  └─ Write CIT Property completed [175μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate cit_property: optifine/cit/projectile_protection_4.properties completed [183μs]
+│  │  │  │  ├─ Generate cit_property: optifine/cit/protection_1.properties
+│  │  │  │  │  ├─ Write CIT Property
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [25μs]
+│  │  │  │  │  │  ▪ Converting content to .properties format
+│  │  │  │  │  │  ▪ Writing CIT property file
+│  │  │  │  │  │  ✓ CIT property written successfully
+│  │  │  │  │  └─ Write CIT Property completed [153μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate cit_property: optifine/cit/protection_1.properties completed [158μs]
+│  │  │  │  ├─ Generate cit_property: optifine/cit/protection_2.properties
+│  │  │  │  │  ├─ Write CIT Property
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [19μs]
+│  │  │  │  │  │  ▪ Converting content to .properties format
+│  │  │  │  │  │  ▪ Writing CIT property file
+│  │  │  │  │  │  ✓ CIT property written successfully
+│  │  │  │  │  └─ Write CIT Property completed [153μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate cit_property: optifine/cit/protection_2.properties completed [160μs]
+│  │  │  │  ├─ Generate cit_property: optifine/cit/protection_3.properties
+│  │  │  │  │  ├─ Write CIT Property
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [19μs]
+│  │  │  │  │  │  ▪ Converting content to .properties format
+│  │  │  │  │  │  ▪ Writing CIT property file
+│  │  │  │  │  │  ✓ CIT property written successfully
+│  │  │  │  │  └─ Write CIT Property completed [151μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate cit_property: optifine/cit/protection_3.properties completed [160μs]
+│  │  │  │  ├─ Generate cit_property: optifine/cit/protection_4.properties
+│  │  │  │  │  ├─ Write CIT Property
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [16μs]
+│  │  │  │  │  │  ▪ Converting content to .properties format
+│  │  │  │  │  │  ▪ Writing CIT property file
+│  │  │  │  │  │  ✓ CIT property written successfully
+│  │  │  │  │  └─ Write CIT Property completed [126μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate cit_property: optifine/cit/protection_4.properties completed [134μs]
+│  │  │  │  ├─ Generate cit_property: optifine/cit/punch_1.properties
+│  │  │  │  │  ├─ Write CIT Property
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [30μs]
+│  │  │  │  │  │  ▪ Converting content to .properties format
+│  │  │  │  │  │  ▪ Writing CIT property file
+│  │  │  │  │  │  ✓ CIT property written successfully
+│  │  │  │  │  └─ Write CIT Property completed [145μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate cit_property: optifine/cit/punch_1.properties completed [152μs]
+│  │  │  │  ├─ Generate cit_property: optifine/cit/punch_2.properties
+│  │  │  │  │  ├─ Write CIT Property
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [21μs]
+│  │  │  │  │  │  ▪ Converting content to .properties format
+│  │  │  │  │  │  ▪ Writing CIT property file
+│  │  │  │  │  │  ✓ CIT property written successfully
+│  │  │  │  │  └─ Write CIT Property completed [192μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate cit_property: optifine/cit/punch_2.properties completed [201μs]
+│  │  │  │  ├─ Generate cit_property: optifine/cit/quick_charge_1.properties
+│  │  │  │  │  ├─ Write CIT Property
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [31μs]
+│  │  │  │  │  │  ▪ Converting content to .properties format
+│  │  │  │  │  │  ▪ Writing CIT property file
+│  │  │  │  │  │  ✓ CIT property written successfully
+│  │  │  │  │  └─ Write CIT Property completed [198μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate cit_property: optifine/cit/quick_charge_1.properties completed [206μs]
+│  │  │  │  ├─ Generate cit_property: optifine/cit/quick_charge_2.properties
+│  │  │  │  │  ├─ Write CIT Property
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [32μs]
+│  │  │  │  │  │  ▪ Converting content to .properties format
+│  │  │  │  │  │  ▪ Writing CIT property file
+│  │  │  │  │  │  ✓ CIT property written successfully
+│  │  │  │  │  └─ Write CIT Property completed [176μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate cit_property: optifine/cit/quick_charge_2.properties completed [183μs]
+│  │  │  │  ├─ Generate cit_property: optifine/cit/quick_charge_3.properties
+│  │  │  │  │  ├─ Write CIT Property
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [24μs]
+│  │  │  │  │  │  ▪ Converting content to .properties format
+│  │  │  │  │  │  ▪ Writing CIT property file
+│  │  │  │  │  │  ✓ CIT property written successfully
+│  │  │  │  │  └─ Write CIT Property completed [149μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate cit_property: optifine/cit/quick_charge_3.properties completed [154μs]
+│  │  │  │  ├─ Generate cit_property: optifine/cit/respiration_1.properties
+│  │  │  │  │  ├─ Write CIT Property
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [17μs]
+│  │  │  │  │  │  ▪ Converting content to .properties format
+│  │  │  │  │  │  ▪ Writing CIT property file
+│  │  │  │  │  │  ✓ CIT property written successfully
+│  │  │  │  │  └─ Write CIT Property completed [132μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate cit_property: optifine/cit/respiration_1.properties completed [137μs]
+│  │  │  │  ├─ Generate cit_property: optifine/cit/respiration_2.properties
+│  │  │  │  │  ├─ Write CIT Property
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [21μs]
+│  │  │  │  │  │  ▪ Converting content to .properties format
+│  │  │  │  │  │  ▪ Writing CIT property file
+│  │  │  │  │  │  ✓ CIT property written successfully
+│  │  │  │  │  └─ Write CIT Property completed [149μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate cit_property: optifine/cit/respiration_2.properties completed [154μs]
+│  │  │  │  ├─ Generate cit_property: optifine/cit/respiration_3.properties
+│  │  │  │  │  ├─ Write CIT Property
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [23μs]
+│  │  │  │  │  │  ▪ Converting content to .properties format
+│  │  │  │  │  │  ▪ Writing CIT property file
+│  │  │  │  │  │  ✓ CIT property written successfully
+│  │  │  │  │  └─ Write CIT Property completed [167μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate cit_property: optifine/cit/respiration_3.properties completed [174μs]
+│  │  │  │  ├─ Generate cit_property: optifine/cit/riptide_1.properties
+│  │  │  │  │  ├─ Write CIT Property
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [39μs]
+│  │  │  │  │  │  ▪ Converting content to .properties format
+│  │  │  │  │  │  ▪ Writing CIT property file
+│  │  │  │  │  │  ✓ CIT property written successfully
+│  │  │  │  │  └─ Write CIT Property completed [182μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate cit_property: optifine/cit/riptide_1.properties completed [189μs]
+│  │  │  │  ├─ Generate cit_property: optifine/cit/riptide_2.properties
+│  │  │  │  │  ├─ Write CIT Property
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [22μs]
+│  │  │  │  │  │  ▪ Converting content to .properties format
+│  │  │  │  │  │  ▪ Writing CIT property file
+│  │  │  │  │  │  ✓ CIT property written successfully
+│  │  │  │  │  └─ Write CIT Property completed [148μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate cit_property: optifine/cit/riptide_2.properties completed [154μs]
+│  │  │  │  ├─ Generate cit_property: optifine/cit/riptide_3.properties
+│  │  │  │  │  ├─ Write CIT Property
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [21μs]
+│  │  │  │  │  │  ▪ Converting content to .properties format
+│  │  │  │  │  │  ▪ Writing CIT property file
+│  │  │  │  │  │  ✓ CIT property written successfully
+│  │  │  │  │  └─ Write CIT Property completed [192μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate cit_property: optifine/cit/riptide_3.properties completed [201μs]
+│  │  │  │  ├─ Generate cit_property: optifine/cit/sharpness_1.properties
+│  │  │  │  │  ├─ Write CIT Property
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [24μs]
+│  │  │  │  │  │  ▪ Converting content to .properties format
+│  │  │  │  │  │  ▪ Writing CIT property file
+│  │  │  │  │  │  ✓ CIT property written successfully
+│  │  │  │  │  └─ Write CIT Property completed [194μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate cit_property: optifine/cit/sharpness_1.properties completed [200μs]
+│  │  │  │  ├─ Generate cit_property: optifine/cit/sharpness_2.properties
+│  │  │  │  │  ├─ Write CIT Property
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [28μs]
+│  │  │  │  │  │  ▪ Converting content to .properties format
+│  │  │  │  │  │  ▪ Writing CIT property file
+│  │  │  │  │  │  ✓ CIT property written successfully
+│  │  │  │  │  └─ Write CIT Property completed [172μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate cit_property: optifine/cit/sharpness_2.properties completed [178μs]
+│  │  │  │  ├─ Generate cit_property: optifine/cit/sharpness_3.properties
+│  │  │  │  │  ├─ Write CIT Property
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [24μs]
+│  │  │  │  │  │  ▪ Converting content to .properties format
+│  │  │  │  │  │  ▪ Writing CIT property file
+│  │  │  │  │  │  ✓ CIT property written successfully
+│  │  │  │  │  └─ Write CIT Property completed [149μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate cit_property: optifine/cit/sharpness_3.properties completed [154μs]
+│  │  │  │  ├─ Generate cit_property: optifine/cit/sharpness_4.properties
+│  │  │  │  │  ├─ Write CIT Property
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [18μs]
+│  │  │  │  │  │  ▪ Converting content to .properties format
+│  │  │  │  │  │  ▪ Writing CIT property file
+│  │  │  │  │  │  ✓ CIT property written successfully
+│  │  │  │  │  └─ Write CIT Property completed [145μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate cit_property: optifine/cit/sharpness_4.properties completed [151μs]
+│  │  │  │  ├─ Generate cit_property: optifine/cit/sharpness_5.properties
+│  │  │  │  │  ├─ Write CIT Property
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [19μs]
+│  │  │  │  │  │  ▪ Converting content to .properties format
+│  │  │  │  │  │  ▪ Writing CIT property file
+│  │  │  │  │  │  ✓ CIT property written successfully
+│  │  │  │  │  └─ Write CIT Property completed [150μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate cit_property: optifine/cit/sharpness_5.properties completed [156μs]
+│  │  │  │  ├─ Generate cit_property: optifine/cit/silk_touch_1.properties
+│  │  │  │  │  ├─ Write CIT Property
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [30μs]
+│  │  │  │  │  │  ▪ Converting content to .properties format
+│  │  │  │  │  │  ▪ Writing CIT property file
+│  │  │  │  │  │  ✓ CIT property written successfully
+│  │  │  │  │  └─ Write CIT Property completed [179μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate cit_property: optifine/cit/silk_touch_1.properties completed [188μs]
+│  │  │  │  ├─ Generate cit_property: optifine/cit/smite_1.properties
+│  │  │  │  │  ├─ Write CIT Property
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [20μs]
+│  │  │  │  │  │  ▪ Converting content to .properties format
+│  │  │  │  │  │  ▪ Writing CIT property file
+│  │  │  │  │  │  ✓ CIT property written successfully
+│  │  │  │  │  └─ Write CIT Property completed [152μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate cit_property: optifine/cit/smite_1.properties completed [161μs]
+│  │  │  │  ├─ Generate cit_property: optifine/cit/smite_2.properties
+│  │  │  │  │  ├─ Write CIT Property
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [20μs]
+│  │  │  │  │  │  ▪ Converting content to .properties format
+│  │  │  │  │  │  ▪ Writing CIT property file
+│  │  │  │  │  │  ✓ CIT property written successfully
+│  │  │  │  │  └─ Write CIT Property completed [125μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate cit_property: optifine/cit/smite_2.properties completed [130μs]
+│  │  │  │  ├─ Generate cit_property: optifine/cit/smite_3.properties
+│  │  │  │  │  ├─ Write CIT Property
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [16μs]
+│  │  │  │  │  │  ▪ Converting content to .properties format
+│  │  │  │  │  │  ▪ Writing CIT property file
+│  │  │  │  │  │  ✓ CIT property written successfully
+│  │  │  │  │  └─ Write CIT Property completed [124μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate cit_property: optifine/cit/smite_3.properties completed [129μs]
+│  │  │  │  ├─ Generate cit_property: optifine/cit/smite_4.properties
+│  │  │  │  │  ├─ Write CIT Property
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [21μs]
+│  │  │  │  │  │  ▪ Converting content to .properties format
+│  │  │  │  │  │  ▪ Writing CIT property file
+│  │  │  │  │  │  ✓ CIT property written successfully
+│  │  │  │  │  └─ Write CIT Property completed [132μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate cit_property: optifine/cit/smite_4.properties completed [136μs]
+│  │  │  │  ├─ Generate cit_property: optifine/cit/smite_5.properties
+│  │  │  │  │  ├─ Write CIT Property
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [20μs]
+│  │  │  │  │  │  ▪ Converting content to .properties format
+│  │  │  │  │  │  ▪ Writing CIT property file
+│  │  │  │  │  │  ✓ CIT property written successfully
+│  │  │  │  │  └─ Write CIT Property completed [170μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate cit_property: optifine/cit/smite_5.properties completed [176μs]
+│  │  │  │  ├─ Generate cit_property: optifine/cit/soul_speed_1.properties
+│  │  │  │  │  ├─ Write CIT Property
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [29μs]
+│  │  │  │  │  │  ▪ Converting content to .properties format
+│  │  │  │  │  │  ▪ Writing CIT property file
+│  │  │  │  │  │  ✓ CIT property written successfully
+│  │  │  │  │  └─ Write CIT Property completed [170μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate cit_property: optifine/cit/soul_speed_1.properties completed [175μs]
+│  │  │  │  ├─ Generate cit_property: optifine/cit/soul_speed_2.properties
+│  │  │  │  │  ├─ Write CIT Property
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [27μs]
+│  │  │  │  │  │  ▪ Converting content to .properties format
+│  │  │  │  │  │  ▪ Writing CIT property file
+│  │  │  │  │  │  ✓ CIT property written successfully
+│  │  │  │  │  └─ Write CIT Property completed [183μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate cit_property: optifine/cit/soul_speed_2.properties completed [189μs]
+│  │  │  │  ├─ Generate cit_property: optifine/cit/soul_speed_3.properties
+│  │  │  │  │  ├─ Write CIT Property
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [22μs]
+│  │  │  │  │  │  ▪ Converting content to .properties format
+│  │  │  │  │  │  ▪ Writing CIT property file
+│  │  │  │  │  │  ✓ CIT property written successfully
+│  │  │  │  │  └─ Write CIT Property completed [161μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate cit_property: optifine/cit/soul_speed_3.properties completed [167μs]
+│  │  │  │  ├─ Generate cit_property: optifine/cit/sweeping_edge_1.properties
+│  │  │  │  │  ├─ Write CIT Property
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [16μs]
+│  │  │  │  │  │  ▪ Converting content to .properties format
+│  │  │  │  │  │  ▪ Writing CIT property file
+│  │  │  │  │  │  ✓ CIT property written successfully
+│  │  │  │  │  └─ Write CIT Property completed [131μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate cit_property: optifine/cit/sweeping_edge_1.properties completed [136μs]
+│  │  │  │  ├─ Generate cit_property: optifine/cit/sweeping_edge_2.properties
+│  │  │  │  │  ├─ Write CIT Property
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [16μs]
+│  │  │  │  │  │  ▪ Converting content to .properties format
+│  │  │  │  │  │  ▪ Writing CIT property file
+│  │  │  │  │  │  ✓ CIT property written successfully
+│  │  │  │  │  └─ Write CIT Property completed [135μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate cit_property: optifine/cit/sweeping_edge_2.properties completed [139μs]
+│  │  │  │  ├─ Generate cit_property: optifine/cit/sweeping_edge_3.properties
+│  │  │  │  │  ├─ Write CIT Property
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [15μs]
+│  │  │  │  │  │  ▪ Converting content to .properties format
+│  │  │  │  │  │  ▪ Writing CIT property file
+│  │  │  │  │  │  ✓ CIT property written successfully
+│  │  │  │  │  └─ Write CIT Property completed [132μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate cit_property: optifine/cit/sweeping_edge_3.properties completed [139μs]
+│  │  │  │  ├─ Generate cit_property: optifine/cit/swift_sneak_1.properties
+│  │  │  │  │  ├─ Write CIT Property
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [22μs]
+│  │  │  │  │  │  ▪ Converting content to .properties format
+│  │  │  │  │  │  ▪ Writing CIT property file
+│  │  │  │  │  │  ✓ CIT property written successfully
+│  │  │  │  │  └─ Write CIT Property completed [133μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate cit_property: optifine/cit/swift_sneak_1.properties completed [140μs]
+│  │  │  │  ├─ Generate cit_property: optifine/cit/swift_sneak_2.properties
+│  │  │  │  │  ├─ Write CIT Property
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [27μs]
+│  │  │  │  │  │  ▪ Converting content to .properties format
+│  │  │  │  │  │  ▪ Writing CIT property file
+│  │  │  │  │  │  ✓ CIT property written successfully
+│  │  │  │  │  └─ Write CIT Property completed [190μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate cit_property: optifine/cit/swift_sneak_2.properties completed [195μs]
+│  │  │  │  ├─ Generate cit_property: optifine/cit/swift_sneak_3.properties
+│  │  │  │  │  ├─ Write CIT Property
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [26μs]
+│  │  │  │  │  │  ▪ Converting content to .properties format
+│  │  │  │  │  │  ▪ Writing CIT property file
+│  │  │  │  │  │  ✓ CIT property written successfully
+│  │  │  │  │  └─ Write CIT Property completed [167μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate cit_property: optifine/cit/swift_sneak_3.properties completed [178μs]
+│  │  │  │  ├─ Generate cit_property: optifine/cit/thorns_1.properties
+│  │  │  │  │  ├─ Write CIT Property
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [20μs]
+│  │  │  │  │  │  ▪ Converting content to .properties format
+│  │  │  │  │  │  ▪ Writing CIT property file
+│  │  │  │  │  │  ✓ CIT property written successfully
+│  │  │  │  │  └─ Write CIT Property completed [160μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate cit_property: optifine/cit/thorns_1.properties completed [168μs]
+│  │  │  │  ├─ Generate cit_property: optifine/cit/thorns_2.properties
+│  │  │  │  │  ├─ Write CIT Property
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [33μs]
+│  │  │  │  │  │  ▪ Converting content to .properties format
+│  │  │  │  │  │  ▪ Writing CIT property file
+│  │  │  │  │  │  ✓ CIT property written successfully
+│  │  │  │  │  └─ Write CIT Property completed [160μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate cit_property: optifine/cit/thorns_2.properties completed [166μs]
+│  │  │  │  ├─ Generate cit_property: optifine/cit/thorns_3.properties
+│  │  │  │  │  ├─ Write CIT Property
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [27μs]
+│  │  │  │  │  │  ▪ Converting content to .properties format
+│  │  │  │  │  │  ▪ Writing CIT property file
+│  │  │  │  │  │  ✓ CIT property written successfully
+│  │  │  │  │  └─ Write CIT Property completed [159μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate cit_property: optifine/cit/thorns_3.properties completed [165μs]
+│  │  │  │  ├─ Generate cit_property: optifine/cit/vanishing_curse_1.properties
+│  │  │  │  │  ├─ Write CIT Property
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [22μs]
+│  │  │  │  │  │  ▪ Converting content to .properties format
+│  │  │  │  │  │  ▪ Writing CIT property file
+│  │  │  │  │  │  ✓ CIT property written successfully
+│  │  │  │  │  └─ Write CIT Property completed [161μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate cit_property: optifine/cit/vanishing_curse_1.properties completed [165μs]
+│  │  │  │  ├─ Generate cit_property: optifine/cit/unbreaking_1.properties
+│  │  │  │  │  ├─ Write CIT Property
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [27μs]
+│  │  │  │  │  │  ▪ Converting content to .properties format
+│  │  │  │  │  │  ▪ Writing CIT property file
+│  │  │  │  │  │  ✓ CIT property written successfully
+│  │  │  │  │  └─ Write CIT Property completed [169μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate cit_property: optifine/cit/unbreaking_1.properties completed [175μs]
+│  │  │  │  ├─ Generate cit_property: optifine/cit/unbreaking_2.properties
+│  │  │  │  │  ├─ Write CIT Property
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [28μs]
+│  │  │  │  │  │  ▪ Converting content to .properties format
+│  │  │  │  │  │  ▪ Writing CIT property file
+│  │  │  │  │  │  ✓ CIT property written successfully
+│  │  │  │  │  └─ Write CIT Property completed [152μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate cit_property: optifine/cit/unbreaking_2.properties completed [159μs]
+│  │  │  │  ├─ Generate cit_property: optifine/cit/unbreaking_3.properties
+│  │  │  │  │  ├─ Write CIT Property
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [27μs]
+│  │  │  │  │  │  ▪ Converting content to .properties format
+│  │  │  │  │  │  ▪ Writing CIT property file
+│  │  │  │  │  │  ✓ CIT property written successfully
+│  │  │  │  │  └─ Write CIT Property completed [171μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate cit_property: optifine/cit/unbreaking_3.properties completed [177μs]
+│  │  │  │  ├─ Generate cit_property: optifine/cit/wind_burst_1.properties
+│  │  │  │  │  ├─ Write CIT Property
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [20μs]
+│  │  │  │  │  │  ▪ Converting content to .properties format
+│  │  │  │  │  │  ▪ Writing CIT property file
+│  │  │  │  │  │  ✓ CIT property written successfully
+│  │  │  │  │  └─ Write CIT Property completed [163μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate cit_property: optifine/cit/wind_burst_1.properties completed [169μs]
+│  │  │  │  ├─ Generate cit_property: optifine/cit/wind_burst_2.properties
+│  │  │  │  │  ├─ Write CIT Property
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [17μs]
+│  │  │  │  │  │  ▪ Converting content to .properties format
+│  │  │  │  │  │  ▪ Writing CIT property file
+│  │  │  │  │  │  ✓ CIT property written successfully
+│  │  │  │  │  └─ Write CIT Property completed [133μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate cit_property: optifine/cit/wind_burst_2.properties completed [138μs]
+│  │  │  │  ├─ Generate cit_property: optifine/cit/wind_burst_3.properties
+│  │  │  │  │  ├─ Write CIT Property
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [27μs]
+│  │  │  │  │  │  ▪ Converting content to .properties format
+│  │  │  │  │  │  ▪ Writing CIT property file
+│  │  │  │  │  │  ✓ CIT property written successfully
+│  │  │  │  │  └─ Write CIT Property completed [159μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate cit_property: optifine/cit/wind_burst_3.properties completed [165μs]
+│  │  │  │  ├─ Generate pommel: models/item/enchanted_books/aqua_affinity_1.json
+│  │  │  │  │  ├─ Write Pommel Model
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [27μs]
+│  │  │  │  │  │  ▪ Writing pommel model content
+│  │  │  │  │  │  ✓ Pommel model written successfully
+│  │  │  │  │  └─ Write Pommel Model completed [188μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate pommel: models/item/enchanted_books/aqua_affinity_1.json completed [204μs]
+│  │  │  │  ├─ Generate pommel: models/item/enchanted_books/bane_of_arthropods_1.json
+│  │  │  │  │  ├─ Write Pommel Model
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [28μs]
+│  │  │  │  │  │  ▪ Writing pommel model content
+│  │  │  │  │  │  ✓ Pommel model written successfully
+│  │  │  │  │  └─ Write Pommel Model completed [695μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate pommel: models/item/enchanted_books/bane_of_arthropods_1.json completed [722μs]
+│  │  │  │  ├─ Generate pommel: models/item/enchanted_books/bane_of_arthropods_2.json
+│  │  │  │  │  ├─ Write Pommel Model
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [22μs]
+│  │  │  │  │  │  ▪ Writing pommel model content
+│  │  │  │  │  │  ✓ Pommel model written successfully
+│  │  │  │  │  └─ Write Pommel Model completed [93μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate pommel: models/item/enchanted_books/bane_of_arthropods_2.json completed [121μs]
+│  │  │  │  ├─ Generate pommel: models/item/enchanted_books/bane_of_arthropods_3.json
+│  │  │  │  │  ├─ Write Pommel Model
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [22μs]
+│  │  │  │  │  │  ▪ Writing pommel model content
+│  │  │  │  │  │  ✓ Pommel model written successfully
+│  │  │  │  │  └─ Write Pommel Model completed [116μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate pommel: models/item/enchanted_books/bane_of_arthropods_3.json completed [124μs]
+│  │  │  │  ├─ Generate pommel: models/item/enchanted_books/bane_of_arthropods_4.json
+│  │  │  │  │  ├─ Write Pommel Model
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [19μs]
+│  │  │  │  │  │  ▪ Writing pommel model content
+│  │  │  │  │  │  ✓ Pommel model written successfully
+│  │  │  │  │  └─ Write Pommel Model completed [94μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate pommel: models/item/enchanted_books/bane_of_arthropods_4.json completed [107μs]
+│  │  │  │  ├─ Generate pommel: models/item/enchanted_books/bane_of_arthropods_5.json
+│  │  │  │  │  ├─ Write Pommel Model
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [16μs]
+│  │  │  │  │  │  ▪ Writing pommel model content
+│  │  │  │  │  │  ✓ Pommel model written successfully
+│  │  │  │  │  └─ Write Pommel Model completed [84μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate pommel: models/item/enchanted_books/bane_of_arthropods_5.json completed [92μs]
+│  │  │  │  ├─ Generate pommel: models/item/enchanted_books/breach_1.json
+│  │  │  │  │  ├─ Write Pommel Model
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [26μs]
+│  │  │  │  │  │  ▪ Writing pommel model content
+│  │  │  │  │  │  ✓ Pommel model written successfully
+│  │  │  │  │  └─ Write Pommel Model completed [100μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate pommel: models/item/enchanted_books/breach_1.json completed [109μs]
+│  │  │  │  ├─ Generate pommel: models/item/enchanted_books/breach_2.json
+│  │  │  │  │  ├─ Write Pommel Model
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [17μs]
+│  │  │  │  │  │  ▪ Writing pommel model content
+│  │  │  │  │  │  ✓ Pommel model written successfully
+│  │  │  │  │  └─ Write Pommel Model completed [85μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate pommel: models/item/enchanted_books/breach_2.json completed [91μs]
+│  │  │  │  ├─ Generate pommel: models/item/enchanted_books/breach_3.json
+│  │  │  │  │  ├─ Write Pommel Model
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [15μs]
+│  │  │  │  │  │  ▪ Writing pommel model content
+│  │  │  │  │  │  ✓ Pommel model written successfully
+│  │  │  │  │  └─ Write Pommel Model completed [85μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate pommel: models/item/enchanted_books/breach_3.json completed [92μs]
+│  │  │  │  ├─ Generate pommel: models/item/enchanted_books/breach_4.json
+│  │  │  │  │  ├─ Write Pommel Model
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [18μs]
+│  │  │  │  │  │  ▪ Writing pommel model content
+│  │  │  │  │  │  ✓ Pommel model written successfully
+│  │  │  │  │  └─ Write Pommel Model completed [76μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate pommel: models/item/enchanted_books/breach_4.json completed [81μs]
+│  │  │  │  ├─ Generate pommel: models/item/enchanted_books/blast_protection_1.json
+│  │  │  │  │  ├─ Write Pommel Model
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [30μs]
+│  │  │  │  │  │  ▪ Writing pommel model content
+│  │  │  │  │  │  ✓ Pommel model written successfully
+│  │  │  │  │  └─ Write Pommel Model completed [101μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate pommel: models/item/enchanted_books/blast_protection_1.json completed [107μs]
+│  │  │  │  ├─ Generate pommel: models/item/enchanted_books/blast_protection_2.json
+│  │  │  │  │  ├─ Write Pommel Model
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [20μs]
+│  │  │  │  │  │  ▪ Writing pommel model content
+│  │  │  │  │  │  ✓ Pommel model written successfully
+│  │  │  │  │  └─ Write Pommel Model completed [120μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate pommel: models/item/enchanted_books/blast_protection_2.json completed [125μs]
+│  │  │  │  ├─ Generate pommel: models/item/enchanted_books/blast_protection_3.json
+│  │  │  │  │  ├─ Write Pommel Model
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [30μs]
+│  │  │  │  │  │  ▪ Writing pommel model content
+│  │  │  │  │  │  ✓ Pommel model written successfully
+│  │  │  │  │  └─ Write Pommel Model completed [114μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate pommel: models/item/enchanted_books/blast_protection_3.json completed [121μs]
+│  │  │  │  ├─ Generate pommel: models/item/enchanted_books/blast_protection_4.json
+│  │  │  │  │  ├─ Write Pommel Model
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [29μs]
+│  │  │  │  │  │  ▪ Writing pommel model content
+│  │  │  │  │  │  ✓ Pommel model written successfully
+│  │  │  │  │  └─ Write Pommel Model completed [122μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate pommel: models/item/enchanted_books/blast_protection_4.json completed [129μs]
+│  │  │  │  ├─ Generate pommel: models/item/enchanted_books/channeling_1.json
+│  │  │  │  │  ├─ Write Pommel Model
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [27μs]
+│  │  │  │  │  │  ▪ Writing pommel model content
+│  │  │  │  │  │  ✓ Pommel model written successfully
+│  │  │  │  │  └─ Write Pommel Model completed [185μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate pommel: models/item/enchanted_books/channeling_1.json completed [191μs]
+│  │  │  │  ├─ Generate pommel: models/item/enchanted_books/binding_curse_1.json
+│  │  │  │  │  ├─ Write Pommel Model
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [36μs]
+│  │  │  │  │  │  ▪ Writing pommel model content
+│  │  │  │  │  │  ✓ Pommel model written successfully
+│  │  │  │  │  └─ Write Pommel Model completed [184μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate pommel: models/item/enchanted_books/binding_curse_1.json completed [190μs]
+│  │  │  │  ├─ Generate pommel: models/item/enchanted_books/density_1.json
+│  │  │  │  │  ├─ Write Pommel Model
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [23μs]
+│  │  │  │  │  │  ▪ Writing pommel model content
+│  │  │  │  │  │  ✓ Pommel model written successfully
+│  │  │  │  │  └─ Write Pommel Model completed [88μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate pommel: models/item/enchanted_books/density_1.json completed [102μs]
+│  │  │  │  ├─ Generate pommel: models/item/enchanted_books/density_2.json
+│  │  │  │  │  ├─ Write Pommel Model
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [16μs]
+│  │  │  │  │  │  ▪ Writing pommel model content
+│  │  │  │  │  │  ✓ Pommel model written successfully
+│  │  │  │  │  └─ Write Pommel Model completed [74μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate pommel: models/item/enchanted_books/density_2.json completed [80μs]
+│  │  │  │  ├─ Generate pommel: models/item/enchanted_books/density_3.json
+│  │  │  │  │  ├─ Write Pommel Model
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [14μs]
+│  │  │  │  │  │  ▪ Writing pommel model content
+│  │  │  │  │  │  ✓ Pommel model written successfully
+│  │  │  │  │  └─ Write Pommel Model completed [79μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate pommel: models/item/enchanted_books/density_3.json completed [86μs]
+│  │  │  │  ├─ Generate pommel: models/item/enchanted_books/density_4.json
+│  │  │  │  │  ├─ Write Pommel Model
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [16μs]
+│  │  │  │  │  │  ▪ Writing pommel model content
+│  │  │  │  │  │  ✓ Pommel model written successfully
+│  │  │  │  │  └─ Write Pommel Model completed [96μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate pommel: models/item/enchanted_books/density_4.json completed [102μs]
+│  │  │  │  ├─ Generate pommel: models/item/enchanted_books/density_5.json
+│  │  │  │  │  ├─ Write Pommel Model
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [26μs]
+│  │  │  │  │  │  ▪ Writing pommel model content
+│  │  │  │  │  │  ✓ Pommel model written successfully
+│  │  │  │  │  └─ Write Pommel Model completed [117μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate pommel: models/item/enchanted_books/density_5.json completed [130μs]
+│  │  │  │  ├─ Generate pommel: models/item/enchanted_books/depth_strider_1.json
+│  │  │  │  │  ├─ Write Pommel Model
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [23μs]
+│  │  │  │  │  │  ▪ Writing pommel model content
+│  │  │  │  │  │  ✓ Pommel model written successfully
+│  │  │  │  │  └─ Write Pommel Model completed [127μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate pommel: models/item/enchanted_books/depth_strider_1.json completed [132μs]
+│  │  │  │  ├─ Generate pommel: models/item/enchanted_books/depth_strider_2.json
+│  │  │  │  │  ├─ Write Pommel Model
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [30μs]
+│  │  │  │  │  │  ▪ Writing pommel model content
+│  │  │  │  │  │  ✓ Pommel model written successfully
+│  │  │  │  │  └─ Write Pommel Model completed [121μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate pommel: models/item/enchanted_books/depth_strider_2.json completed [130μs]
+│  │  │  │  ├─ Generate pommel: models/item/enchanted_books/depth_strider_3.json
+│  │  │  │  │  ├─ Write Pommel Model
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [39μs]
+│  │  │  │  │  │  ▪ Writing pommel model content
+│  │  │  │  │  │  ✓ Pommel model written successfully
+│  │  │  │  │  └─ Write Pommel Model completed [156μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate pommel: models/item/enchanted_books/depth_strider_3.json completed [163μs]
+│  │  │  │  ├─ Generate pommel: models/item/enchanted_books/efficiency_1.json
+│  │  │  │  │  ├─ Write Pommel Model
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [22μs]
+│  │  │  │  │  │  ▪ Writing pommel model content
+│  │  │  │  │  │  ✓ Pommel model written successfully
+│  │  │  │  │  └─ Write Pommel Model completed [108μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate pommel: models/item/enchanted_books/efficiency_1.json completed [116μs]
+│  │  │  │  ├─ Generate pommel: models/item/enchanted_books/efficiency_2.json
+│  │  │  │  │  ├─ Write Pommel Model
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [28μs]
+│  │  │  │  │  │  ▪ Writing pommel model content
+│  │  │  │  │  │  ✓ Pommel model written successfully
+│  │  │  │  │  └─ Write Pommel Model completed [117μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate pommel: models/item/enchanted_books/efficiency_2.json completed [123μs]
+│  │  │  │  ├─ Generate pommel: models/item/enchanted_books/efficiency_3.json
+│  │  │  │  │  ├─ Write Pommel Model
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [22μs]
+│  │  │  │  │  │  ▪ Writing pommel model content
+│  │  │  │  │  │  ✓ Pommel model written successfully
+│  │  │  │  │  └─ Write Pommel Model completed [104μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate pommel: models/item/enchanted_books/efficiency_3.json completed [110μs]
+│  │  │  │  ├─ Generate pommel: models/item/enchanted_books/efficiency_4.json
+│  │  │  │  │  ├─ Write Pommel Model
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [20μs]
+│  │  │  │  │  │  ▪ Writing pommel model content
+│  │  │  │  │  │  ✓ Pommel model written successfully
+│  │  │  │  │  └─ Write Pommel Model completed [100μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate pommel: models/item/enchanted_books/efficiency_4.json completed [117μs]
+│  │  │  │  ├─ Generate pommel: models/item/enchanted_books/efficiency_5.json
+│  │  │  │  │  ├─ Write Pommel Model
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [30μs]
+│  │  │  │  │  │  ▪ Writing pommel model content
+│  │  │  │  │  │  ✓ Pommel model written successfully
+│  │  │  │  │  └─ Write Pommel Model completed [124μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate pommel: models/item/enchanted_books/efficiency_5.json completed [133μs]
+│  │  │  │  ├─ Generate pommel: models/item/enchanted_books/feather_falling_1.json
+│  │  │  │  │  ├─ Write Pommel Model
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [21μs]
+│  │  │  │  │  │  ▪ Writing pommel model content
+│  │  │  │  │  │  ✓ Pommel model written successfully
+│  │  │  │  │  └─ Write Pommel Model completed [109μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate pommel: models/item/enchanted_books/feather_falling_1.json completed [117μs]
+│  │  │  │  ├─ Generate pommel: models/item/enchanted_books/feather_falling_2.json
+│  │  │  │  │  ├─ Write Pommel Model
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [20μs]
+│  │  │  │  │  │  ▪ Writing pommel model content
+│  │  │  │  │  │  ✓ Pommel model written successfully
+│  │  │  │  │  └─ Write Pommel Model completed [95μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate pommel: models/item/enchanted_books/feather_falling_2.json completed [112μs]
+│  │  │  │  ├─ Generate pommel: models/item/enchanted_books/feather_falling_3.json
+│  │  │  │  │  ├─ Write Pommel Model
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [20μs]
+│  │  │  │  │  │  ▪ Writing pommel model content
+│  │  │  │  │  │  ✓ Pommel model written successfully
+│  │  │  │  │  └─ Write Pommel Model completed [94μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate pommel: models/item/enchanted_books/feather_falling_3.json completed [99μs]
+│  │  │  │  ├─ Generate pommel: models/item/enchanted_books/feather_falling_4.json
+│  │  │  │  │  ├─ Write Pommel Model
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [22μs]
+│  │  │  │  │  │  ▪ Writing pommel model content
+│  │  │  │  │  │  ✓ Pommel model written successfully
+│  │  │  │  │  └─ Write Pommel Model completed [100μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate pommel: models/item/enchanted_books/feather_falling_4.json completed [107μs]
+│  │  │  │  ├─ Generate pommel: models/item/enchanted_books/fire_aspect_1.json
+│  │  │  │  │  ├─ Write Pommel Model
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [21μs]
+│  │  │  │  │  │  ▪ Writing pommel model content
+│  │  │  │  │  │  ✓ Pommel model written successfully
+│  │  │  │  │  └─ Write Pommel Model completed [94μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate pommel: models/item/enchanted_books/fire_aspect_1.json completed [108μs]
+│  │  │  │  ├─ Generate pommel: models/item/enchanted_books/fire_aspect_2.json
+│  │  │  │  │  ├─ Write Pommel Model
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [26μs]
+│  │  │  │  │  │  ▪ Writing pommel model content
+│  │  │  │  │  │  ✓ Pommel model written successfully
+│  │  │  │  │  └─ Write Pommel Model completed [106μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate pommel: models/item/enchanted_books/fire_aspect_2.json completed [128μs]
+│  │  │  │  ├─ Generate pommel: models/item/enchanted_books/fire_protection_1.json
+│  │  │  │  │  ├─ Write Pommel Model
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [21μs]
+│  │  │  │  │  │  ▪ Writing pommel model content
+│  │  │  │  │  │  ✓ Pommel model written successfully
+│  │  │  │  │  └─ Write Pommel Model completed [94μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate pommel: models/item/enchanted_books/fire_protection_1.json completed [99μs]
+│  │  │  │  ├─ Generate pommel: models/item/enchanted_books/fire_protection_2.json
+│  │  │  │  │  ├─ Write Pommel Model
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [28μs]
+│  │  │  │  │  │  ▪ Writing pommel model content
+│  │  │  │  │  │  ✓ Pommel model written successfully
+│  │  │  │  │  └─ Write Pommel Model completed [104μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate pommel: models/item/enchanted_books/fire_protection_2.json completed [110μs]
+│  │  │  │  ├─ Generate pommel: models/item/enchanted_books/fire_protection_3.json
+│  │  │  │  │  ├─ Write Pommel Model
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [28μs]
+│  │  │  │  │  │  ▪ Writing pommel model content
+│  │  │  │  │  │  ✓ Pommel model written successfully
+│  │  │  │  │  └─ Write Pommel Model completed [109μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate pommel: models/item/enchanted_books/fire_protection_3.json completed [114μs]
+│  │  │  │  ├─ Generate pommel: models/item/enchanted_books/fire_protection_4.json
+│  │  │  │  │  ├─ Write Pommel Model
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [21μs]
+│  │  │  │  │  │  ▪ Writing pommel model content
+│  │  │  │  │  │  ✓ Pommel model written successfully
+│  │  │  │  │  └─ Write Pommel Model completed [92μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate pommel: models/item/enchanted_books/fire_protection_4.json completed [98μs]
+│  │  │  │  ├─ Generate pommel: models/item/enchanted_books/flame_1.json
+│  │  │  │  │  ├─ Write Pommel Model
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [23μs]
+│  │  │  │  │  │  ▪ Writing pommel model content
+│  │  │  │  │  │  ✓ Pommel model written successfully
+│  │  │  │  │  └─ Write Pommel Model completed [177μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate pommel: models/item/enchanted_books/flame_1.json completed [182μs]
+│  │  │  │  ├─ Generate pommel: models/item/enchanted_books/fortune_1.json
+│  │  │  │  │  ├─ Write Pommel Model
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [21μs]
+│  │  │  │  │  │  ▪ Writing pommel model content
+│  │  │  │  │  │  ✓ Pommel model written successfully
+│  │  │  │  │  └─ Write Pommel Model completed [104μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate pommel: models/item/enchanted_books/fortune_1.json completed [109μs]
+│  │  │  │  ├─ Generate pommel: models/item/enchanted_books/fortune_2.json
+│  │  │  │  │  ├─ Write Pommel Model
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [20μs]
+│  │  │  │  │  │  ▪ Writing pommel model content
+│  │  │  │  │  │  ✓ Pommel model written successfully
+│  │  │  │  │  └─ Write Pommel Model completed [92μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate pommel: models/item/enchanted_books/fortune_2.json completed [97μs]
+│  │  │  │  ├─ Generate pommel: models/item/enchanted_books/fortune_3.json
+│  │  │  │  │  ├─ Write Pommel Model
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [20μs]
+│  │  │  │  │  │  ▪ Writing pommel model content
+│  │  │  │  │  │  ✓ Pommel model written successfully
+│  │  │  │  │  └─ Write Pommel Model completed [97μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate pommel: models/item/enchanted_books/fortune_3.json completed [103μs]
+│  │  │  │  ├─ Generate pommel: models/item/enchanted_books/frost_walker_1.json
+│  │  │  │  │  ├─ Write Pommel Model
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [23μs]
+│  │  │  │  │  │  ▪ Writing pommel model content
+│  │  │  │  │  │  ✓ Pommel model written successfully
+│  │  │  │  │  └─ Write Pommel Model completed [98μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate pommel: models/item/enchanted_books/frost_walker_1.json completed [103μs]
+│  │  │  │  ├─ Generate pommel: models/item/enchanted_books/frost_walker_2.json
+│  │  │  │  │  ├─ Write Pommel Model
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [28μs]
+│  │  │  │  │  │  ▪ Writing pommel model content
+│  │  │  │  │  │  ✓ Pommel model written successfully
+│  │  │  │  │  └─ Write Pommel Model completed [100μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate pommel: models/item/enchanted_books/frost_walker_2.json completed [107μs]
+│  │  │  │  ├─ Generate pommel: models/item/enchanted_books/impaling_1.json
+│  │  │  │  │  ├─ Write Pommel Model
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [21μs]
+│  │  │  │  │  │  ▪ Writing pommel model content
+│  │  │  │  │  │  ✓ Pommel model written successfully
+│  │  │  │  │  └─ Write Pommel Model completed [91μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate pommel: models/item/enchanted_books/impaling_1.json completed [100μs]
+│  │  │  │  ├─ Generate pommel: models/item/enchanted_books/impaling_2.json
+│  │  │  │  │  ├─ Write Pommel Model
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [38μs]
+│  │  │  │  │  │  ▪ Writing pommel model content
+│  │  │  │  │  │  ✓ Pommel model written successfully
+│  │  │  │  │  └─ Write Pommel Model completed [115μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate pommel: models/item/enchanted_books/impaling_2.json completed [124μs]
+│  │  │  │  ├─ Generate pommel: models/item/enchanted_books/impaling_3.json
+│  │  │  │  │  ├─ Write Pommel Model
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [27μs]
+│  │  │  │  │  │  ▪ Writing pommel model content
+│  │  │  │  │  │  ✓ Pommel model written successfully
+│  │  │  │  │  └─ Write Pommel Model completed [110μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate pommel: models/item/enchanted_books/impaling_3.json completed [117μs]
+│  │  │  │  ├─ Generate pommel: models/item/enchanted_books/impaling_4.json
+│  │  │  │  │  ├─ Write Pommel Model
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [37μs]
+│  │  │  │  │  │  ▪ Writing pommel model content
+│  │  │  │  │  │  ✓ Pommel model written successfully
+│  │  │  │  │  └─ Write Pommel Model completed [147μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate pommel: models/item/enchanted_books/impaling_4.json completed [158μs]
+│  │  │  │  ├─ Generate pommel: models/item/enchanted_books/impaling_5.json
+│  │  │  │  │  ├─ Write Pommel Model
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [19μs]
+│  │  │  │  │  │  ▪ Writing pommel model content
+│  │  │  │  │  │  ✓ Pommel model written successfully
+│  │  │  │  │  └─ Write Pommel Model completed [107μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate pommel: models/item/enchanted_books/impaling_5.json completed [113μs]
+│  │  │  │  ├─ Generate pommel: models/item/enchanted_books/infinity_1.json
+│  │  │  │  │  ├─ Write Pommel Model
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [18μs]
+│  │  │  │  │  │  ▪ Writing pommel model content
+│  │  │  │  │  │  ✓ Pommel model written successfully
+│  │  │  │  │  └─ Write Pommel Model completed [163μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate pommel: models/item/enchanted_books/infinity_1.json completed [170μs]
+│  │  │  │  ├─ Generate pommel: models/item/enchanted_books/knockback_1.json
+│  │  │  │  │  ├─ Write Pommel Model
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [29μs]
+│  │  │  │  │  │  ▪ Writing pommel model content
+│  │  │  │  │  │  ✓ Pommel model written successfully
+│  │  │  │  │  └─ Write Pommel Model completed [123μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate pommel: models/item/enchanted_books/knockback_1.json completed [137μs]
+│  │  │  │  ├─ Generate pommel: models/item/enchanted_books/knockback_2.json
+│  │  │  │  │  ├─ Write Pommel Model
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [30μs]
+│  │  │  │  │  │  ▪ Writing pommel model content
+│  │  │  │  │  │  ✓ Pommel model written successfully
+│  │  │  │  │  └─ Write Pommel Model completed [128μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate pommel: models/item/enchanted_books/knockback_2.json completed [136μs]
+│  │  │  │  ├─ Generate pommel: models/item/enchanted_books/looting_1.json
+│  │  │  │  │  ├─ Write Pommel Model
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [27μs]
+│  │  │  │  │  │  ▪ Writing pommel model content
+│  │  │  │  │  │  ✓ Pommel model written successfully
+│  │  │  │  │  └─ Write Pommel Model completed [105μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate pommel: models/item/enchanted_books/looting_1.json completed [112μs]
+│  │  │  │  ├─ Generate pommel: models/item/enchanted_books/looting_2.json
+│  │  │  │  │  ├─ Write Pommel Model
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [26μs]
+│  │  │  │  │  │  ▪ Writing pommel model content
+│  │  │  │  │  │  ✓ Pommel model written successfully
+│  │  │  │  │  └─ Write Pommel Model completed [123μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate pommel: models/item/enchanted_books/looting_2.json completed [129μs]
+│  │  │  │  ├─ Generate pommel: models/item/enchanted_books/looting_3.json
+│  │  │  │  │  ├─ Write Pommel Model
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [27μs]
+│  │  │  │  │  │  ▪ Writing pommel model content
+│  │  │  │  │  │  ✓ Pommel model written successfully
+│  │  │  │  │  └─ Write Pommel Model completed [109μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate pommel: models/item/enchanted_books/looting_3.json completed [115μs]
+│  │  │  │  ├─ Generate pommel: models/item/enchanted_books/loyalty_1.json
+│  │  │  │  │  ├─ Write Pommel Model
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [27μs]
+│  │  │  │  │  │  ▪ Writing pommel model content
+│  │  │  │  │  │  ✓ Pommel model written successfully
+│  │  │  │  │  └─ Write Pommel Model completed [121μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate pommel: models/item/enchanted_books/loyalty_1.json completed [128μs]
+│  │  │  │  ├─ Generate pommel: models/item/enchanted_books/loyalty_2.json
+│  │  │  │  │  ├─ Write Pommel Model
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [28μs]
+│  │  │  │  │  │  ▪ Writing pommel model content
+│  │  │  │  │  │  ✓ Pommel model written successfully
+│  │  │  │  │  └─ Write Pommel Model completed [126μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate pommel: models/item/enchanted_books/loyalty_2.json completed [134μs]
+│  │  │  │  ├─ Generate pommel: models/item/enchanted_books/loyalty_3.json
+│  │  │  │  │  ├─ Write Pommel Model
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [22μs]
+│  │  │  │  │  │  ▪ Writing pommel model content
+│  │  │  │  │  │  ✓ Pommel model written successfully
+│  │  │  │  │  └─ Write Pommel Model completed [129μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate pommel: models/item/enchanted_books/loyalty_3.json completed [142μs]
+│  │  │  │  ├─ Generate pommel: models/item/enchanted_books/luck_of_the_sea_1.json
+│  │  │  │  │  ├─ Write Pommel Model
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [28μs]
+│  │  │  │  │  │  ▪ Writing pommel model content
+│  │  │  │  │  │  ✓ Pommel model written successfully
+│  │  │  │  │  └─ Write Pommel Model completed [104μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate pommel: models/item/enchanted_books/luck_of_the_sea_1.json completed [110μs]
+│  │  │  │  ├─ Generate pommel: models/item/enchanted_books/luck_of_the_sea_2.json
+│  │  │  │  │  ├─ Write Pommel Model
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [21μs]
+│  │  │  │  │  │  ▪ Writing pommel model content
+│  │  │  │  │  │  ✓ Pommel model written successfully
+│  │  │  │  │  └─ Write Pommel Model completed [117μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate pommel: models/item/enchanted_books/luck_of_the_sea_2.json completed [123μs]
+│  │  │  │  ├─ Generate pommel: models/item/enchanted_books/luck_of_the_sea_3.json
+│  │  │  │  │  ├─ Write Pommel Model
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [30μs]
+│  │  │  │  │  │  ▪ Writing pommel model content
+│  │  │  │  │  │  ✓ Pommel model written successfully
+│  │  │  │  │  └─ Write Pommel Model completed [123μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate pommel: models/item/enchanted_books/luck_of_the_sea_3.json completed [131μs]
+│  │  │  │  ├─ Generate pommel: models/item/enchanted_books/lure_1.json
+│  │  │  │  │  ├─ Write Pommel Model
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [29μs]
+│  │  │  │  │  │  ▪ Writing pommel model content
+│  │  │  │  │  │  ✓ Pommel model written successfully
+│  │  │  │  │  └─ Write Pommel Model completed [123μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate pommel: models/item/enchanted_books/lure_1.json completed [130μs]
+│  │  │  │  ├─ Generate pommel: models/item/enchanted_books/lure_2.json
+│  │  │  │  │  ├─ Write Pommel Model
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [30μs]
+│  │  │  │  │  │  ▪ Writing pommel model content
+│  │  │  │  │  │  ✓ Pommel model written successfully
+│  │  │  │  │  └─ Write Pommel Model completed [111μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate pommel: models/item/enchanted_books/lure_2.json completed [118μs]
+│  │  │  │  ├─ Generate pommel: models/item/enchanted_books/lure_3.json
+│  │  │  │  │  ├─ Write Pommel Model
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [26μs]
+│  │  │  │  │  │  ▪ Writing pommel model content
+│  │  │  │  │  │  ✓ Pommel model written successfully
+│  │  │  │  │  └─ Write Pommel Model completed [116μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate pommel: models/item/enchanted_books/lure_3.json completed [121μs]
+│  │  │  │  ├─ Generate pommel: models/item/enchanted_books/mending_1.json
+│  │  │  │  │  ├─ Write Pommel Model
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [27μs]
+│  │  │  │  │  │  ▪ Writing pommel model content
+│  │  │  │  │  │  ✓ Pommel model written successfully
+│  │  │  │  │  └─ Write Pommel Model completed [176μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate pommel: models/item/enchanted_books/mending_1.json completed [189μs]
+│  │  │  │  ├─ Generate pommel: models/item/enchanted_books/multishot_1.json
+│  │  │  │  │  ├─ Write Pommel Model
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [28μs]
+│  │  │  │  │  │  ▪ Writing pommel model content
+│  │  │  │  │  │  ✓ Pommel model written successfully
+│  │  │  │  │  └─ Write Pommel Model completed [179μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate pommel: models/item/enchanted_books/multishot_1.json completed [186μs]
+│  │  │  │  ├─ Generate pommel: models/item/enchanted_books/piercing_1.json
+│  │  │  │  │  ├─ Write Pommel Model
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [28μs]
+│  │  │  │  │  │  ▪ Writing pommel model content
+│  │  │  │  │  │  ✓ Pommel model written successfully
+│  │  │  │  │  └─ Write Pommel Model completed [123μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate pommel: models/item/enchanted_books/piercing_1.json completed [129μs]
+│  │  │  │  ├─ Generate pommel: models/item/enchanted_books/piercing_2.json
+│  │  │  │  │  ├─ Write Pommel Model
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [30μs]
+│  │  │  │  │  │  ▪ Writing pommel model content
+│  │  │  │  │  │  ✓ Pommel model written successfully
+│  │  │  │  │  └─ Write Pommel Model completed [131μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate pommel: models/item/enchanted_books/piercing_2.json completed [137μs]
+│  │  │  │  ├─ Generate pommel: models/item/enchanted_books/piercing_3.json
+│  │  │  │  │  ├─ Write Pommel Model
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [22μs]
+│  │  │  │  │  │  ▪ Writing pommel model content
+│  │  │  │  │  │  ✓ Pommel model written successfully
+│  │  │  │  │  └─ Write Pommel Model completed [109μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate pommel: models/item/enchanted_books/piercing_3.json completed [116μs]
+│  │  │  │  ├─ Generate pommel: models/item/enchanted_books/piercing_4.json
+│  │  │  │  │  ├─ Write Pommel Model
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [34μs]
+│  │  │  │  │  │  ▪ Writing pommel model content
+│  │  │  │  │  │  ✓ Pommel model written successfully
+│  │  │  │  │  └─ Write Pommel Model completed [130μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate pommel: models/item/enchanted_books/piercing_4.json completed [137μs]
+│  │  │  │  ├─ Generate pommel: models/item/enchanted_books/power_1.json
+│  │  │  │  │  ├─ Write Pommel Model
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [40μs]
+│  │  │  │  │  │  ▪ Writing pommel model content
+│  │  │  │  │  │  ✓ Pommel model written successfully
+│  │  │  │  │  └─ Write Pommel Model completed [133μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate pommel: models/item/enchanted_books/power_1.json completed [140μs]
+│  │  │  │  ├─ Generate pommel: models/item/enchanted_books/power_2.json
+│  │  │  │  │  ├─ Write Pommel Model
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [52μs]
+│  │  │  │  │  │  ▪ Writing pommel model content
+│  │  │  │  │  │  ✓ Pommel model written successfully
+│  │  │  │  │  └─ Write Pommel Model completed [150μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate pommel: models/item/enchanted_books/power_2.json completed [157μs]
+│  │  │  │  ├─ Generate pommel: models/item/enchanted_books/power_3.json
+│  │  │  │  │  ├─ Write Pommel Model
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [20μs]
+│  │  │  │  │  │  ▪ Writing pommel model content
+│  │  │  │  │  │  ✓ Pommel model written successfully
+│  │  │  │  │  └─ Write Pommel Model completed [115μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate pommel: models/item/enchanted_books/power_3.json completed [120μs]
+│  │  │  │  ├─ Generate pommel: models/item/enchanted_books/power_4.json
+│  │  │  │  │  ├─ Write Pommel Model
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [27μs]
+│  │  │  │  │  │  ▪ Writing pommel model content
+│  │  │  │  │  │  ✓ Pommel model written successfully
+│  │  │  │  │  └─ Write Pommel Model completed [112μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate pommel: models/item/enchanted_books/power_4.json completed [118μs]
+│  │  │  │  ├─ Generate pommel: models/item/enchanted_books/power_5.json
+│  │  │  │  │  ├─ Write Pommel Model
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [21μs]
+│  │  │  │  │  │  ▪ Writing pommel model content
+│  │  │  │  │  │  ✓ Pommel model written successfully
+│  │  │  │  │  └─ Write Pommel Model completed [92μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate pommel: models/item/enchanted_books/power_5.json completed [98μs]
+│  │  │  │  ├─ Generate pommel: models/item/enchanted_books/projectile_protection_1.json
+│  │  │  │  │  ├─ Write Pommel Model
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [19μs]
+│  │  │  │  │  │  ▪ Writing pommel model content
+│  │  │  │  │  │  ✓ Pommel model written successfully
+│  │  │  │  │  └─ Write Pommel Model completed [93μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate pommel: models/item/enchanted_books/projectile_protection_1.json completed [98μs]
+│  │  │  │  ├─ Generate pommel: models/item/enchanted_books/projectile_protection_2.json
+│  │  │  │  │  ├─ Write Pommel Model
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [17μs]
+│  │  │  │  │  │  ▪ Writing pommel model content
+│  │  │  │  │  │  ✓ Pommel model written successfully
+│  │  │  │  │  └─ Write Pommel Model completed [94μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate pommel: models/item/enchanted_books/projectile_protection_2.json completed [99μs]
+│  │  │  │  ├─ Generate pommel: models/item/enchanted_books/projectile_protection_3.json
+│  │  │  │  │  ├─ Write Pommel Model
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [18μs]
+│  │  │  │  │  │  ▪ Writing pommel model content
+│  │  │  │  │  │  ✓ Pommel model written successfully
+│  │  │  │  │  └─ Write Pommel Model completed [81μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate pommel: models/item/enchanted_books/projectile_protection_3.json completed [85μs]
+│  │  │  │  ├─ Generate pommel: models/item/enchanted_books/projectile_protection_4.json
+│  │  │  │  │  ├─ Write Pommel Model
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [20μs]
+│  │  │  │  │  │  ▪ Writing pommel model content
+│  │  │  │  │  │  ✓ Pommel model written successfully
+│  │  │  │  │  └─ Write Pommel Model completed [97μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate pommel: models/item/enchanted_books/projectile_protection_4.json completed [105μs]
+│  │  │  │  ├─ Generate pommel: models/item/enchanted_books/protection_1.json
+│  │  │  │  │  ├─ Write Pommel Model
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [22μs]
+│  │  │  │  │  │  ▪ Writing pommel model content
+│  │  │  │  │  │  ✓ Pommel model written successfully
+│  │  │  │  │  └─ Write Pommel Model completed [90μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate pommel: models/item/enchanted_books/protection_1.json completed [96μs]
+│  │  │  │  ├─ Generate pommel: models/item/enchanted_books/protection_2.json
+│  │  │  │  │  ├─ Write Pommel Model
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [24μs]
+│  │  │  │  │  │  ▪ Writing pommel model content
+│  │  │  │  │  │  ✓ Pommel model written successfully
+│  │  │  │  │  └─ Write Pommel Model completed [103μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate pommel: models/item/enchanted_books/protection_2.json completed [108μs]
+│  │  │  │  ├─ Generate pommel: models/item/enchanted_books/protection_3.json
+│  │  │  │  │  ├─ Write Pommel Model
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [28μs]
+│  │  │  │  │  │  ▪ Writing pommel model content
+│  │  │  │  │  │  ✓ Pommel model written successfully
+│  │  │  │  │  └─ Write Pommel Model completed [125μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate pommel: models/item/enchanted_books/protection_3.json completed [131μs]
+│  │  │  │  ├─ Generate pommel: models/item/enchanted_books/protection_4.json
+│  │  │  │  │  ├─ Write Pommel Model
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [28μs]
+│  │  │  │  │  │  ▪ Writing pommel model content
+│  │  │  │  │  │  ✓ Pommel model written successfully
+│  │  │  │  │  └─ Write Pommel Model completed [124μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate pommel: models/item/enchanted_books/protection_4.json completed [141μs]
+│  │  │  │  ├─ Generate pommel: models/item/enchanted_books/punch_1.json
+│  │  │  │  │  ├─ Write Pommel Model
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [28μs]
+│  │  │  │  │  │  ▪ Writing pommel model content
+│  │  │  │  │  │  ✓ Pommel model written successfully
+│  │  │  │  │  └─ Write Pommel Model completed [122μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate pommel: models/item/enchanted_books/punch_1.json completed [136μs]
+│  │  │  │  ├─ Generate pommel: models/item/enchanted_books/punch_2.json
+│  │  │  │  │  ├─ Write Pommel Model
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [23μs]
+│  │  │  │  │  │  ▪ Writing pommel model content
+│  │  │  │  │  │  ✓ Pommel model written successfully
+│  │  │  │  │  └─ Write Pommel Model completed [116μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate pommel: models/item/enchanted_books/punch_2.json completed [124μs]
+│  │  │  │  ├─ Generate pommel: models/item/enchanted_books/quick_charge_1.json
+│  │  │  │  │  ├─ Write Pommel Model
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [35μs]
+│  │  │  │  │  │  ▪ Writing pommel model content
+│  │  │  │  │  │  ✓ Pommel model written successfully
+│  │  │  │  │  └─ Write Pommel Model completed [125μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate pommel: models/item/enchanted_books/quick_charge_1.json completed [131μs]
+│  │  │  │  ├─ Generate pommel: models/item/enchanted_books/quick_charge_2.json
+│  │  │  │  │  ├─ Write Pommel Model
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [28μs]
+│  │  │  │  │  │  ▪ Writing pommel model content
+│  │  │  │  │  │  ✓ Pommel model written successfully
+│  │  │  │  │  └─ Write Pommel Model completed [106μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate pommel: models/item/enchanted_books/quick_charge_2.json completed [113μs]
+│  │  │  │  ├─ Generate pommel: models/item/enchanted_books/quick_charge_3.json
+│  │  │  │  │  ├─ Write Pommel Model
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [24μs]
+│  │  │  │  │  │  ▪ Writing pommel model content
+│  │  │  │  │  │  ✓ Pommel model written successfully
+│  │  │  │  │  └─ Write Pommel Model completed [123μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate pommel: models/item/enchanted_books/quick_charge_3.json completed [130μs]
+│  │  │  │  ├─ Generate pommel: models/item/enchanted_books/respiration_1.json
+│  │  │  │  │  ├─ Write Pommel Model
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [27μs]
+│  │  │  │  │  │  ▪ Writing pommel model content
+│  │  │  │  │  │  ✓ Pommel model written successfully
+│  │  │  │  │  └─ Write Pommel Model completed [112μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate pommel: models/item/enchanted_books/respiration_1.json completed [126μs]
+│  │  │  │  ├─ Generate pommel: models/item/enchanted_books/respiration_2.json
+│  │  │  │  │  ├─ Write Pommel Model
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [37μs]
+│  │  │  │  │  │  ▪ Writing pommel model content
+│  │  │  │  │  │  ✓ Pommel model written successfully
+│  │  │  │  │  └─ Write Pommel Model completed [134μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate pommel: models/item/enchanted_books/respiration_2.json completed [149μs]
+│  │  │  │  ├─ Generate pommel: models/item/enchanted_books/respiration_3.json
+│  │  │  │  │  ├─ Write Pommel Model
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [23μs]
+│  │  │  │  │  │  ▪ Writing pommel model content
+│  │  │  │  │  │  ✓ Pommel model written successfully
+│  │  │  │  │  └─ Write Pommel Model completed [107μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate pommel: models/item/enchanted_books/respiration_3.json completed [112μs]
+│  │  │  │  ├─ Generate pommel: models/item/enchanted_books/riptide_1.json
+│  │  │  │  │  ├─ Write Pommel Model
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [22μs]
+│  │  │  │  │  │  ▪ Writing pommel model content
+│  │  │  │  │  │  ✓ Pommel model written successfully
+│  │  │  │  │  └─ Write Pommel Model completed [93μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate pommel: models/item/enchanted_books/riptide_1.json completed [97μs]
+│  │  │  │  ├─ Generate pommel: models/item/enchanted_books/riptide_2.json
+│  │  │  │  │  ├─ Write Pommel Model
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [20μs]
+│  │  │  │  │  │  ▪ Writing pommel model content
+│  │  │  │  │  │  ✓ Pommel model written successfully
+│  │  │  │  │  └─ Write Pommel Model completed [87μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate pommel: models/item/enchanted_books/riptide_2.json completed [93μs]
+│  │  │  │  ├─ Generate pommel: models/item/enchanted_books/riptide_3.json
+│  │  │  │  │  ├─ Write Pommel Model
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [19μs]
+│  │  │  │  │  │  ▪ Writing pommel model content
+│  │  │  │  │  │  ✓ Pommel model written successfully
+│  │  │  │  │  └─ Write Pommel Model completed [87μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate pommel: models/item/enchanted_books/riptide_3.json completed [92μs]
+│  │  │  │  ├─ Generate pommel: models/item/enchanted_books/sharpness_1.json
+│  │  │  │  │  ├─ Write Pommel Model
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [24μs]
+│  │  │  │  │  │  ▪ Writing pommel model content
+│  │  │  │  │  │  ✓ Pommel model written successfully
+│  │  │  │  │  └─ Write Pommel Model completed [100μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate pommel: models/item/enchanted_books/sharpness_1.json completed [109μs]
+│  │  │  │  ├─ Generate pommel: models/item/enchanted_books/sharpness_2.json
+│  │  │  │  │  ├─ Write Pommel Model
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [33μs]
+│  │  │  │  │  │  ▪ Writing pommel model content
+│  │  │  │  │  │  ✓ Pommel model written successfully
+│  │  │  │  │  └─ Write Pommel Model completed [109μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate pommel: models/item/enchanted_books/sharpness_2.json completed [114μs]
+│  │  │  │  ├─ Generate pommel: models/item/enchanted_books/sharpness_3.json
+│  │  │  │  │  ├─ Write Pommel Model
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [22μs]
+│  │  │  │  │  │  ▪ Writing pommel model content
+│  │  │  │  │  │  ✓ Pommel model written successfully
+│  │  │  │  │  └─ Write Pommel Model completed [88μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate pommel: models/item/enchanted_books/sharpness_3.json completed [98μs]
+│  │  │  │  ├─ Generate pommel: models/item/enchanted_books/sharpness_4.json
+│  │  │  │  │  ├─ Write Pommel Model
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [23μs]
+│  │  │  │  │  │  ▪ Writing pommel model content
+│  │  │  │  │  │  ✓ Pommel model written successfully
+│  │  │  │  │  └─ Write Pommel Model completed [93μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate pommel: models/item/enchanted_books/sharpness_4.json completed [98μs]
+│  │  │  │  ├─ Generate pommel: models/item/enchanted_books/sharpness_5.json
+│  │  │  │  │  ├─ Write Pommel Model
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [31μs]
+│  │  │  │  │  │  ▪ Writing pommel model content
+│  │  │  │  │  │  ✓ Pommel model written successfully
+│  │  │  │  │  └─ Write Pommel Model completed [95μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate pommel: models/item/enchanted_books/sharpness_5.json completed [100μs]
+│  │  │  │  ├─ Generate pommel: models/item/enchanted_books/silk_touch_1.json
+│  │  │  │  │  ├─ Write Pommel Model
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [25μs]
+│  │  │  │  │  │  ▪ Writing pommel model content
+│  │  │  │  │  │  ✓ Pommel model written successfully
+│  │  │  │  │  └─ Write Pommel Model completed [165μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate pommel: models/item/enchanted_books/silk_touch_1.json completed [170μs]
+│  │  │  │  ├─ Generate pommel: models/item/enchanted_books/smite_1.json
+│  │  │  │  │  ├─ Write Pommel Model
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [31μs]
+│  │  │  │  │  │  ▪ Writing pommel model content
+│  │  │  │  │  │  ✓ Pommel model written successfully
+│  │  │  │  │  └─ Write Pommel Model completed [108μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate pommel: models/item/enchanted_books/smite_1.json completed [113μs]
+│  │  │  │  ├─ Generate pommel: models/item/enchanted_books/smite_2.json
+│  │  │  │  │  ├─ Write Pommel Model
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [32μs]
+│  │  │  │  │  │  ▪ Writing pommel model content
+│  │  │  │  │  │  ✓ Pommel model written successfully
+│  │  │  │  │  └─ Write Pommel Model completed [115μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate pommel: models/item/enchanted_books/smite_2.json completed [132μs]
+│  │  │  │  ├─ Generate pommel: models/item/enchanted_books/smite_3.json
+│  │  │  │  │  ├─ Write Pommel Model
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [28μs]
+│  │  │  │  │  │  ▪ Writing pommel model content
+│  │  │  │  │  │  ✓ Pommel model written successfully
+│  │  │  │  │  └─ Write Pommel Model completed [100μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate pommel: models/item/enchanted_books/smite_3.json completed [106μs]
+│  │  │  │  ├─ Generate pommel: models/item/enchanted_books/smite_4.json
+│  │  │  │  │  ├─ Write Pommel Model
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [24μs]
+│  │  │  │  │  │  ▪ Writing pommel model content
+│  │  │  │  │  │  ✓ Pommel model written successfully
+│  │  │  │  │  └─ Write Pommel Model completed [114μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate pommel: models/item/enchanted_books/smite_4.json completed [119μs]
+│  │  │  │  ├─ Generate pommel: models/item/enchanted_books/smite_5.json
+│  │  │  │  │  ├─ Write Pommel Model
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [35μs]
+│  │  │  │  │  │  ▪ Writing pommel model content
+│  │  │  │  │  │  ✓ Pommel model written successfully
+│  │  │  │  │  └─ Write Pommel Model completed [118μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate pommel: models/item/enchanted_books/smite_5.json completed [123μs]
+│  │  │  │  ├─ Generate pommel: models/item/enchanted_books/soul_speed_1.json
+│  │  │  │  │  ├─ Write Pommel Model
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [26μs]
+│  │  │  │  │  │  ▪ Writing pommel model content
+│  │  │  │  │  │  ✓ Pommel model written successfully
+│  │  │  │  │  └─ Write Pommel Model completed [127μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate pommel: models/item/enchanted_books/soul_speed_1.json completed [148μs]
+│  │  │  │  ├─ Generate pommel: models/item/enchanted_books/soul_speed_2.json
+│  │  │  │  │  ├─ Write Pommel Model
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [32μs]
+│  │  │  │  │  │  ▪ Writing pommel model content
+│  │  │  │  │  │  ✓ Pommel model written successfully
+│  │  │  │  │  └─ Write Pommel Model completed [108μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate pommel: models/item/enchanted_books/soul_speed_2.json completed [114μs]
+│  │  │  │  ├─ Generate pommel: models/item/enchanted_books/soul_speed_3.json
+│  │  │  │  │  ├─ Write Pommel Model
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [32μs]
+│  │  │  │  │  │  ▪ Writing pommel model content
+│  │  │  │  │  │  ✓ Pommel model written successfully
+│  │  │  │  │  └─ Write Pommel Model completed [104μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate pommel: models/item/enchanted_books/soul_speed_3.json completed [109μs]
+│  │  │  │  ├─ Generate pommel: models/item/enchanted_books/sweeping_edge_1.json
+│  │  │  │  │  ├─ Write Pommel Model
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [30μs]
+│  │  │  │  │  │  ▪ Writing pommel model content
+│  │  │  │  │  │  ✓ Pommel model written successfully
+│  │  │  │  │  └─ Write Pommel Model completed [96μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate pommel: models/item/enchanted_books/sweeping_edge_1.json completed [101μs]
+│  │  │  │  ├─ Generate pommel: models/item/enchanted_books/sweeping_edge_2.json
+│  │  │  │  │  ├─ Write Pommel Model
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [25μs]
+│  │  │  │  │  │  ▪ Writing pommel model content
+│  │  │  │  │  │  ✓ Pommel model written successfully
+│  │  │  │  │  └─ Write Pommel Model completed [100μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate pommel: models/item/enchanted_books/sweeping_edge_2.json completed [105μs]
+│  │  │  │  ├─ Generate pommel: models/item/enchanted_books/sweeping_edge_3.json
+│  │  │  │  │  ├─ Write Pommel Model
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [23μs]
+│  │  │  │  │  │  ▪ Writing pommel model content
+│  │  │  │  │  │  ✓ Pommel model written successfully
+│  │  │  │  │  └─ Write Pommel Model completed [91μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate pommel: models/item/enchanted_books/sweeping_edge_3.json completed [96μs]
+│  │  │  │  ├─ Generate pommel: models/item/enchanted_books/swift_sneak_1.json
+│  │  │  │  │  ├─ Write Pommel Model
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [19μs]
+│  │  │  │  │  │  ▪ Writing pommel model content
+│  │  │  │  │  │  ✓ Pommel model written successfully
+│  │  │  │  │  └─ Write Pommel Model completed [94μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate pommel: models/item/enchanted_books/swift_sneak_1.json completed [99μs]
+│  │  │  │  ├─ Generate pommel: models/item/enchanted_books/swift_sneak_2.json
+│  │  │  │  │  ├─ Write Pommel Model
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [36μs]
+│  │  │  │  │  │  ▪ Writing pommel model content
+│  │  │  │  │  │  ✓ Pommel model written successfully
+│  │  │  │  │  └─ Write Pommel Model completed [138μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate pommel: models/item/enchanted_books/swift_sneak_2.json completed [143μs]
+│  │  │  │  ├─ Generate pommel: models/item/enchanted_books/swift_sneak_3.json
+│  │  │  │  │  ├─ Write Pommel Model
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [25μs]
+│  │  │  │  │  │  ▪ Writing pommel model content
+│  │  │  │  │  │  ✓ Pommel model written successfully
+│  │  │  │  │  └─ Write Pommel Model completed [99μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate pommel: models/item/enchanted_books/swift_sneak_3.json completed [116μs]
+│  │  │  │  ├─ Generate pommel: models/item/enchanted_books/thorns_1.json
+│  │  │  │  │  ├─ Write Pommel Model
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [25μs]
+│  │  │  │  │  │  ▪ Writing pommel model content
+│  │  │  │  │  │  ✓ Pommel model written successfully
+│  │  │  │  │  └─ Write Pommel Model completed [94μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate pommel: models/item/enchanted_books/thorns_1.json completed [98μs]
+│  │  │  │  ├─ Generate pommel: models/item/enchanted_books/thorns_2.json
+│  │  │  │  │  ├─ Write Pommel Model
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [18μs]
+│  │  │  │  │  │  ▪ Writing pommel model content
+│  │  │  │  │  │  ✓ Pommel model written successfully
+│  │  │  │  │  └─ Write Pommel Model completed [74μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate pommel: models/item/enchanted_books/thorns_2.json completed [78μs]
+│  │  │  │  ├─ Generate pommel: models/item/enchanted_books/thorns_3.json
+│  │  │  │  │  ├─ Write Pommel Model
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [16μs]
+│  │  │  │  │  │  ▪ Writing pommel model content
+│  │  │  │  │  │  ✓ Pommel model written successfully
+│  │  │  │  │  └─ Write Pommel Model completed [87μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate pommel: models/item/enchanted_books/thorns_3.json completed [93μs]
+│  │  │  │  ├─ Generate pommel: models/item/enchanted_books/vanishing_curse_1.json
+│  │  │  │  │  ├─ Write Pommel Model
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [28μs]
+│  │  │  │  │  │  ▪ Writing pommel model content
+│  │  │  │  │  │  ✓ Pommel model written successfully
+│  │  │  │  │  └─ Write Pommel Model completed [169μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate pommel: models/item/enchanted_books/vanishing_curse_1.json completed [174μs]
+│  │  │  │  ├─ Generate pommel: models/item/enchanted_books/unbreaking_1.json
+│  │  │  │  │  ├─ Write Pommel Model
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [19μs]
+│  │  │  │  │  │  ▪ Writing pommel model content
+│  │  │  │  │  │  ✓ Pommel model written successfully
+│  │  │  │  │  └─ Write Pommel Model completed [92μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate pommel: models/item/enchanted_books/unbreaking_1.json completed [98μs]
+│  │  │  │  ├─ Generate pommel: models/item/enchanted_books/unbreaking_2.json
+│  │  │  │  │  ├─ Write Pommel Model
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [28μs]
+│  │  │  │  │  │  ▪ Writing pommel model content
+│  │  │  │  │  │  ✓ Pommel model written successfully
+│  │  │  │  │  └─ Write Pommel Model completed [125μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate pommel: models/item/enchanted_books/unbreaking_2.json completed [131μs]
+│  │  │  │  ├─ Generate pommel: models/item/enchanted_books/unbreaking_3.json
+│  │  │  │  │  ├─ Write Pommel Model
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [28μs]
+│  │  │  │  │  │  ▪ Writing pommel model content
+│  │  │  │  │  │  ✓ Pommel model written successfully
+│  │  │  │  │  └─ Write Pommel Model completed [119μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate pommel: models/item/enchanted_books/unbreaking_3.json completed [131μs]
+│  │  │  │  ├─ Generate pommel: models/item/enchanted_books/wind_burst_1.json
+│  │  │  │  │  ├─ Write Pommel Model
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [19μs]
+│  │  │  │  │  │  ▪ Writing pommel model content
+│  │  │  │  │  │  ✓ Pommel model written successfully
+│  │  │  │  │  └─ Write Pommel Model completed [85μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate pommel: models/item/enchanted_books/wind_burst_1.json completed [91μs]
+│  │  │  │  ├─ Generate pommel: models/item/enchanted_books/wind_burst_2.json
+│  │  │  │  │  ├─ Write Pommel Model
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [22μs]
+│  │  │  │  │  │  ▪ Writing pommel model content
+│  │  │  │  │  │  ✓ Pommel model written successfully
+│  │  │  │  │  └─ Write Pommel Model completed [90μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate pommel: models/item/enchanted_books/wind_burst_2.json completed [95μs]
+│  │  │  │  ├─ Generate pommel: models/item/enchanted_books/wind_burst_3.json
+│  │  │  │  │  ├─ Write Pommel Model
+│  │  │  │  │  │  ▪ Ensuring directory exists
+│  │  │  │  │  │  ├─ Ensure Directory
+│  │  │  │  │  │  │  ▪ Creating directory recursively
+│  │  │  │  │  │  └─ Ensure Directory completed [20μs]
+│  │  │  │  │  │  ▪ Writing pommel model content
+│  │  │  │  │  │  ✓ Pommel model written successfully
+│  │  │  │  │  └─ Write Pommel Model completed [92μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate pommel: models/item/enchanted_books/wind_burst_3.json completed [97μs]
+│  │  │  │  ├─ Generate enhanced_model: minecraft:item/books_3d/channeling_3d_open.json
+│  │  │  │  │  ├─ Copy Enhanced Model
+│  │  │  │  │  └─ Copy Enhanced Model completed [60μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate enhanced_model: minecraft:item/books_3d/channeling_3d_open.json completed [320μs]
+│  │  │  │  ├─ Generate enhanced_model: minecraft:item/books_3d/fire_aspect_3d_open.json
+│  │  │  │  │  ├─ Copy Enhanced Model
+│  │  │  │  │  └─ Copy Enhanced Model completed [13μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate enhanced_model: minecraft:item/books_3d/fire_aspect_3d_open.json completed [29μs]
+│  │  │  │  ├─ Generate enhanced_model: minecraft:item/books_3d/flame_3d_open.json
+│  │  │  │  │  ├─ Copy Enhanced Model
+│  │  │  │  │  └─ Copy Enhanced Model completed [7μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate enhanced_model: minecraft:item/books_3d/flame_3d_open.json completed [18μs]
+│  │  │  │  ├─ Generate enhanced_model: minecraft:item/books_3d/riptide_3d_open.json
+│  │  │  │  │  ├─ Copy Enhanced Model
+│  │  │  │  │  └─ Copy Enhanced Model completed [5μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate enhanced_model: minecraft:item/books_3d/riptide_3d_open.json completed [13μs]
+│  │  │  │  ├─ Generate enhanced_model: minecraft:item/books_3d/channeling_3d.json
+│  │  │  │  │  ├─ Copy Enhanced Model
+│  │  │  │  │  └─ Copy Enhanced Model completed [5μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate enhanced_model: minecraft:item/books_3d/channeling_3d.json completed [12μs]
+│  │  │  │  ├─ Generate enhanced_model: minecraft:item/books_3d/fire_aspect_3d.json
+│  │  │  │  │  ├─ Copy Enhanced Model
+│  │  │  │  │  └─ Copy Enhanced Model completed [6μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate enhanced_model: minecraft:item/books_3d/fire_aspect_3d.json completed [15μs]
+│  │  │  │  ├─ Generate enhanced_model: minecraft:item/books_3d/flame_3d.json
+│  │  │  │  │  ├─ Copy Enhanced Model
+│  │  │  │  │  └─ Copy Enhanced Model completed [6μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate enhanced_model: minecraft:item/books_3d/flame_3d.json completed [16μs]
+│  │  │  │  ├─ Generate enhanced_model: minecraft:item/books_3d/riptide_3d.json
+│  │  │  │  │  ├─ Copy Enhanced Model
+│  │  │  │  │  └─ Copy Enhanced Model completed [11μs]
+│  │  │  │  │  ✓ File generated successfully
+│  │  │  │  └─ Generate enhanced_model: minecraft:item/books_3d/riptide_3d.json completed [30μs]
+│  │  │  └─ Generate Files completed [40.1ms]
+│  │  └─ Process Item: enchanted_book completed [44.7ms]
+│  └─ Item Processing completed [48.1ms]
+│  ├─ Post-Processing
+│  │  ✓ Model compatibility fixes applied
+│  └─ Post-Processing completed [19.4ms]
+└─ Conditional Compiler Backport completed [208.9ms]
+└─ Resource Pack Backport completed [209.3ms]

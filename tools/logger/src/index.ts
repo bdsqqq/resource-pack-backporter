@@ -247,10 +247,11 @@ export class StructuredTracer {
   }
 
   private formatDuration(ms: number): string {
-    if (ms < 1) return `[${ms.toFixed(2)}ms]`;
-    if (ms < 1000) return `[${ms.toFixed(1)}ms]`;
-    if (ms < 60000) return `[${(ms / 1000).toFixed(1)}s]`;
-    return `[${Math.floor(ms / 60000)}m ${Math.floor((ms % 60000) / 1000)}s]`;
+    if (ms < 0.001) return `[${(ms * 1000000).toFixed(0)}ns]`; // nanoseconds
+    if (ms < 1) return `[${(ms * 1000).toFixed(0)}μs]`; // microseconds
+    if (ms < 1000) return `[${ms.toFixed(1)}ms]`; // milliseconds
+    if (ms < 60000) return `[${(ms / 1000).toFixed(1)}s]`; // seconds
+    return `[${Math.floor(ms / 60000)}m ${Math.floor((ms % 60000) / 1000)}s]`; // minutes
   }
 
   private generateId(): string {

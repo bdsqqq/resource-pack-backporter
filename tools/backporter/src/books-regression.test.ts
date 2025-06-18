@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it } from "bun:test";
 import { existsSync } from "node:fs";
-import { mkdir, readFile, rm, writeFile, copyFile } from "node:fs/promises";
+import { mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import { ConditionalBackportCoordinator } from "@backporter/conditional-compiler/backport-coordinator";
 import { createTestTracer } from "./test-utils";
@@ -41,10 +41,9 @@ describe("Books Resource Pack Regression Tests", () => {
   describe("Template File Protection (Main Hand Invisibility Fix)", () => {
     it("should never add parent field to template files", async () => {
       // Setup: Create a template file that would trigger compatibility processing
-      await mkdir(
-        join(inputDir, "assets", "minecraft", "models", "item", "books_3d"),
-        { recursive: true }
-      );
+      await mkdir(join(inputDir, "assets", "minecraft", "models", "item", "books_3d"), {
+        recursive: true,
+      });
 
       const templateFile = {
         credit: "Test Template",
@@ -109,10 +108,9 @@ describe("Books Resource Pack Regression Tests", () => {
 
     it("should validate template file structure requirements", async () => {
       // Setup: Create template with required fields
-      await mkdir(
-        join(inputDir, "assets", "minecraft", "models", "item", "books_3d"),
-        { recursive: true }
-      );
+      await mkdir(join(inputDir, "assets", "minecraft", "models", "item", "books_3d"), {
+        recursive: true,
+      });
 
       const validTemplate = {
         credit: "Bray + Cyberia were here",
@@ -202,27 +200,17 @@ describe("Books Resource Pack Regression Tests", () => {
       );
       expect(existsSync(channelingModelPath)).toBe(true);
 
-      const channelingModel = JSON.parse(
-        await readFile(channelingModelPath, "utf-8")
-      );
+      const channelingModel = JSON.parse(await readFile(channelingModelPath, "utf-8"));
       expect(channelingModel.parent).toBe("minecraft:item/handheld");
-      expect(channelingModel.textures.layer0).toBe(
-        "minecraft:item/enchanted_books/channeling"
-      );
+      expect(channelingModel.textures.layer0).toBe("minecraft:item/enchanted_books/channeling");
       expect(channelingModel.overrides).toBeDefined();
       expect(channelingModel.overrides.length).toBeGreaterThan(0);
 
       // Should have ground, held, and offhand predicates with correct 3D model references
       const predicates = channelingModel.overrides.map((o: any) => o.predicate);
-      const groundCount = predicates.filter(
-        (p: any) => p["pommel:is_ground"] === 1
-      ).length;
-      const heldCount = predicates.filter(
-        (p: any) => p["pommel:is_held"] === 1
-      ).length;
-      const offhandCount = predicates.filter(
-        (p: any) => p["pommel:is_offhand"] === 1
-      ).length;
+      const groundCount = predicates.filter((p: any) => p["pommel:is_ground"] === 1).length;
+      const heldCount = predicates.filter((p: any) => p["pommel:is_held"] === 1).length;
+      const offhandCount = predicates.filter((p: any) => p["pommel:is_offhand"] === 1).length;
 
       expect(groundCount).toBe(1);
       expect(heldCount).toBeGreaterThan(0); // At least one held predicate
@@ -260,9 +248,7 @@ describe("Books Resource Pack Regression Tests", () => {
       );
 
       // Single-level enchantments should reference texture without level suffix
-      expect(channelingModel.textures.layer0).toBe(
-        "minecraft:item/enchanted_books/channeling"
-      );
+      expect(channelingModel.textures.layer0).toBe("minecraft:item/enchanted_books/channeling");
       // NOT "minecraft:item/enchanted_books/channeling_1"
     });
 
@@ -287,9 +273,7 @@ describe("Books Resource Pack Regression Tests", () => {
       );
 
       // Multi-level enchantments should include level suffix in texture name
-      expect(sharpness3Model.textures.layer0).toBe(
-        "minecraft:item/enchanted_books/sharpness_3"
-      );
+      expect(sharpness3Model.textures.layer0).toBe("minecraft:item/enchanted_books/sharpness_3");
 
       // Should have corresponding CIT property
       const citPath = join(
@@ -343,9 +327,7 @@ describe("Books Resource Pack Regression Tests", () => {
       );
 
       // Curse mapping: binding_curse → curse_of_binding
-      expect(curseModel.textures.layer0).toBe(
-        "minecraft:item/enchanted_books/curse_of_binding"
-      );
+      expect(curseModel.textures.layer0).toBe("minecraft:item/enchanted_books/curse_of_binding");
 
       // Should have corresponding CIT property with original enchantment ID
       const citPath = join(
@@ -386,15 +368,9 @@ describe("Books Resource Pack Regression Tests", () => {
 
       // Should have proper predicate pattern
       const predicates = bookModel.overrides.map((o: any) => o.predicate);
-      const groundCount = predicates.filter(
-        (p: any) => p["pommel:is_ground"] === 1
-      ).length;
-      const heldCount = predicates.filter(
-        (p: any) => p["pommel:is_held"] === 1
-      ).length;
-      const offhandCount = predicates.filter(
-        (p: any) => p["pommel:is_offhand"] === 1
-      ).length;
+      const groundCount = predicates.filter((p: any) => p["pommel:is_ground"] === 1).length;
+      const heldCount = predicates.filter((p: any) => p["pommel:is_held"] === 1).length;
+      const offhandCount = predicates.filter((p: any) => p["pommel:is_offhand"] === 1).length;
 
       expect(groundCount).toBe(1);
       expect(heldCount).toBe(2);
@@ -402,16 +378,7 @@ describe("Books Resource Pack Regression Tests", () => {
 
       // Should NOT have CIT properties for regular books
       expect(
-        existsSync(
-          join(
-            outputDir,
-            "assets",
-            "minecraft",
-            "optifine",
-            "cit",
-            "book_1.properties"
-          )
-        )
+        existsSync(join(outputDir, "assets", "minecraft", "optifine", "cit", "book_1.properties"))
       ).toBe(false);
     });
 
@@ -421,14 +388,7 @@ describe("Books Resource Pack Regression Tests", () => {
 
       const writableBookModel = JSON.parse(
         await readFile(
-          join(
-            outputDir,
-            "assets",
-            "minecraft",
-            "models",
-            "item",
-            "writable_book.json"
-          ),
+          join(outputDir, "assets", "minecraft", "models", "item", "writable_book.json"),
           "utf-8"
         )
       );
@@ -439,7 +399,7 @@ describe("Books Resource Pack Regression Tests", () => {
 
       // Should include Pommel predicates (writable_book_content may not be supported yet)
       const hasPommelPredicate = writableBookModel.overrides.some(
-        (o: any) => o.predicate && o.predicate["pommel:is_ground"]
+        (o: any) => o.predicate?.["pommel:is_ground"]
       );
 
       expect(hasPommelPredicate).toBe(true);
@@ -452,10 +412,9 @@ describe("Books Resource Pack Regression Tests", () => {
       await setupEnchantedBookPack(inputDir, "channeling");
 
       // Add animated 3D model
-      await mkdir(
-        join(inputDir, "assets", "minecraft", "models", "item", "books_3d"),
-        { recursive: true }
-      );
+      await mkdir(join(inputDir, "assets", "minecraft", "models", "item", "books_3d"), {
+        recursive: true,
+      });
       const animatedModel = {
         credit: "Animated Model",
         texture_size: [32, 32],
@@ -501,32 +460,21 @@ describe("Books Resource Pack Regression Tests", () => {
       );
 
       expect(preserved3DModel.elements[0].faces.north.animation).toBeDefined();
-      expect(preserved3DModel.elements[0].faces.north.animation.frametime).toBe(
-        2
-      );
+      expect(preserved3DModel.elements[0].faces.north.animation.frametime).toBe(2);
     });
 
     it("should correctly reference 3D models in Pommel overrides", async () => {
       await setupEnchantedBookPack(inputDir, "channeling");
 
       // Add matching 3D models
-      await mkdir(
-        join(inputDir, "assets", "minecraft", "models", "item", "books_3d"),
-        { recursive: true }
-      );
+      await mkdir(join(inputDir, "assets", "minecraft", "models", "item", "books_3d"), {
+        recursive: true,
+      });
       const closedModel = { credit: "Test", elements: [] };
       const openModel = { credit: "Test", elements: [] };
 
       await writeFile(
-        join(
-          inputDir,
-          "assets",
-          "minecraft",
-          "models",
-          "item",
-          "books_3d",
-          "channeling_3d.json"
-        ),
+        join(inputDir, "assets", "minecraft", "models", "item", "books_3d", "channeling_3d.json"),
         JSON.stringify(closedModel, null, 2)
       );
       await writeFile(
@@ -555,9 +503,7 @@ describe("Books Resource Pack Regression Tests", () => {
       );
 
       if (existsSync(channelingModelPath)) {
-        const channelingModel = JSON.parse(
-          await readFile(channelingModelPath, "utf-8")
-        );
+        const channelingModel = JSON.parse(await readFile(channelingModelPath, "utf-8"));
 
         // Should reference 3D models with correct paths
         const hasClosedReference = channelingModel.overrides.some(
@@ -573,21 +519,14 @@ describe("Books Resource Pack Regression Tests", () => {
         // If individual model doesn't exist, check base model instead
         const baseModel = JSON.parse(
           await readFile(
-            join(
-              outputDir,
-              "assets",
-              "minecraft",
-              "models",
-              "item",
-              "enchanted_book.json"
-            ),
+            join(outputDir, "assets", "minecraft", "models", "item", "enchanted_book.json"),
             "utf-8"
           )
         );
 
         // Base model should reference 3D models
-        const hasClosedReference = baseModel.overrides.some(
-          (o: any) => o.model && o.model.includes("channeling_3d")
+        const hasClosedReference = baseModel.overrides.some((o: any) =>
+          o.model?.includes("channeling_3d")
         );
 
         expect(hasClosedReference).toBe(true);
@@ -606,16 +545,11 @@ describe("Books Resource Pack Regression Tests", () => {
           description: "Original Pack Description",
         },
       };
-      await writeFile(
-        join(inputDir, "pack.mcmeta"),
-        JSON.stringify(packMeta, null, 2)
-      );
+      await writeFile(join(inputDir, "pack.mcmeta"), JSON.stringify(packMeta, null, 2));
 
       await coordinator.backport(inputDir, outputDir);
 
-      const outputPackMeta = JSON.parse(
-        await readFile(join(outputDir, "pack.mcmeta"), "utf-8")
-      );
+      const outputPackMeta = JSON.parse(await readFile(join(outputDir, "pack.mcmeta"), "utf-8"));
 
       expect(outputPackMeta.pack.description).toBe(
         "Original Pack Description ↺_backported_by_@bdsqqq"
@@ -632,16 +566,11 @@ describe("Books Resource Pack Regression Tests", () => {
           description: ["§7Original Pack", " §aby Author"],
         },
       };
-      await writeFile(
-        join(inputDir, "pack.mcmeta"),
-        JSON.stringify(packMeta, null, 2)
-      );
+      await writeFile(join(inputDir, "pack.mcmeta"), JSON.stringify(packMeta, null, 2));
 
       await coordinator.backport(inputDir, outputDir);
 
-      const outputPackMeta = JSON.parse(
-        await readFile(join(outputDir, "pack.mcmeta"), "utf-8")
-      );
+      const outputPackMeta = JSON.parse(await readFile(join(outputDir, "pack.mcmeta"), "utf-8"));
 
       expect(outputPackMeta.pack.description).toEqual([
         "§7Original Pack",
@@ -686,39 +615,18 @@ describe("Books Resource Pack Regression Tests", () => {
         join(inputDir, "assets", "minecraft", "textures", "item", "custom.png"),
         "texture"
       );
-      await writeFile(
-        join(inputDir, "assets", "minecraft", "sounds", "custom.ogg"),
-        "sound"
-      );
-      await writeFile(
-        join(inputDir, "assets", "minecraft", "blockstates", "custom.json"),
-        "{}"
-      );
+      await writeFile(join(inputDir, "assets", "minecraft", "sounds", "custom.ogg"), "sound");
+      await writeFile(join(inputDir, "assets", "minecraft", "blockstates", "custom.json"), "{}");
 
       await coordinator.backport(inputDir, outputDir);
 
       expect(
-        existsSync(
-          join(
-            outputDir,
-            "assets",
-            "minecraft",
-            "textures",
-            "item",
-            "custom.png"
-          )
-        )
+        existsSync(join(outputDir, "assets", "minecraft", "textures", "item", "custom.png"))
       ).toBe(true);
-      expect(
-        existsSync(
-          join(outputDir, "assets", "minecraft", "sounds", "custom.ogg")
-        )
-      ).toBe(true);
-      expect(
-        existsSync(
-          join(outputDir, "assets", "minecraft", "blockstates", "custom.json")
-        )
-      ).toBe(true);
+      expect(existsSync(join(outputDir, "assets", "minecraft", "sounds", "custom.ogg"))).toBe(true);
+      expect(existsSync(join(outputDir, "assets", "minecraft", "blockstates", "custom.json"))).toBe(
+        true
+      );
     });
   });
 
@@ -727,17 +635,9 @@ describe("Books Resource Pack Regression Tests", () => {
     await mkdir(join(inputDir, "assets", "minecraft", "items"), {
       recursive: true,
     });
-    await mkdir(
-      join(
-        inputDir,
-        "assets",
-        "minecraft",
-        "models",
-        "item",
-        "enchanted_books"
-      ),
-      { recursive: true }
-    );
+    await mkdir(join(inputDir, "assets", "minecraft", "models", "item", "enchanted_books"), {
+      recursive: true,
+    });
 
     const packMeta = {
       pack: {
@@ -745,10 +645,7 @@ describe("Books Resource Pack Regression Tests", () => {
         description: "Test Pack",
       },
     };
-    await writeFile(
-      join(inputDir, "pack.mcmeta"),
-      JSON.stringify(packMeta, null, 2)
-    );
+    await writeFile(join(inputDir, "pack.mcmeta"), JSON.stringify(packMeta, null, 2));
   }
 
   async function setupEnchantedBookPack(
@@ -775,18 +672,14 @@ describe("Books Resource Pack Regression Tests", () => {
                 when: ["gui", "fixed", "head"],
                 model: {
                   type: "minecraft:model",
-                  model: `minecraft:item/enchanted_books/${enchantment}_${
-                    i + 1
-                  }`,
+                  model: `minecraft:item/enchanted_books/${enchantment}_${i + 1}`,
                 },
               },
               {
                 when: ["ground"],
                 model: {
                   type: "minecraft:model",
-                  model: `minecraft:item/enchanted_books/${enchantment}_${
-                    i + 1
-                  }`,
+                  model: `minecraft:item/enchanted_books/${enchantment}_${i + 1}`,
                 },
               },
               {
@@ -894,15 +787,7 @@ describe("Books Resource Pack Regression Tests", () => {
     };
 
     await writeFile(
-      join(
-        inputDir,
-        "assets",
-        "minecraft",
-        "models",
-        "item",
-        "enchanted_books",
-        "book.json"
-      ),
+      join(inputDir, "assets", "minecraft", "models", "item", "enchanted_books", "book.json"),
       JSON.stringify(bookModel, null, 2)
     );
   }

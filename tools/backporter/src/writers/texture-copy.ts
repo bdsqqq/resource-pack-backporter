@@ -1,5 +1,5 @@
 import { copyFile, mkdir } from "node:fs/promises";
-import { join, dirname } from "node:path";
+import { dirname, join } from "node:path";
 import type { WriteRequest } from "@backporter/file-manager";
 import type { FileWriter } from "@backporter/writers";
 
@@ -15,9 +15,7 @@ export class TextureCopyWriter implements FileWriter {
     const sourceContent = request.content;
 
     if (!sourceContent.sourcePath) {
-      throw new Error(
-        `No source path provided for texture copy: ${request.path}`
-      );
+      throw new Error(`No source path provided for texture copy: ${request.path}`);
     }
 
     // Ensure directory exists

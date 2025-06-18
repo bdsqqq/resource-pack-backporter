@@ -1,20 +1,17 @@
-import type { WriteRequest, ProcessingContext } from "@backporter/file-manager";
+import type { ProcessingContext, WriteRequest } from "@backporter/file-manager";
 import type { ItemHandler } from "@backporter/handlers";
 
 export class StoredEnchanmentsHandler implements ItemHandler {
   name = "stored-enchantments";
 
-  canHandle(jsonNode: any, context: ProcessingContext): boolean {
+  canHandle(jsonNode: any, _context: ProcessingContext): boolean {
     // Check if this item has stored_enchantments component
     return this.hasStoredEnchantments(jsonNode);
   }
 
   process(jsonNode: any, context: ProcessingContext): WriteRequest[] {
     // Extract enchantment variants from the JSON
-    const enchantmentVariants = this.extractEnchantmentVariants(
-      jsonNode,
-      context
-    );
+    const enchantmentVariants = this.extractEnchantmentVariants(jsonNode, context);
 
     if (enchantmentVariants.length === 0) {
       return [];
@@ -79,19 +76,14 @@ export class StoredEnchanmentsHandler implements ItemHandler {
     // Process cases to extract enchantment conditions
     for (const caseObj of selector.cases) {
       if (caseObj.when && caseObj.model) {
-        const conditions = Array.isArray(caseObj.when)
-          ? caseObj.when
-          : [caseObj.when];
+        const conditions = Array.isArray(caseObj.when) ? caseObj.when : [caseObj.when];
         const modelPath = caseObj.model.model || caseObj.model;
 
         for (const condition of conditions) {
           if (typeof condition === "object") {
             // Extract enchantment and level from condition
             for (const [enchantment, level] of Object.entries(condition)) {
-              if (
-                typeof enchantment === "string" &&
-                typeof level === "number"
-              ) {
+              if (typeof enchantment === "string" && typeof level === "number") {
                 const enchantmentName = enchantment.replace("minecraft:", "");
                 const variantName = `${enchantmentName}_${level}`;
 
@@ -129,8 +121,7 @@ export class StoredEnchanmentsHandler implements ItemHandler {
     // Try to read texture from the model file
     if (modelPath && typeof modelPath === "string") {
       try {
-        const fullModelPath =
-          modelPath.replace("minecraft:", "assets/minecraft/models/") + ".json";
+        const fullModelPath = `${modelPath.replace("minecraft:", "assets/minecraft/models/")}.json`;
 
         // Find the model file in pack structure
         const found = context.packStructure.modelFiles.find((file) => {
@@ -166,9 +157,9 @@ export class StoredEnchanmentsHandler implements ItemHandler {
     }
 
     // Fallback to texture directory search
-    const possibleDirs = Object.keys(
-      context.packStructure.textureDirectories
-    ).filter((dir) => dir.includes("enchant") || dir.includes("book"));
+    const possibleDirs = Object.keys(context.packStructure.textureDirectories).filter(
+      (dir) => dir.includes("enchant") || dir.includes("book")
+    );
 
     for (const dir of possibleDirs) {
       const textures = context.packStructure.textureDirectories[dir];
@@ -217,10 +208,7 @@ export class StoredEnchanmentsHandler implements ItemHandler {
     return `${enchantmentName}_${level}`;
   }
 
-  private buildCITProperties(
-    variant: EnchantmentVariant,
-    context: ProcessingContext
-  ): any {
+  private buildCITProperties(variant: EnchantmentVariant, context: ProcessingContext): any {
     // CIT properties format should match OptiFine expectations
     return {
       type: "item",
@@ -231,10 +219,7 @@ export class StoredEnchanmentsHandler implements ItemHandler {
     };
   }
 
-  private buildPommelModel(
-    variant: EnchantmentVariant,
-    context: ProcessingContext
-  ): any {
+  private buildPommelModel(variant: EnchantmentVariant, _context: ProcessingContext): any {
     // Get the base enchantment name for 3D model references
     const enchantmentName = variant.enchantment.replace("minecraft:", "");
 

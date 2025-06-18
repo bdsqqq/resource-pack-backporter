@@ -1,9 +1,9 @@
-import { validateJson } from "@json-utils/index";
-import { walkModels, walkTextures } from "@file-utils/index";
-import { resolveTexturePath, resolveModelPath } from "@mc-paths/index";
-import type { StructuredTracer } from "@logger/index";
-import { Result, ok } from "neverthrow";
 import { join } from "node:path";
+import { walkModels, walkTextures } from "@file-utils/index";
+import { validateJson } from "@json-utils/index";
+import type { StructuredTracer } from "@logger/index";
+import { resolveModelPath, resolveTexturePath } from "@mc-paths/index";
+import { ok, type Result } from "neverthrow";
 import { ensureVanillaAssetsGenerated } from "./pack-format-utils";
 
 export interface ValidationOptions {
@@ -186,9 +186,7 @@ export async function validateResourcePack(
               }
             } else {
               // Custom model that should exist but doesn't
-              errors.push(
-                `Missing model: ${parentRef} (referenced in ${modelFile})`
-              );
+              errors.push(`Missing model: ${parentRef} (referenced in ${modelFile})`);
             }
           }
         }
@@ -199,9 +197,7 @@ export async function validateResourcePack(
       for (const ref of textureRefs) {
         const texturePathResult = await resolveTexturePath(packDir, ref);
         if (texturePathResult.isErr()) {
-          errors.push(
-            `Error resolving texture ${ref}: ${texturePathResult.error}`
-          );
+          errors.push(`Error resolving texture ${ref}: ${texturePathResult.error}`);
           continue;
         }
 
@@ -252,9 +248,7 @@ export async function validateResourcePack(
   if (verbose) {
     const textureCountResult = await walkTextures(`${packDir}/assets`);
     if (textureCountResult.isOk()) {
-      validationSpan?.info(
-        `Found ${textureCountResult.value.length} texture files`
-      );
+      validationSpan?.info(`Found ${textureCountResult.value.length} texture files`);
     }
   }
 

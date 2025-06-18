@@ -1,5 +1,5 @@
 import { mkdir, writeFile } from "node:fs/promises";
-import { join, dirname } from "node:path";
+import { dirname, join } from "node:path";
 import type { WriteRequest } from "@backporter/file-manager";
 
 interface FileWriter {

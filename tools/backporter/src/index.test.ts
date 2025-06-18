@@ -1,6 +1,6 @@
-import { expect, test, beforeEach, afterEach } from "bun:test";
-import { mkdir, writeFile, rm, readdir, readFile } from "node:fs/promises";
-import { join, dirname } from "node:path";
+import { afterEach, beforeEach, expect, test } from "bun:test";
+import { mkdir, readdir, readFile, rm, writeFile } from "node:fs/promises";
+import { dirname, join } from "node:path";
 import { ConditionalBackportCoordinator } from "@backporter/index";
 import { createTestTracer } from "./test-utils";
 
@@ -73,8 +73,7 @@ test("backports pack with display context switching", async () => {
       },
     },
     "assets/minecraft/textures/item/test_sword.png": "fake_texture_content",
-    "assets/minecraft/textures/item/test_sword_ground.png":
-      "fake_texture_content",
+    "assets/minecraft/textures/item/test_sword_ground.png": "fake_texture_content",
   });
 
   // Run backport
@@ -97,16 +96,12 @@ test("backports pack with display context switching", async () => {
   expect(pommelModel.overrides.length).toBeGreaterThan(0);
 
   // Should have overrides for held contexts
-  const heldOverride = pommelModel.overrides.find(
-    (o) => o.predicate["pommel:is_held"]
-  );
+  const heldOverride = pommelModel.overrides.find((o) => o.predicate["pommel:is_held"]);
   expect(heldOverride).toBeDefined();
   expect(heldOverride.model).toBe("minecraft:item/test_sword_3d");
 
   // Should have overrides for ground
-  const groundOverride = pommelModel.overrides.find(
-    (o) => o.predicate["pommel:is_ground"]
-  );
+  const groundOverride = pommelModel.overrides.find((o) => o.predicate["pommel:is_ground"]);
   expect(groundOverride).toBeDefined();
   expect(groundOverride.model).toBe("minecraft:item/test_sword_ground");
 
@@ -145,9 +140,7 @@ test("backports pack with no special components (base item)", async () => {
   // Should just copy the model as-is (base handler behavior)
   const outputFiles = await getAllFiles(TEST_OUTPUT_DIR);
   expect(outputFiles).toContain("pack.mcmeta");
-  expect(outputFiles).toContain(
-    "assets/minecraft/textures/item/simple_item.png"
-  );
+  expect(outputFiles).toContain("assets/minecraft/textures/item/simple_item.png");
 
   // Base handler should create basic Pommel-compatible model
   const model = await readJsonFile(

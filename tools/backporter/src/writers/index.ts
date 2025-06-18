@@ -8,10 +8,10 @@ export interface FileWriter {
   write(request: WriteRequest, outputDir: string): Promise<void>;
 }
 
-import { PommelModelWriter } from "./pommel-model";
 import { CITPropertiesWriter } from "./cit-properties";
-import { VanillaModelWriter } from "./vanilla-model";
+import { PommelModelWriter } from "./pommel-model";
 import { TextureCopyWriter } from "./texture-copy";
+import { VanillaModelWriter } from "./vanilla-model";
 
 // Writer registry - will be populated as we migrate writers
 export const writers: FileWriter[] = [

@@ -1,5 +1,5 @@
 import { existsSync } from "node:fs";
-import { readFile, readdir } from "node:fs/promises";
+import { readdir, readFile } from "node:fs/promises";
 import { join } from "node:path";
 import type { ResourcePackStructure } from "@backporter/file-manager";
 import type { StructuredTracer } from "@logger/index";
@@ -25,10 +25,7 @@ export class ResourcePackIntrospector {
     this.tracer = tracer;
   }
 
-  async analyzeStructure(
-    packDir: string,
-    verbose = false
-  ): Promise<ResourcePackStructure> {
+  async analyzeStructure(packDir: string, verbose = false): Promise<ResourcePackStructure> {
     const structure: ResourcePackStructure = {
       itemFiles: [],
       modelFiles: [],
@@ -47,9 +44,7 @@ export class ResourcePackIntrospector {
     basePath = "",
     verbose = false
   ) {
-    const scanSpan = this.tracer?.startSpan(
-      `Scan Directory: ${basePath || "root"}`
-    );
+    const scanSpan = this.tracer?.startSpan(`Scan Directory: ${basePath || "root"}`);
     scanSpan?.setAttributes({ dir, basePath });
 
     if (verbose) {
@@ -102,10 +97,7 @@ export class ResourcePackIntrospector {
       fileSpan?.debug("Categorizing file");
     }
 
-    if (
-      relativePath.includes("assets/minecraft/items/") &&
-      relativePath.endsWith(".json")
-    ) {
+    if (relativePath.includes("assets/minecraft/items/") && relativePath.endsWith(".json")) {
       if (verbose) {
         fileSpan?.debug("Found item file");
       }
@@ -120,8 +112,7 @@ export class ResourcePackIntrospector {
       }
       structure.modelFiles.push(fullPath);
       const dir = relativePath.substring(0, relativePath.lastIndexOf("/"));
-      if (!structure.modelDirectories[dir])
-        structure.modelDirectories[dir] = [];
+      if (!structure.modelDirectories[dir]) structure.modelDirectories[dir] = [];
       structure.modelDirectories[dir].push(relativePath);
       fileSpan?.end({ success: true, type: "model" });
     } else if (
@@ -133,8 +124,7 @@ export class ResourcePackIntrospector {
       }
       structure.textureFiles.push(fullPath);
       const dir = relativePath.substring(0, relativePath.lastIndexOf("/"));
-      if (!structure.textureDirectories[dir])
-        structure.textureDirectories[dir] = [];
+      if (!structure.textureDirectories[dir]) structure.textureDirectories[dir] = [];
       structure.textureDirectories[dir].push(relativePath);
       fileSpan?.end({ success: true, type: "texture" });
     } else {
@@ -146,9 +136,7 @@ export class ResourcePackIntrospector {
   }
 
   private isImageFile(path: string): boolean {
-    return (
-      path.endsWith(".png") || path.endsWith(".jpg") || path.endsWith(".jpeg")
-    );
+    return path.endsWith(".png") || path.endsWith(".jpg") || path.endsWith(".jpeg");
   }
 
   async analyzeComponent(itemFilePath: string): Promise<ComponentAnalysis> {
@@ -193,34 +181,19 @@ export class ResourcePackIntrospector {
 
       // Track component selectors within display contexts
       if (key === "component" && obj.cases) {
-        this.extractConditionalModels(
-          obj,
-          analysis,
-          currentPath,
-          currentContexts
-        );
+        this.extractConditionalModels(obj, analysis, currentPath, currentContexts);
         return; // Don't recurse further as we've handled this branch
       }
 
       // Handle minecraft:condition with on_true/on_false branches
       if (key === "type" && value === "minecraft:condition") {
-        this.extractConditionModels(
-          obj,
-          analysis,
-          currentPath,
-          currentContexts
-        );
+        this.extractConditionModels(obj, analysis, currentPath, currentContexts);
         return; // Don't recurse further as we've handled this branch
       }
 
       // Recurse with updated context
       if (typeof value === "object") {
-        this.extractComponentInfo(
-          value,
-          analysis,
-          currentPath,
-          currentContexts
-        );
+        this.extractComponentInfo(value, analysis, currentPath, currentContexts);
       }
     }
   }
@@ -235,9 +208,7 @@ export class ResourcePackIntrospector {
     if (selectObj.cases && Array.isArray(selectObj.cases)) {
       for (const caseObj of selectObj.cases) {
         if (caseObj.when && caseObj.model) {
-          const contexts = Array.isArray(caseObj.when)
-            ? caseObj.when
-            : [caseObj.when];
+          const contexts = Array.isArray(caseObj.when) ? caseObj.when : [caseObj.when];
 
           // Track explicitly handled contexts
           for (const context of contexts) {
@@ -248,10 +219,7 @@ export class ResourcePackIntrospector {
 
           // Add to global context list
           for (const context of contexts) {
-            if (
-              typeof context === "string" &&
-              !analysis.displayContexts.includes(context)
-            ) {
+            if (typeof context === "string" && !analysis.displayContexts.includes(context)) {
               analysis.displayContexts.push(context);
             }
           }
@@ -294,9 +262,7 @@ export class ResourcePackIntrospector {
         "head",
       ];
 
-      const missingContexts = standardContexts.filter(
-        (context) => !explicitContexts.has(context)
-      );
+      const missingContexts = standardContexts.filter((context) => !explicitContexts.has(context));
 
       if (missingContexts.length > 0) {
         // Add missing contexts to global context list
@@ -332,9 +298,7 @@ export class ResourcePackIntrospector {
     if (selectObj.cases && Array.isArray(selectObj.cases)) {
       for (const caseObj of selectObj.cases) {
         if (caseObj.when && caseObj.model) {
-          const conditions = Array.isArray(caseObj.when)
-            ? caseObj.when
-            : [caseObj.when];
+          const conditions = Array.isArray(caseObj.when) ? caseObj.when : [caseObj.when];
           const modelPath = caseObj.model.model || caseObj.model;
 
           // Build context mappings - each condition gets mapped to specific contexts with specific models
@@ -369,18 +333,10 @@ export class ResourcePackIntrospector {
 
     // Extract models from both branches and add them to current contexts
     if (condition.on_true) {
-      this.extractModelsFromBranch(
-        condition.on_true,
-        analysis,
-        currentContexts
-      );
+      this.extractModelsFromBranch(condition.on_true, analysis, currentContexts);
     }
     if (condition.on_false) {
-      this.extractModelsFromBranch(
-        condition.on_false,
-        analysis,
-        currentContexts
-      );
+      this.extractModelsFromBranch(condition.on_false, analysis, currentContexts);
     }
   }
 

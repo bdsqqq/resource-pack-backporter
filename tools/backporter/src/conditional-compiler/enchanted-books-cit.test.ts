@@ -2,8 +2,8 @@ import { afterEach, beforeEach, describe, expect, it } from "bun:test";
 import { existsSync } from "node:fs";
 import { mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import { join } from "node:path";
-import { ConditionalBackportCoordinator } from "./backport-coordinator";
 import { createTestTracer } from "../test-utils";
+import { ConditionalBackportCoordinator } from "./backport-coordinator";
 
 /**
  * Enchanted Books CIT Generation Test Suite
@@ -134,16 +134,12 @@ describe("Enchanted Books CIT Generation", () => {
 
       // Should match reference pack structure
       expect(model.parent).toBe("minecraft:item/handheld");
-      expect(model.textures.layer0).toBe(
-        "minecraft:item/enchanted_books/channeling"
-      ); // No level suffix for single-level
+      expect(model.textures.layer0).toBe("minecraft:item/enchanted_books/channeling"); // No level suffix for single-level
       expect(model.overrides).toBeDefined();
       expect(model.overrides.length).toBeGreaterThan(0);
 
       // Should have Pommel predicates
-      const predicates = model.overrides.map(
-        (o: any) => Object.keys(o.predicate)[0]
-      );
+      const predicates = model.overrides.map((o: any) => Object.keys(o.predicate)[0]);
       expect(predicates).toContain("pommel:is_ground");
       expect(predicates).toContain("pommel:is_held");
       expect(predicates).toContain("pommel:is_offhand");
@@ -178,9 +174,7 @@ describe("Enchanted Books CIT Generation", () => {
       const model = JSON.parse(await readFile(modelPath, "utf-8"));
 
       expect(model.parent).toBe("minecraft:item/handheld");
-      expect(model.textures.layer0).toBe(
-        "minecraft:item/enchanted_books/sharpness_2"
-      ); // With level suffix
+      expect(model.textures.layer0).toBe("minecraft:item/enchanted_books/sharpness_2"); // With level suffix
 
       // Should reference 3D models without level suffix in the path
       const hasHeldReference = model.overrides.some(
@@ -212,9 +206,7 @@ describe("Enchanted Books CIT Generation", () => {
       const model = JSON.parse(await readFile(modelPath, "utf-8"));
 
       // Should use mapped texture name: binding_curse → curse_of_binding
-      expect(model.textures.layer0).toBe(
-        "minecraft:item/enchanted_books/curse_of_binding"
-      );
+      expect(model.textures.layer0).toBe("minecraft:item/enchanted_books/curse_of_binding");
 
       // But 3D models should use the enchantment name
       const hasHeldReference = model.overrides.some(
@@ -230,26 +222,14 @@ describe("Enchanted Books CIT Generation", () => {
   });
 
   // Helper function to create enchanted book test packs
-  async function setupEnchantedBookPack(
-    inputDir: string,
-    enchantment: string,
-    maxLevel: number
-  ) {
+  async function setupEnchantedBookPack(inputDir: string, enchantment: string, maxLevel: number) {
     // Create basic pack structure
     await mkdir(join(inputDir, "assets", "minecraft", "items"), {
       recursive: true,
     });
-    await mkdir(
-      join(
-        inputDir,
-        "assets",
-        "minecraft",
-        "models",
-        "item",
-        "enchanted_books"
-      ),
-      { recursive: true }
-    );
+    await mkdir(join(inputDir, "assets", "minecraft", "models", "item", "enchanted_books"), {
+      recursive: true,
+    });
 
     const packMeta = {
       pack: {
@@ -257,10 +237,7 @@ describe("Enchanted Books CIT Generation", () => {
         description: "Test Enchanted Book Pack",
       },
     };
-    await writeFile(
-      join(inputDir, "pack.mcmeta"),
-      JSON.stringify(packMeta, null, 2)
-    );
+    await writeFile(join(inputDir, "pack.mcmeta"), JSON.stringify(packMeta, null, 2));
 
     // Create enchanted book item with conditional structure
     const enchantedBookItem = {
@@ -279,18 +256,14 @@ describe("Enchanted Books CIT Generation", () => {
                 when: ["gui", "fixed", "head"],
                 model: {
                   type: "minecraft:model",
-                  model: `minecraft:item/enchanted_books/${enchantment}_${
-                    i + 1
-                  }`,
+                  model: `minecraft:item/enchanted_books/${enchantment}_${i + 1}`,
                 },
               },
               {
                 when: ["ground"],
                 model: {
                   type: "minecraft:model",
-                  model: `minecraft:item/enchanted_books/${enchantment}_${
-                    i + 1
-                  }`,
+                  model: `minecraft:item/enchanted_books/${enchantment}_${i + 1}`,
                 },
               },
               {

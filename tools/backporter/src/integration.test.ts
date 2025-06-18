@@ -28,19 +28,9 @@ describe("Integration Tests", () => {
     await mkdir(join(inputDir, "assets", "minecraft", "items"), {
       recursive: true,
     });
-    await mkdir(
-      join(
-        inputDir,
-        "assets",
-        "minecraft",
-        "models",
-        "item",
-        "enchanted_books"
-      ),
-      {
-        recursive: true,
-      }
-    );
+    await mkdir(join(inputDir, "assets", "minecraft", "models", "item", "enchanted_books"), {
+      recursive: true,
+    });
     await mkdir(join(inputDir, "assets", "minecraft", "textures", "item"), {
       recursive: true,
     });
@@ -52,10 +42,7 @@ describe("Integration Tests", () => {
         description: "Test Pack",
       },
     };
-    await writeFile(
-      join(inputDir, "pack.mcmeta"),
-      JSON.stringify(packMeta, null, 2)
-    );
+    await writeFile(join(inputDir, "pack.mcmeta"), JSON.stringify(packMeta, null, 2));
 
     // Create book item file
     const bookItem = {
@@ -93,15 +80,7 @@ describe("Integration Tests", () => {
       },
     };
     await writeFile(
-      join(
-        inputDir,
-        "assets",
-        "minecraft",
-        "models",
-        "item",
-        "enchanted_books",
-        "book.json"
-      ),
+      join(inputDir, "assets", "minecraft", "models", "item", "enchanted_books", "book.json"),
       JSON.stringify(bookModel, null, 2)
     );
 
@@ -111,18 +90,13 @@ describe("Integration Tests", () => {
 
     // Verify output structure
     expect(existsSync(join(outputDir, "pack.mcmeta"))).toBe(true);
-    expect(
-      existsSync(
-        join(outputDir, "assets", "minecraft", "models", "item", "book.json")
-      )
-    ).toBe(true);
+    expect(existsSync(join(outputDir, "assets", "minecraft", "models", "item", "book.json"))).toBe(
+      true
+    );
 
     // Verify generated book.json has correct structure
     const generatedBook = JSON.parse(
-      await readFile(
-        join(outputDir, "assets", "minecraft", "models", "item", "book.json"),
-        "utf-8"
-      )
+      await readFile(join(outputDir, "assets", "minecraft", "models", "item", "book.json"), "utf-8")
     );
 
     // Pure Pommel strategy generates 3D models with original parent preserved
@@ -132,8 +106,7 @@ describe("Integration Tests", () => {
 
     // Should have Pommel predicates for ground context
     const hasGroundPredicate = generatedBook.overrides.some(
-      (override: any) =>
-        override.predicate && override.predicate["pommel:is_ground"] === 1
+      (override: any) => override.predicate && override.predicate["pommel:is_ground"] === 1
     );
 
     expect(hasGroundPredicate).toBe(true);
@@ -144,19 +117,9 @@ describe("Integration Tests", () => {
     await mkdir(join(inputDir, "assets", "minecraft", "items"), {
       recursive: true,
     });
-    await mkdir(
-      join(
-        inputDir,
-        "assets",
-        "minecraft",
-        "models",
-        "item",
-        "enchanted_books"
-      ),
-      {
-        recursive: true,
-      }
-    );
+    await mkdir(join(inputDir, "assets", "minecraft", "models", "item", "enchanted_books"), {
+      recursive: true,
+    });
 
     // Create pack.mcmeta
     const packMeta = {
@@ -165,10 +128,7 @@ describe("Integration Tests", () => {
         description: "Multi-Book Test Pack",
       },
     };
-    await writeFile(
-      join(inputDir, "pack.mcmeta"),
-      JSON.stringify(packMeta, null, 2)
-    );
+    await writeFile(join(inputDir, "pack.mcmeta"), JSON.stringify(packMeta, null, 2));
 
     // Create book items
     const bookItem = {
@@ -223,15 +183,7 @@ describe("Integration Tests", () => {
     };
 
     await writeFile(
-      join(
-        inputDir,
-        "assets",
-        "minecraft",
-        "models",
-        "item",
-        "enchanted_books",
-        "book.json"
-      ),
+      join(inputDir, "assets", "minecraft", "models", "item", "enchanted_books", "book.json"),
       JSON.stringify(bookModel, null, 2)
     );
     await writeFile(
@@ -254,21 +206,11 @@ describe("Integration Tests", () => {
 
     // Verify both books have correct textures
     const generatedBook = JSON.parse(
-      await readFile(
-        join(outputDir, "assets", "minecraft", "models", "item", "book.json"),
-        "utf-8"
-      )
+      await readFile(join(outputDir, "assets", "minecraft", "models", "item", "book.json"), "utf-8")
     );
     const generatedKnowledgeBook = JSON.parse(
       await readFile(
-        join(
-          outputDir,
-          "assets",
-          "minecraft",
-          "models",
-          "item",
-          "knowledge_book.json"
-        ),
+        join(outputDir, "assets", "minecraft", "models", "item", "knowledge_book.json"),
         "utf-8"
       )
     );
@@ -283,25 +225,12 @@ describe("Integration Tests", () => {
     await mkdir(join(inputDir, "assets", "minecraft", "items"), {
       recursive: true,
     });
-    await mkdir(
-      join(
-        inputDir,
-        "assets",
-        "minecraft",
-        "models",
-        "item",
-        "enchanted_books"
-      ),
-      {
-        recursive: true,
-      }
-    );
+    await mkdir(join(inputDir, "assets", "minecraft", "models", "item", "enchanted_books"), {
+      recursive: true,
+    });
 
     const packMeta = { pack: { pack_format: 48, description: "Test" } };
-    await writeFile(
-      join(inputDir, "pack.mcmeta"),
-      JSON.stringify(packMeta, null, 2)
-    );
+    await writeFile(join(inputDir, "pack.mcmeta"), JSON.stringify(packMeta, null, 2));
 
     const bookItem = {
       model: {
@@ -335,15 +264,7 @@ describe("Integration Tests", () => {
       textures: { layer0: "minecraft:item/enchanted_books/book" },
     };
     await writeFile(
-      join(
-        inputDir,
-        "assets",
-        "minecraft",
-        "models",
-        "item",
-        "enchanted_books",
-        "book.json"
-      ),
+      join(inputDir, "assets", "minecraft", "models", "item", "enchanted_books", "book.json"),
       JSON.stringify(bookModel, null, 2)
     );
 
@@ -368,10 +289,7 @@ describe("Integration Tests", () => {
 
     // Verify output directory was cleared and regenerated correctly
     const generatedBook = JSON.parse(
-      await readFile(
-        join(outputDir, "assets", "minecraft", "models", "item", "book.json"),
-        "utf-8"
-      )
+      await readFile(join(outputDir, "assets", "minecraft", "models", "item", "book.json"), "utf-8")
     );
 
     // Should have Pommel overrides (indicating it was regenerated, not contaminated)
@@ -380,8 +298,7 @@ describe("Integration Tests", () => {
 
     // Should have ground predicate (proving it's our generated file)
     const hasGroundPredicate = generatedBook.overrides.some(
-      (override: any) =>
-        override.predicate && override.predicate["pommel:is_ground"] === 1
+      (override: any) => override.predicate && override.predicate["pommel:is_ground"] === 1
     );
     expect(hasGroundPredicate).toBe(true);
   });
@@ -391,19 +308,9 @@ describe("Integration Tests", () => {
     await mkdir(join(inputDir, "assets", "minecraft", "items"), {
       recursive: true,
     });
-    await mkdir(
-      join(
-        inputDir,
-        "assets",
-        "minecraft",
-        "models",
-        "item",
-        "enchanted_books"
-      ),
-      {
-        recursive: true,
-      }
-    );
+    await mkdir(join(inputDir, "assets", "minecraft", "models", "item", "enchanted_books"), {
+      recursive: true,
+    });
     await mkdir(join(inputDir, "assets", "minecraft", "textures", "item"), {
       recursive: true,
     });
@@ -413,22 +320,12 @@ describe("Integration Tests", () => {
 
     // Create pack files
     const packMeta = { pack: { pack_format: 48, description: "Test" } };
-    await writeFile(
-      join(inputDir, "pack.mcmeta"),
-      JSON.stringify(packMeta, null, 2)
-    );
+    await writeFile(join(inputDir, "pack.mcmeta"), JSON.stringify(packMeta, null, 2));
     await writeFile(join(inputDir, "pack.png"), "fake-png-data");
 
     // Create texture file (minecraft textures are copied)
     await writeFile(
-      join(
-        inputDir,
-        "assets",
-        "minecraft",
-        "textures",
-        "item",
-        "custom_texture.png"
-      ),
+      join(inputDir, "assets", "minecraft", "textures", "item", "custom_texture.png"),
       "fake-texture-data"
     );
 
@@ -465,15 +362,7 @@ describe("Integration Tests", () => {
       textures: { layer0: "minecraft:item/enchanted_books/book" },
     };
     await writeFile(
-      join(
-        inputDir,
-        "assets",
-        "minecraft",
-        "models",
-        "item",
-        "enchanted_books",
-        "book.json"
-      ),
+      join(inputDir, "assets", "minecraft", "models", "item", "enchanted_books", "book.json"),
       JSON.stringify(bookModel, null, 2)
     );
 
@@ -488,30 +377,16 @@ describe("Integration Tests", () => {
 
     // Verify minecraft assets were preserved
     expect(
-      existsSync(
-        join(
-          outputDir,
-          "assets",
-          "minecraft",
-          "textures",
-          "item",
-          "custom_texture.png"
-        )
-      )
+      existsSync(join(outputDir, "assets", "minecraft", "textures", "item", "custom_texture.png"))
     ).toBe(true);
 
     // Verify processed book exists and has Pommel overrides
-    expect(
-      existsSync(
-        join(outputDir, "assets", "minecraft", "models", "item", "book.json")
-      )
-    ).toBe(true);
+    expect(existsSync(join(outputDir, "assets", "minecraft", "models", "item", "book.json"))).toBe(
+      true
+    );
 
     const generatedBook = JSON.parse(
-      await readFile(
-        join(outputDir, "assets", "minecraft", "models", "item", "book.json"),
-        "utf-8"
-      )
+      await readFile(join(outputDir, "assets", "minecraft", "models", "item", "book.json"), "utf-8")
     );
     expect(generatedBook.overrides).toBeDefined();
     expect(generatedBook.overrides.length).toBeGreaterThan(0);

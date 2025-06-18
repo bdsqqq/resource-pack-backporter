@@ -1,10 +1,6 @@
 // Write Request Types and FileManager Interface
 
-export type MergeStrategy =
-  | "replace"
-  | "merge-overrides"
-  | "merge-properties"
-  | "append";
+export type MergeStrategy = "replace" | "merge-overrides" | "merge-properties" | "append";
 
 export interface WriteRequest {
   type: "pommel-model" | "cit-properties" | "vanilla-model" | "texture-copy";

@@ -35,9 +35,7 @@ async function main() {
     });
 
     // Simulate some work
-    await new Promise((resolve) =>
-      setTimeout(resolve, 100 + Math.random() * 200)
-    );
+    await new Promise((resolve) => setTimeout(resolve, 100 + Math.random() * 200));
 
     itemSpan.info("Generated model file", {
       outputPath: `models/item/item_${i}.json`,

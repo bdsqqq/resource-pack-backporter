@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it } from "bun:test";
-import { mkdir, rm, writeFile, readFile } from "node:fs/promises";
+import { mkdir, rm } from "node:fs/promises";
 import { join } from "node:path";
 import { TargetSystemMapper } from "./target-mapper";
 
@@ -73,15 +73,9 @@ describe("Pommel Predicate Patterns", () => {
 
       // Count predicate types
       const predicates = overrides.map((o: any) => o.predicate);
-      const groundCount = predicates.filter(
-        (p: any) => p && p["pommel:is_ground"] === 1
-      ).length;
-      const heldCount = predicates.filter(
-        (p: any) => p && p["pommel:is_held"] === 1
-      ).length;
-      const offhandCount = predicates.filter(
-        (p: any) => p && p["pommel:is_offhand"] === 1
-      ).length;
+      const groundCount = predicates.filter((p: any) => p && p["pommel:is_ground"] === 1).length;
+      const heldCount = predicates.filter((p: any) => p && p["pommel:is_held"] === 1).length;
+      const offhandCount = predicates.filter((p: any) => p && p["pommel:is_offhand"] === 1).length;
 
       // Critical pattern requirements
       expect(groundCount).toBe(1);
@@ -121,10 +115,7 @@ describe("Pommel Predicate Patterns", () => {
         },
       ];
 
-      const targets = mapper.mapPathsToTargets(
-        enchantedPaths,
-        "enchanted_book"
-      );
+      const targets = mapper.mapPathsToTargets(enchantedPaths, "enchanted_book");
 
       // Should generate CIT + Pommel targets
       const pommelTargets = targets.filter(
@@ -135,15 +126,9 @@ describe("Pommel Predicate Patterns", () => {
       const overrides = pommelTargets[0].content.overrides;
       const predicates = overrides.map((o: any) => o.predicate);
 
-      const groundCount = predicates.filter(
-        (p: any) => p && p["pommel:is_ground"] === 1
-      ).length;
-      const heldCount = predicates.filter(
-        (p: any) => p && p["pommel:is_held"] === 1
-      ).length;
-      const offhandCount = predicates.filter(
-        (p: any) => p && p["pommel:is_offhand"] === 1
-      ).length;
+      const groundCount = predicates.filter((p: any) => p && p["pommel:is_ground"] === 1).length;
+      const heldCount = predicates.filter((p: any) => p && p["pommel:is_held"] === 1).length;
+      const offhandCount = predicates.filter((p: any) => p && p["pommel:is_offhand"] === 1).length;
 
       // Same pattern for individual enchantment models
       expect(groundCount).toBe(1);
@@ -192,7 +177,7 @@ describe("Pommel Predicate Patterns", () => {
 
       expect(pommelTarget).toBeDefined();
 
-      const overrides = pommelTarget!.content.overrides;
+      const overrides = pommelTarget?.content.overrides;
       const hasGroundPredicate = overrides.some(
         (o: any) => o.predicate && o.predicate["pommel:is_ground"] === 1
       );
@@ -216,7 +201,7 @@ describe("Pommel Predicate Patterns", () => {
 
       expect(pommelTarget).toBeDefined();
 
-      const overrides = pommelTarget!.content.overrides;
+      const overrides = pommelTarget?.content.overrides;
       const heldPredicates = overrides.filter(
         (o: any) => o.predicate && o.predicate["pommel:is_held"] === 1
       );
@@ -240,7 +225,7 @@ describe("Pommel Predicate Patterns", () => {
 
       expect(pommelTarget).toBeDefined();
 
-      const overrides = pommelTarget!.content.overrides;
+      const overrides = pommelTarget?.content.overrides;
       const offhandPredicates = overrides.filter(
         (o: any) => o.predicate && o.predicate["pommel:is_offhand"] === 1
       );
@@ -274,7 +259,7 @@ describe("Pommel Predicate Patterns", () => {
 
       expect(pommelTarget).toBeDefined();
 
-      const overrides = pommelTarget!.content.overrides;
+      const overrides = pommelTarget?.content.overrides;
 
       // Should generate multiple overrides for the same model with different predicates (Pommel duplicate system)
       const modelReferences = overrides.map((o: any) => o.model);
@@ -307,7 +292,7 @@ describe("Pommel Predicate Patterns", () => {
 
       expect(pommelTarget).toBeDefined();
 
-      const overrides = pommelTarget!.content.overrides;
+      const overrides = pommelTarget?.content.overrides;
 
       // Should have overrides for both models
       const hasOpenModel = overrides.some(
@@ -353,13 +338,12 @@ describe("Pommel Predicate Patterns", () => {
 
       expect(pommelTarget).toBeDefined();
 
-      const overrides = pommelTarget!.content.overrides;
+      const overrides = pommelTarget?.content.overrides;
 
       // Ground predicates should come first (as shown in debug output)
       const firstOverride = overrides[0];
       if (firstOverride.predicate) {
-        const hasGroundFirst =
-          firstOverride.predicate["pommel:is_ground"] === 1;
+        const hasGroundFirst = firstOverride.predicate["pommel:is_ground"] === 1;
         expect(hasGroundFirst).toBe(true);
       }
     });
@@ -387,7 +371,7 @@ describe("Pommel Predicate Patterns", () => {
 
       expect(pommelTarget).toBeDefined();
 
-      const overrides = pommelTarget!.content.overrides;
+      const overrides = pommelTarget?.content.overrides;
       const hasGroundPredicate = overrides.some(
         (o: any) => o.predicate && o.predicate["pommel:is_ground"] === 1
       );
@@ -408,16 +392,11 @@ describe("Pommel Predicate Patterns", () => {
         },
       ];
 
-      const targets = mapper.mapPathsToTargets(
-        enchantedBookPaths,
-        "enchanted_book"
-      );
+      const targets = mapper.mapPathsToTargets(enchantedBookPaths, "enchanted_book");
 
       // Should have both CIT and Pommel targets
       const citTarget = targets.find((t) => t.type === "cit_property");
-      const baseTarget = targets.find(
-        (t) => t.file === "models/item/enchanted_book.json"
-      );
+      const baseTarget = targets.find((t) => t.file === "models/item/enchanted_book.json");
 
       expect(citTarget).toBeDefined();
 
@@ -459,10 +438,7 @@ describe("Pommel Predicate Patterns", () => {
         },
       ];
 
-      const targets = mapper.mapPathsToTargets(
-        enchantedBookPaths,
-        "enchanted_book"
-      );
+      const targets = mapper.mapPathsToTargets(enchantedBookPaths, "enchanted_book");
 
       // Individual model should have full Pommel predicates
       const sharpnessModel = targets.find(
@@ -471,18 +447,12 @@ describe("Pommel Predicate Patterns", () => {
 
       expect(sharpnessModel).toBeDefined();
 
-      const overrides = sharpnessModel!.content.overrides;
+      const overrides = sharpnessModel?.content.overrides;
       const predicates = overrides.map((o: any) => o.predicate);
 
-      const groundCount = predicates.filter(
-        (p: any) => p && p["pommel:is_ground"] === 1
-      ).length;
-      const heldCount = predicates.filter(
-        (p: any) => p && p["pommel:is_held"] === 1
-      ).length;
-      const offhandCount = predicates.filter(
-        (p: any) => p && p["pommel:is_offhand"] === 1
-      ).length;
+      const groundCount = predicates.filter((p: any) => p && p["pommel:is_ground"] === 1).length;
+      const heldCount = predicates.filter((p: any) => p && p["pommel:is_held"] === 1).length;
+      const offhandCount = predicates.filter((p: any) => p && p["pommel:is_offhand"] === 1).length;
 
       expect(groundCount).toBe(1);
       expect(heldCount).toBe(2);

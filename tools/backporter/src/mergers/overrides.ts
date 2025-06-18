@@ -23,17 +23,13 @@ export class OverridesMerger implements RequestMerger {
     if (requests.length === 1) return requests[0];
 
     // Use the highest priority request as base
-    const sorted = requests.sort(
-      (a, b) => (b.priority || 0) - (a.priority || 0)
-    );
+    const sorted = requests.sort((a, b) => (b.priority || 0) - (a.priority || 0));
     const base = { ...sorted[0] };
     const highestPriority = sorted[0].priority || 0;
 
     // Only merge overrides from requests with the same highest priority
     // This prevents low-priority raw conditionals from polluting high-priority simplified overrides
-    const samePriorityRequests = sorted.filter(
-      (r) => (r.priority || 0) === highestPriority
-    );
+    const samePriorityRequests = sorted.filter((r) => (r.priority || 0) === highestPriority);
 
     const allOverrides = [];
 
@@ -78,10 +74,7 @@ export class OverridesMerger implements RequestMerger {
       // Create a key from predicate + model for ALL overrides (including Pommel)
       const key = JSON.stringify({
         predicate: override.predicate,
-        model:
-          typeof override.model === "string"
-            ? override.model
-            : JSON.stringify(override.model),
+        model: typeof override.model === "string" ? override.model : JSON.stringify(override.model),
       });
 
       if (!seen.has(key)) {

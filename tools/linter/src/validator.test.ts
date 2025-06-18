@@ -1,8 +1,8 @@
-import { describe, test, expect, beforeEach, afterEach } from "bun:test";
-import { validateResourcePack } from "./validator";
-import { createTracer } from "@logger/index";
-import { mkdirSync, writeFileSync, rmSync, existsSync } from "node:fs";
+import { afterEach, beforeEach, describe, expect, test } from "bun:test";
+import { existsSync, mkdirSync, rmSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
+import { createTracer } from "@logger/index";
+import { validateResourcePack } from "./validator";
 
 // test fixture setup/teardown
 const TEST_PACK_DIR = "test-fixtures/linter-test-pack";
@@ -76,9 +76,7 @@ describe("validateResourcePack", () => {
     expect(result.isOk()).toBe(true);
     if (result.isOk()) {
       expect(result.value.isValid).toBe(false);
-      expect(
-        result.value.errors.some((e) => e.includes("pack.mcmeta error:"))
-      ).toBe(true);
+      expect(result.value.errors.some((e) => e.includes("pack.mcmeta error:"))).toBe(true);
     }
   });
 
@@ -90,9 +88,7 @@ describe("validateResourcePack", () => {
     expect(result.isOk()).toBe(true);
     if (result.isOk()) {
       expect(result.value.isValid).toBe(false);
-      expect(
-        result.value.errors.some((e) => e.includes("Invalid pack.mcmeta"))
-      ).toBe(true);
+      expect(result.value.errors.some((e) => e.includes("Invalid pack.mcmeta"))).toBe(true);
     }
   });
 
@@ -138,9 +134,7 @@ describe("validateResourcePack", () => {
       expect(result.value.isValid).toBe(false);
       expect(
         result.value.errors.some((e) =>
-          e.includes(
-            "Invalid vanilla texture reference: minecraft:item/nonexistent_texture"
-          )
+          e.includes("Invalid vanilla texture reference: minecraft:item/nonexistent_texture")
         )
       ).toBe(true);
     }
@@ -161,14 +155,7 @@ describe("validateResourcePack", () => {
 
     // create the custom texture file
     writeFileSync(
-      join(
-        TEST_PACK_DIR,
-        "assets",
-        "custom",
-        "textures",
-        "item",
-        "my_texture.png"
-      ),
+      join(TEST_PACK_DIR, "assets", "custom", "textures", "item", "my_texture.png"),
       "dummy png content"
     );
 
@@ -200,9 +187,7 @@ describe("validateResourcePack", () => {
     if (result.isOk()) {
       expect(result.value.isValid).toBe(false);
       expect(
-        result.value.errors.some((e) =>
-          e.includes("Missing texture: custom:item/missing_texture")
-        )
+        result.value.errors.some((e) => e.includes("Missing texture: custom:item/missing_texture"))
       ).toBe(true);
     }
   });
@@ -227,9 +212,7 @@ describe("validateResourcePack", () => {
       expect(result.value.isValid).toBe(true); // warnings don't make pack invalid
       expect(
         result.value.warnings.some((w) =>
-          w.includes(
-            "isn't namespaced, it will fallback to vanilla minecraft:item/book"
-          )
+          w.includes("isn't namespaced, it will fallback to vanilla minecraft:item/book")
         )
       ).toBe(true);
     }
@@ -237,14 +220,7 @@ describe("validateResourcePack", () => {
 
   test("should fail when model has invalid json", async () => {
     writeFileSync(
-      join(
-        TEST_PACK_DIR,
-        "assets",
-        "minecraft",
-        "models",
-        "item",
-        "broken.json"
-      ),
+      join(TEST_PACK_DIR, "assets", "minecraft", "models", "item", "broken.json"),
       "{ invalid json structure"
     );
 
@@ -254,9 +230,7 @@ describe("validateResourcePack", () => {
     if (result.isOk()) {
       expect(result.value.isValid).toBe(false);
       expect(
-        result.value.errors.some(
-          (e) => e.includes("Invalid JSON in") && e.includes("broken.json")
-        )
+        result.value.errors.some((e) => e.includes("Invalid JSON in") && e.includes("broken.json"))
       ).toBe(true);
     }
   });
@@ -281,9 +255,7 @@ describe("validateResourcePack", () => {
       expect(result.value.isValid).toBe(false);
       expect(
         result.value.errors.some((e) =>
-          e.includes(
-            "Invalid vanilla model reference: minecraft:item/nonexistent_parent"
-          )
+          e.includes("Invalid vanilla model reference: minecraft:item/nonexistent_parent")
         )
       ).toBe(true);
     }
@@ -301,14 +273,7 @@ describe("validateResourcePack", () => {
     };
 
     writeFileSync(
-      join(
-        TEST_PACK_DIR,
-        "assets",
-        "minecraft",
-        "models",
-        "item",
-        "multi.json"
-      ),
+      join(TEST_PACK_DIR, "assets", "minecraft", "models", "item", "multi.json"),
       JSON.stringify(multiTextureModel, null, 2)
     );
 
@@ -319,15 +284,11 @@ describe("validateResourcePack", () => {
       expect(result.value.isValid).toBe(false);
       expect(result.value.errors).toHaveLength(2);
       expect(
-        result.value.errors.some((e) =>
-          e.includes("Missing texture: custom:item/overlay")
-        )
+        result.value.errors.some((e) => e.includes("Missing texture: custom:item/overlay"))
       ).toBe(true);
       expect(
         result.value.errors.some((e) =>
-          e.includes(
-            "Invalid vanilla texture reference: minecraft:item/fake_texture"
-          )
+          e.includes("Invalid vanilla texture reference: minecraft:item/fake_texture")
         )
       ).toBe(true);
     }
@@ -381,25 +342,11 @@ describe("validateResourcePack", () => {
     };
 
     writeFileSync(
-      join(
-        TEST_PACK_DIR,
-        "assets",
-        "minecraft",
-        "models",
-        "item",
-        "model1.json"
-      ),
+      join(TEST_PACK_DIR, "assets", "minecraft", "models", "item", "model1.json"),
       JSON.stringify(model1, null, 2)
     );
     writeFileSync(
-      join(
-        TEST_PACK_DIR,
-        "assets",
-        "minecraft",
-        "models",
-        "item",
-        "model2.json"
-      ),
+      join(TEST_PACK_DIR, "assets", "minecraft", "models", "item", "model2.json"),
       JSON.stringify(model2, null, 2)
     );
 
@@ -422,9 +369,7 @@ describe("validateResourcePack", () => {
     if (result.isOk()) {
       expect(result.value.isValid).toBe(false);
       // in this case we expect a regular pack.mcmeta error since assets already exist
-      expect(
-        result.value.errors.some((e) => e.includes("pack.mcmeta error:"))
-      ).toBe(true);
+      expect(result.value.errors.some((e) => e.includes("pack.mcmeta error:"))).toBe(true);
     }
   });
 

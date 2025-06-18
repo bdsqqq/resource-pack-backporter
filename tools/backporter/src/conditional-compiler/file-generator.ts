@@ -1,8 +1,8 @@
-import { mkdir, writeFile, copyFile } from "node:fs/promises";
-import { dirname, join } from "node:path";
 import { existsSync } from "node:fs";
-import type { OutputTarget } from "./index";
+import { copyFile, mkdir, writeFile } from "node:fs/promises";
+import { dirname, join } from "node:path";
 import type { StructuredTracer } from "@logger/index";
+import type { OutputTarget } from "./index";
 
 export class BackportFileGenerator {
   private outputDir: string;
@@ -15,13 +15,9 @@ export class BackportFileGenerator {
     this.tracer = tracer;
   }
 
-  async generateAllFiles(
-    targets: OutputTarget[],
-    parentSpan?: any
-  ): Promise<void> {
+  async generateAllFiles(targets: OutputTarget[], parentSpan?: any): Promise<void> {
     const genSpan =
-      parentSpan?.startChild("Generate Files") ||
-      this.tracer?.startSpan("Generate Files");
+      parentSpan?.startChild("Generate Files") || this.tracer?.startSpan("Generate Files");
     genSpan?.setAttributes({ targetCount: targets.length });
 
     try {
@@ -29,9 +25,7 @@ export class BackportFileGenerator {
       const sortedTargets = targets.sort((a, b) => a.priority - b.priority);
 
       for (const target of sortedTargets) {
-        const targetSpan = genSpan?.startChild(
-          `Generate ${target.type}: ${target.file}`
-        );
+        const targetSpan = genSpan?.startChild(`Generate ${target.type}: ${target.file}`);
         targetSpan?.setAttributes({
           type: target.type,
           file: target.file,
@@ -80,13 +74,9 @@ export class BackportFileGenerator {
     }
   }
 
-  private async writePommelModel(
-    target: OutputTarget,
-    parentSpan?: any
-  ): Promise<void> {
+  private async writePommelModel(target: OutputTarget, parentSpan?: any): Promise<void> {
     const writeSpan =
-      parentSpan?.startChild("Write Pommel Model") ||
-      this.tracer?.startSpan("Write Pommel Model");
+      parentSpan?.startChild("Write Pommel Model") || this.tracer?.startSpan("Write Pommel Model");
     const filePath = join(this.outputDir, "assets", "minecraft", target.file);
 
     writeSpan?.setAttributes({
@@ -115,13 +105,9 @@ export class BackportFileGenerator {
     }
   }
 
-  private async writeCITProperty(
-    target: OutputTarget,
-    parentSpan?: any
-  ): Promise<void> {
+  private async writeCITProperty(target: OutputTarget, parentSpan?: any): Promise<void> {
     const writeSpan =
-      parentSpan?.startChild("Write CIT Property") ||
-      this.tracer?.startSpan("Write CIT Property");
+      parentSpan?.startChild("Write CIT Property") || this.tracer?.startSpan("Write CIT Property");
     const filePath = join(this.outputDir, "assets", "minecraft", target.file);
 
     writeSpan?.setAttributes({
@@ -141,7 +127,7 @@ export class BackportFileGenerator {
         lines.push(`${key}=${value}`);
       }
 
-      const content = lines.join("\n") + "\n";
+      const content = `${lines.join("\n")}\n`;
       writeSpan?.debug("Writing CIT property file", {
         lineCount: lines.length,
       });
@@ -159,10 +145,7 @@ export class BackportFileGenerator {
     }
   }
 
-  private async copyEnhancedModel(
-    target: OutputTarget,
-    parentSpan?: any
-  ): Promise<void> {
+  private async copyEnhancedModel(target: OutputTarget, parentSpan?: any): Promise<void> {
     // Enhanced models should already exist in source, just copy them
     const sourceFile = join(this.sourceDir, "assets", "minecraft", target.file);
     const destFile = join(this.outputDir, "assets", "minecraft", target.file);
@@ -200,10 +183,7 @@ export class BackportFileGenerator {
     }
   }
 
-  private async copyPreserved3DModel(
-    target: OutputTarget,
-    parentSpan?: any
-  ): Promise<void> {
+  private async copyPreserved3DModel(target: OutputTarget, parentSpan?: any): Promise<void> {
     const preserveSpan =
       parentSpan?.startChild("Copy Preserved 3D Model") ||
       this.tracer?.startSpan("Copy Preserved 3D Model");
@@ -215,12 +195,7 @@ export class BackportFileGenerator {
 
     // Extract original model name from target file name
     const originalFileName = target.file.replace("_3d.json", ".json");
-    const sourceFile = join(
-      this.sourceDir,
-      "assets",
-      "minecraft",
-      originalFileName
-    );
+    const sourceFile = join(this.sourceDir, "assets", "minecraft", originalFileName);
 
     preserveSpan?.setAttributes({
       targetFile: target.file,
@@ -257,13 +232,9 @@ export class BackportFileGenerator {
     }
   }
 
-  private async copyTexture(
-    target: OutputTarget,
-    parentSpan?: any
-  ): Promise<void> {
+  private async copyTexture(target: OutputTarget, parentSpan?: any): Promise<void> {
     const textureSpan =
-      parentSpan?.startChild("Copy Texture") ||
-      this.tracer?.startSpan("Copy Texture");
+      parentSpan?.startChild("Copy Texture") || this.tracer?.startSpan("Copy Texture");
 
     // Copy texture files from source to output
     const sourceFile = join(this.sourceDir, "assets", "minecraft", target.file);
@@ -303,13 +274,9 @@ export class BackportFileGenerator {
     }
   }
 
-  private async ensureDirectory(
-    filePath: string,
-    parentSpan?: any
-  ): Promise<void> {
+  private async ensureDirectory(filePath: string, parentSpan?: any): Promise<void> {
     const dirSpan =
-      parentSpan?.startChild("Ensure Directory") ||
-      this.tracer?.startSpan("Ensure Directory");
+      parentSpan?.startChild("Ensure Directory") || this.tracer?.startSpan("Ensure Directory");
     const dir = dirname(filePath);
 
     dirSpan?.setAttributes({
@@ -332,10 +299,7 @@ export class BackportFileGenerator {
   }
 
   // Utility method for preserving animation data
-  async preserveAnimationData(
-    sourceModel: any,
-    targetModel: any
-  ): Promise<any> {
+  async preserveAnimationData(sourceModel: any, targetModel: any): Promise<any> {
     // Copy animation-related properties
     if (sourceModel.textures) {
       targetModel.textures = {

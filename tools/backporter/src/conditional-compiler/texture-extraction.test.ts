@@ -1,7 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it } from "bun:test";
-import { mkdir, readFile, rm, writeFile } from "node:fs/promises";
+import { mkdir, rm, writeFile } from "node:fs/promises";
 import { join } from "node:path";
-import { ConditionalPathExtractor } from "./path-extractor";
 import type { ResourcePackStructure } from "@backporter/file-manager";
 import { createTestTracer } from "../test-utils";
 
@@ -25,10 +24,7 @@ class TestDisplayContextStrategy {
 
       if (guiModel) {
         // Try to read the actual model file to get its texture
-        const modelPath = guiModel.replace(
-          "minecraft:",
-          "assets/minecraft/models/"
-        );
+        const modelPath = guiModel.replace("minecraft:", "assets/minecraft/models/");
         const modelFile = `${modelPath}.json`;
 
         // Look for the model file in the pack structure with exact path matching
@@ -98,9 +94,7 @@ class TestDisplayContextStrategy {
       for (const dir of possibleDirs) {
         const textures = packStructure.textureDirectories[dir];
         if (textures) {
-          const found = textures.find((texture) =>
-            texture.endsWith(`${itemId}.png`)
-          );
+          const found = textures.find((texture) => texture.endsWith(`${itemId}.png`));
           if (found) {
             const fallbackTexture = found
               .replace(/^.*assets\/minecraft\/textures\//, "minecraft:")
@@ -149,12 +143,9 @@ describe("Texture Extraction", () => {
 
     // Create test directory structure
     await mkdir(testDir, { recursive: true });
-    await mkdir(
-      join(testDir, "assets", "minecraft", "models", "item", "enchanted_books"),
-      {
-        recursive: true,
-      }
-    );
+    await mkdir(join(testDir, "assets", "minecraft", "models", "item", "enchanted_books"), {
+      recursive: true,
+    });
     await mkdir(
       join(
         testDir,
@@ -183,15 +174,7 @@ describe("Texture Extraction", () => {
       },
     };
     await writeFile(
-      join(
-        testDir,
-        "assets",
-        "minecraft",
-        "models",
-        "item",
-        "enchanted_books",
-        "book.json"
-      ),
+      join(testDir, "assets", "minecraft", "models", "item", "enchanted_books", "book.json"),
       JSON.stringify(sourceBookModel, null, 2)
     );
 
@@ -228,15 +211,7 @@ describe("Texture Extraction", () => {
       itemFiles: [],
       textureFiles: [],
       modelFiles: [
-        join(
-          testDir,
-          "assets",
-          "minecraft",
-          "models",
-          "item",
-          "enchanted_books",
-          "book.json"
-        ),
+        join(testDir, "assets", "minecraft", "models", "item", "enchanted_books", "book.json"),
         join(
           testDir,
           "dist",
@@ -259,11 +234,7 @@ describe("Texture Extraction", () => {
       ground: "minecraft:item/enchanted_books/book",
     };
 
-    const result = strategy.testDetermineTextureRef(
-      "book",
-      packStructure,
-      modelMappings
-    );
+    const result = strategy.testDetermineTextureRef("book", packStructure, modelMappings);
 
     // Should extract from source file, not contaminated output file
     expect(result).toBe("minecraft:item/enchanted_books/book");
@@ -285,15 +256,7 @@ describe("Texture Extraction", () => {
     };
 
     await writeFile(
-      join(
-        testDir,
-        "assets",
-        "minecraft",
-        "models",
-        "item",
-        "enchanted_books",
-        "book.json"
-      ),
+      join(testDir, "assets", "minecraft", "models", "item", "enchanted_books", "book.json"),
       JSON.stringify(sourceBookModel, null, 2)
     );
     await writeFile(
@@ -313,15 +276,7 @@ describe("Texture Extraction", () => {
       itemFiles: [],
       textureFiles: [],
       modelFiles: [
-        join(
-          testDir,
-          "assets",
-          "minecraft",
-          "models",
-          "item",
-          "enchanted_books",
-          "book.json"
-        ),
+        join(testDir, "assets", "minecraft", "models", "item", "enchanted_books", "book.json"),
         join(
           testDir,
           "assets",
@@ -340,11 +295,7 @@ describe("Texture Extraction", () => {
     const bookMappings = {
       gui: "minecraft:item/enchanted_books/book",
     };
-    const bookResult = strategy.testDetermineTextureRef(
-      "book",
-      packStructure,
-      bookMappings
-    );
+    const bookResult = strategy.testDetermineTextureRef("book", packStructure, bookMappings);
     expect(bookResult).toBe("minecraft:item/enchanted_books/book");
 
     // Test knowledge_book extraction
@@ -356,9 +307,7 @@ describe("Texture Extraction", () => {
       packStructure,
       knowledgeBookMappings
     );
-    expect(knowledgeBookResult).toBe(
-      "minecraft:item/enchanted_books/knowledge_book"
-    );
+    expect(knowledgeBookResult).toBe("minecraft:item/enchanted_books/knowledge_book");
   });
 
   it("should skip files in various output directory patterns", async () => {
@@ -371,15 +320,7 @@ describe("Texture Extraction", () => {
 
     // Create source file
     await writeFile(
-      join(
-        testDir,
-        "assets",
-        "minecraft",
-        "models",
-        "item",
-        "enchanted_books",
-        "book.json"
-      ),
+      join(testDir, "assets", "minecraft", "models", "item", "enchanted_books", "book.json"),
       JSON.stringify(sourceModel, null, 2)
     );
 
@@ -391,42 +332,14 @@ describe("Texture Extraction", () => {
     };
 
     await mkdir(
-      join(
-        testDir,
-        "build",
-        "assets",
-        "minecraft",
-        "models",
-        "item",
-        "enchanted_books"
-      ),
+      join(testDir, "build", "assets", "minecraft", "models", "item", "enchanted_books"),
       { recursive: true }
     );
+    await mkdir(join(testDir, "out", "assets", "minecraft", "models", "item", "enchanted_books"), {
+      recursive: true,
+    });
     await mkdir(
-      join(
-        testDir,
-        "out",
-        "assets",
-        "minecraft",
-        "models",
-        "item",
-        "enchanted_books"
-      ),
-      {
-        recursive: true,
-      }
-    );
-    await mkdir(
-      join(
-        testDir,
-        "nested",
-        "dist",
-        "assets",
-        "minecraft",
-        "models",
-        "item",
-        "enchanted_books"
-      ),
+      join(testDir, "nested", "dist", "assets", "minecraft", "models", "item", "enchanted_books"),
       { recursive: true }
     );
 
@@ -444,16 +357,7 @@ describe("Texture Extraction", () => {
       JSON.stringify(contaminatedModel, null, 2)
     );
     await writeFile(
-      join(
-        testDir,
-        "out",
-        "assets",
-        "minecraft",
-        "models",
-        "item",
-        "enchanted_books",
-        "book.json"
-      ),
+      join(testDir, "out", "assets", "minecraft", "models", "item", "enchanted_books", "book.json"),
       JSON.stringify(contaminatedModel, null, 2)
     );
     await writeFile(
@@ -475,15 +379,7 @@ describe("Texture Extraction", () => {
       itemFiles: [],
       textureFiles: [],
       modelFiles: [
-        join(
-          testDir,
-          "assets",
-          "minecraft",
-          "models",
-          "item",
-          "enchanted_books",
-          "book.json"
-        ),
+        join(testDir, "assets", "minecraft", "models", "item", "enchanted_books", "book.json"),
         join(
           testDir,
           "build",
@@ -524,11 +420,7 @@ describe("Texture Extraction", () => {
       gui: "minecraft:item/enchanted_books/book",
     };
 
-    const result = strategy.testDetermineTextureRef(
-      "book",
-      packStructure,
-      modelMappings
-    );
+    const result = strategy.testDetermineTextureRef("book", packStructure, modelMappings);
 
     // Should only find the source file, not any of the output files
     expect(result).toBe("minecraft:item/enchanted_books/book");
@@ -549,11 +441,7 @@ describe("Texture Extraction", () => {
       gui: "minecraft:item/enchanted_books/book",
     };
 
-    const result = strategy.testDetermineTextureRef(
-      "book",
-      packStructure,
-      modelMappings
-    );
+    const result = strategy.testDetermineTextureRef("book", packStructure, modelMappings);
 
     expect(result).toBe("minecraft:item/book");
   });
@@ -571,11 +459,7 @@ describe("Texture Extraction", () => {
       gui: "minecraft:item/enchanted_books/book",
     };
 
-    const result = strategy.testDetermineTextureRef(
-      "book",
-      packStructure,
-      modelMappings
-    );
+    const result = strategy.testDetermineTextureRef("book", packStructure, modelMappings);
 
     expect(result).toBe("minecraft:item/book");
   });

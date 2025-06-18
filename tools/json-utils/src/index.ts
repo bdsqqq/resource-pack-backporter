@@ -1,5 +1,5 @@
 import { readFile } from "node:fs/promises";
-import { Result, ok, err } from "neverthrow";
+import { err, ok, type Result } from "neverthrow";
 
 export interface ValidationResult {
   isValid: boolean;
@@ -9,9 +9,7 @@ export interface ValidationResult {
   column?: number;
 }
 
-export async function validateJson(
-  filePath: string
-): Promise<Result<ValidationResult, string>> {
+export async function validateJson(filePath: string): Promise<Result<ValidationResult, string>> {
   try {
     const content = await readFile(filePath, "utf-8");
 

@@ -1,6 +1,6 @@
 #!/usr/bin/env bun
 
-import { writeFile, mkdir } from "node:fs/promises";
+import { mkdir, writeFile } from "node:fs/promises";
 
 interface GitHubTreeItem {
   path: string;
@@ -26,22 +26,16 @@ async function fetchGitHubTree(
 
   const response = await fetch(url);
   if (!response.ok) {
-    throw new Error(
-      `GitHub API error: ${response.status} ${response.statusText}`
-    );
+    throw new Error(`GitHub API error: ${response.status} ${response.statusText}`);
   }
 
   const data = (await response.json()) as GitHubTreeResponse;
 
   if (data.truncated) {
-    console.warn(
-      "Warning: GitHub tree response was truncated, some files may be missing"
-    );
+    console.warn("Warning: GitHub tree response was truncated, some files may be missing");
   }
 
-  return data.tree.filter(
-    (item) => item.type === "blob" && item.path.startsWith(path)
-  );
+  return data.tree.filter((item) => item.type === "blob" && item.path.startsWith(path));
 }
 
 function extractAssetName(path: string): string {
@@ -66,9 +60,7 @@ function categorizeModel(path: string): "block" | "item" | "other" {
 }
 
 async function generateVanillaAssets(version: string): Promise<void> {
-  console.log(
-    `Generating vanilla asset dictionaries for Minecraft ${version}...`
-  );
+  console.log(`Generating vanilla asset dictionaries for Minecraft ${version}...`);
 
   try {
     // Fetch all texture and model files from minecraft-assets
@@ -120,12 +112,8 @@ async function generateVanillaAssets(version: string): Promise<void> {
       }
     }
 
-    console.log(
-      `Found ${blockTextures.size} block textures, ${itemTextures.size} item textures`
-    );
-    console.log(
-      `Found ${blockModels.size} block models, ${itemModels.size} item models`
-    );
+    console.log(`Found ${blockTextures.size} block textures, ${itemTextures.size} item textures`);
+    console.log(`Found ${blockModels.size} block models, ${itemModels.size} item models`);
 
     // Generate TypeScript file
     const generatedCode = `// Auto-generated vanilla asset registry for Minecraft ${version}
@@ -244,12 +232,8 @@ export function isVanillaModel(modelRef: string): boolean {
 
     console.log(`✅ Generated vanilla assets for Minecraft ${version}`);
     console.log(`📄 Output: ${outputPath}`);
-    console.log(
-      `📊 Block textures: ${blockTextures.size}, Item textures: ${itemTextures.size}`
-    );
-    console.log(
-      `📊 Block models: ${blockModels.size}, Item models: ${itemModels.size}`
-    );
+    console.log(`📊 Block textures: ${blockTextures.size}, Item textures: ${itemTextures.size}`);
+    console.log(`📊 Block models: ${blockModels.size}, Item models: ${itemModels.size}`);
   } catch (error) {
     console.error("❌ Failed to generate vanilla assets:", error);
     process.exit(1);

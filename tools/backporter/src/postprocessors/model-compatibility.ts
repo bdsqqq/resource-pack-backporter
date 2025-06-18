@@ -1,6 +1,6 @@
+import { existsSync } from "node:fs";
 import { readdir, readFile, writeFile } from "node:fs/promises";
 import { join } from "node:path";
-import { existsSync } from "node:fs";
 import type { StructuredTracer } from "@logger/index";
 
 export class ModelCompatibilityProcessor {
@@ -34,10 +34,7 @@ export class ModelCompatibilityProcessor {
     }
   }
 
-  private async fixModelsInDirectory(
-    dir: string,
-    parentSpan?: any
-  ): Promise<void> {
+  private async fixModelsInDirectory(dir: string, parentSpan?: any): Promise<void> {
     const entries = await readdir(dir, { withFileTypes: true });
 
     for (const entry of entries) {
@@ -51,13 +48,8 @@ export class ModelCompatibilityProcessor {
     }
   }
 
-  private async fixSingleModel(
-    modelPath: string,
-    parentSpan?: any
-  ): Promise<void> {
-    const modelSpan = parentSpan?.startChild(
-      `Fix model: ${modelPath.split("/").pop()}`
-    );
+  private async fixSingleModel(modelPath: string, parentSpan?: any): Promise<void> {
+    const modelSpan = parentSpan?.startChild(`Fix model: ${modelPath.split("/").pop()}`);
     modelSpan?.setAttributes({ modelPath });
 
     try {
@@ -123,18 +115,12 @@ export class ModelCompatibilityProcessor {
     }
   }
 
-  private validateTemplateFile(
-    model: any,
-    modelPath: string,
-    modelSpan?: any
-  ): void {
+  private validateTemplateFile(model: any, modelPath: string, modelSpan?: any): void {
     const errors: string[] = [];
 
     // Template files should NOT have parent field
     if (model.parent) {
-      errors.push(
-        `Template file should not have parent field, found: ${model.parent}`
-      );
+      errors.push(`Template file should not have parent field, found: ${model.parent}`);
     }
 
     // Template files should have required structure

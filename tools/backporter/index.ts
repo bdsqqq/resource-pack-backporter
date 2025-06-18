@@ -11,9 +11,7 @@ export async function main() {
 
   // Parse flags
   const verbose = allArgs.includes("--verbose") || allArgs.includes("-v");
-  const nonFlagArgs = allArgs.filter(
-    (arg) => !arg.startsWith("--") && !arg.startsWith("-")
-  );
+  const nonFlagArgs = allArgs.filter((arg) => !arg.startsWith("--") && !arg.startsWith("-"));
 
   let [inputDir = ".", outputDir] = nonFlagArgs;
 

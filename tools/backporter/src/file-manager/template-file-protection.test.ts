@@ -1,5 +1,4 @@
 import { afterEach, beforeEach, describe, expect, it } from "bun:test";
-import { existsSync } from "node:fs";
 import { mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import { ModelCompatibilityProcessor } from "@backporter/postprocessors/model-compatibility";
@@ -75,10 +74,9 @@ describe("Template File Protection", () => {
         },
       };
 
-      await mkdir(
-        join(testDir, "assets", "minecraft", "models", "item", "books_3d"),
-        { recursive: true }
-      );
+      await mkdir(join(testDir, "assets", "minecraft", "models", "item", "books_3d"), {
+        recursive: true,
+      });
       const templatePath = join(
         testDir,
         "assets",
@@ -88,18 +86,13 @@ describe("Template File Protection", () => {
         "books_3d",
         "template_book_open.json"
       );
-      await writeFile(
-        templatePath,
-        JSON.stringify(templateWithZeroThickness, null, 2)
-      );
+      await writeFile(templatePath, JSON.stringify(templateWithZeroThickness, null, 2));
 
       // Process the file (this would normally add parent field for non-templates)
       await processor.fixSingleModel(templatePath);
 
       // Critical test: Template must NOT have parent field after processing
-      const processedTemplate = JSON.parse(
-        await readFile(templatePath, "utf-8")
-      );
+      const processedTemplate = JSON.parse(await readFile(templatePath, "utf-8"));
 
       expect(processedTemplate.parent).toBeUndefined();
       expect(processedTemplate.credit).toBe("Bray + Cyberia were here");
@@ -129,10 +122,9 @@ describe("Template File Protection", () => {
         },
       };
 
-      await mkdir(
-        join(testDir, "assets", "minecraft", "models", "item", "books_3d"),
-        { recursive: true }
-      );
+      await mkdir(join(testDir, "assets", "minecraft", "models", "item", "books_3d"), {
+        recursive: true,
+      });
       const templatePath = join(
         testDir,
         "assets",
@@ -173,10 +165,9 @@ describe("Template File Protection", () => {
         },
       };
 
-      await mkdir(
-        join(testDir, "assets", "minecraft", "models", "item", "books_3d"),
-        { recursive: true }
-      );
+      await mkdir(join(testDir, "assets", "minecraft", "models", "item", "books_3d"), {
+        recursive: true,
+      });
       const templatePath = join(
         testDir,
         "assets",
@@ -190,9 +181,7 @@ describe("Template File Protection", () => {
 
       await processor.fixSingleModel(templatePath);
 
-      const processedTemplate = JSON.parse(
-        await readFile(templatePath, "utf-8")
-      );
+      const processedTemplate = JSON.parse(await readFile(templatePath, "utf-8"));
 
       // All required fields should be present
       expect(processedTemplate.credit).toBeDefined();
@@ -250,10 +239,7 @@ describe("Template File Protection", () => {
       };
 
       const regularPath = join(testDir, "channeling_1.json");
-      await writeFile(
-        regularPath,
-        JSON.stringify(modelWithValidParent, null, 2)
-      );
+      await writeFile(regularPath, JSON.stringify(modelWithValidParent, null, 2));
 
       await processor.fixSingleModel(regularPath);
 
@@ -272,10 +258,9 @@ describe("Template File Protection", () => {
         elements: [],
       };
 
-      await mkdir(
-        join(testDir, "assets", "minecraft", "models", "item", "books_3d"),
-        { recursive: true }
-      );
+      await mkdir(join(testDir, "assets", "minecraft", "models", "item", "books_3d"), {
+        recursive: true,
+      });
       const templatePath = join(
         testDir,
         "assets",
@@ -288,13 +273,9 @@ describe("Template File Protection", () => {
       await writeFile(templatePath, JSON.stringify(malformedTemplate, null, 2));
 
       // Should not throw error but will reject the malformed template
-      await expect(
-        processor.fixSingleModel(templatePath)
-      ).resolves.toBeUndefined();
+      await expect(processor.fixSingleModel(templatePath)).resolves.toBeUndefined();
 
-      const processedTemplate = JSON.parse(
-        await readFile(templatePath, "utf-8")
-      );
+      const processedTemplate = JSON.parse(await readFile(templatePath, "utf-8"));
 
       // Malformed template should be preserved as-is (validation failed)
       expect(processedTemplate.parent).toBe("minecraft:item/handheld");
@@ -309,10 +290,9 @@ describe("Template File Protection", () => {
         display: {},
       };
 
-      await mkdir(
-        join(testDir, "assets", "minecraft", "models", "item", "books_3d"),
-        { recursive: true }
-      );
+      await mkdir(join(testDir, "assets", "minecraft", "models", "item", "books_3d"), {
+        recursive: true,
+      });
       const templatePath = join(
         testDir,
         "assets",
@@ -322,16 +302,11 @@ describe("Template File Protection", () => {
         "books_3d",
         "template_no_elements.json"
       );
-      await writeFile(
-        templatePath,
-        JSON.stringify(templateNoElements, null, 2)
-      );
+      await writeFile(templatePath, JSON.stringify(templateNoElements, null, 2));
 
       await processor.fixSingleModel(templatePath);
 
-      const processedTemplate = JSON.parse(
-        await readFile(templatePath, "utf-8")
-      );
+      const processedTemplate = JSON.parse(await readFile(templatePath, "utf-8"));
 
       // Template rejected due to missing elements - preserved as-is
       expect(processedTemplate.parent).toBe("minecraft:item/handheld");
@@ -343,10 +318,9 @@ describe("Template File Protection", () => {
         parent: "minecraft:item/handheld", // Only this field - missing all required fields
       };
 
-      await mkdir(
-        join(testDir, "assets", "minecraft", "models", "item", "books_3d"),
-        { recursive: true }
-      );
+      await mkdir(join(testDir, "assets", "minecraft", "models", "item", "books_3d"), {
+        recursive: true,
+      });
       const templatePath = join(
         testDir,
         "assets",
@@ -360,9 +334,7 @@ describe("Template File Protection", () => {
 
       await processor.fixSingleModel(templatePath);
 
-      const processedTemplate = JSON.parse(
-        await readFile(templatePath, "utf-8")
-      );
+      const processedTemplate = JSON.parse(await readFile(templatePath, "utf-8"));
 
       // Invalid template should be preserved as-is (validation failed)
       expect(processedTemplate.parent).toBe("minecraft:item/handheld");
@@ -395,10 +367,9 @@ describe("Template File Protection", () => {
         display: {},
       };
 
-      await mkdir(
-        join(testDir, "assets", "minecraft", "models", "item", "books_3d"),
-        { recursive: true }
-      );
+      await mkdir(join(testDir, "assets", "minecraft", "models", "item", "books_3d"), {
+        recursive: true,
+      });
       const templatePath = join(
         testDir,
         "assets",
@@ -408,16 +379,11 @@ describe("Template File Protection", () => {
         "books_3d",
         "template_multi_issues.json"
       );
-      await writeFile(
-        templatePath,
-        JSON.stringify(templateWithMultipleIssues, null, 2)
-      );
+      await writeFile(templatePath, JSON.stringify(templateWithMultipleIssues, null, 2));
 
       await processor.fixSingleModel(templatePath);
 
-      const processedTemplate = JSON.parse(
-        await readFile(templatePath, "utf-8")
-      );
+      const processedTemplate = JSON.parse(await readFile(templatePath, "utf-8"));
 
       // All zero-thickness issues should be fixed
       expect(processedTemplate.elements[0].to[2]).toBeGreaterThan(0); // Z fixed

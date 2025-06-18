@@ -1,7 +1,5 @@
 #!/usr/bin/env bun
 
-import { existsSync } from "node:fs";
-import { readFile } from "node:fs/promises";
 import { basename } from "node:path";
 import { ConditionalBackportCoordinator } from "@backporter/conditional-compiler/backport-coordinator";
 import { createTracer } from "@logger/index";
@@ -13,9 +11,7 @@ async function main() {
 
   // Parse flags
   const verbose = allArgs.includes("--verbose") || allArgs.includes("-v");
-  const nonFlagArgs = allArgs.filter(
-    (arg) => !arg.startsWith("--") && !arg.startsWith("-")
-  );
+  const nonFlagArgs = allArgs.filter((arg) => !arg.startsWith("--") && !arg.startsWith("-"));
 
   let [inputDir = ".", outputDir] = nonFlagArgs;
 

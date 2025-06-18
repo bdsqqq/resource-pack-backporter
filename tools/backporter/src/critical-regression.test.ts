@@ -1,5 +1,4 @@
 import { afterEach, beforeEach, describe, expect, it } from "bun:test";
-import { existsSync } from "node:fs";
 import { mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import { ConditionalBackportCoordinator } from "@backporter/conditional-compiler/backport-coordinator";
@@ -44,10 +43,9 @@ describe("Critical Books Regression Prevention", () => {
    */
   it("should never add parent field to template files", async () => {
     // Create template file that would trigger compatibility processing
-    await mkdir(
-      join(inputDir, "assets", "minecraft", "models", "item", "books_3d"),
-      { recursive: true }
-    );
+    await mkdir(join(inputDir, "assets", "minecraft", "models", "item", "books_3d"), {
+      recursive: true,
+    });
 
     const templateWithZeroThickness = {
       credit: "Bray + Cyberia were here",
@@ -127,20 +125,13 @@ describe("Critical Books Regression Prevention", () => {
         description: "Original Test Pack",
       },
     };
-    await writeFile(
-      join(inputDir, "pack.mcmeta"),
-      JSON.stringify(packMeta, null, 2)
-    );
+    await writeFile(join(inputDir, "pack.mcmeta"), JSON.stringify(packMeta, null, 2));
 
     await coordinator.backport(inputDir, outputDir);
 
-    const outputPackMeta = JSON.parse(
-      await readFile(join(outputDir, "pack.mcmeta"), "utf-8")
-    );
+    const outputPackMeta = JSON.parse(await readFile(join(outputDir, "pack.mcmeta"), "utf-8"));
 
-    expect(outputPackMeta.pack.description).toBe(
-      "Original Test Pack ↺_backported_by_@bdsqqq"
-    );
+    expect(outputPackMeta.pack.description).toBe("Original Test Pack ↺_backported_by_@bdsqqq");
   });
 
   /**
@@ -149,10 +140,9 @@ describe("Critical Books Regression Prevention", () => {
    * Ensures template files maintain their critical structure after processing
    */
   it("should preserve template file structure with all required fields", async () => {
-    await mkdir(
-      join(inputDir, "assets", "minecraft", "models", "item", "books_3d"),
-      { recursive: true }
-    );
+    await mkdir(join(inputDir, "assets", "minecraft", "models", "item", "books_3d"), {
+      recursive: true,
+    });
 
     const validTemplate = {
       credit: "Template Credit",
@@ -222,10 +212,7 @@ describe("Critical Books Regression Prevention", () => {
     await coordinator.backport(inputDir, outputDir);
 
     const bookModel = JSON.parse(
-      await readFile(
-        join(outputDir, "assets", "minecraft", "models", "item", "book.json"),
-        "utf-8"
-      )
+      await readFile(join(outputDir, "assets", "minecraft", "models", "item", "book.json"), "utf-8")
     );
 
     expect(bookModel.overrides).toBeDefined();
@@ -233,15 +220,9 @@ describe("Critical Books Regression Prevention", () => {
 
     // Should have Pommel predicates
     const predicates = bookModel.overrides.map((o: any) => o.predicate);
-    const hasGroundPredicate = predicates.some(
-      (p: any) => p && p["pommel:is_ground"] === 1
-    );
-    const hasHeldPredicate = predicates.some(
-      (p: any) => p && p["pommel:is_held"] === 1
-    );
-    const hasOffhandPredicate = predicates.some(
-      (p: any) => p && p["pommel:is_offhand"] === 1
-    );
+    const hasGroundPredicate = predicates.some((p: any) => p && p["pommel:is_ground"] === 1);
+    const hasHeldPredicate = predicates.some((p: any) => p && p["pommel:is_held"] === 1);
+    const hasOffhandPredicate = predicates.some((p: any) => p && p["pommel:is_offhand"] === 1);
 
     expect(hasGroundPredicate).toBe(true);
     expect(hasHeldPredicate).toBe(true);
@@ -283,27 +264,16 @@ describe("Critical Books Regression Prevention", () => {
         description: "Test Pack",
       },
     };
-    await writeFile(
-      join(inputDir, "pack.mcmeta"),
-      JSON.stringify(packMeta, null, 2)
-    );
+    await writeFile(join(inputDir, "pack.mcmeta"), JSON.stringify(packMeta, null, 2));
   }
 
   async function createBookPack(inputDir: string) {
     await mkdir(join(inputDir, "assets", "minecraft", "items"), {
       recursive: true,
     });
-    await mkdir(
-      join(
-        inputDir,
-        "assets",
-        "minecraft",
-        "models",
-        "item",
-        "enchanted_books"
-      ),
-      { recursive: true }
-    );
+    await mkdir(join(inputDir, "assets", "minecraft", "models", "item", "enchanted_books"), {
+      recursive: true,
+    });
 
     await createMinimalPack(inputDir);
 
@@ -359,15 +329,7 @@ describe("Critical Books Regression Prevention", () => {
     };
 
     await writeFile(
-      join(
-        inputDir,
-        "assets",
-        "minecraft",
-        "models",
-        "item",
-        "enchanted_books",
-        "book.json"
-      ),
+      join(inputDir, "assets", "minecraft", "models", "item", "enchanted_books", "book.json"),
       JSON.stringify(bookModel, null, 2)
     );
   }

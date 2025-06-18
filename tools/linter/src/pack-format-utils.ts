@@ -1,8 +1,8 @@
 import { existsSync } from "node:fs";
+import { mkdir, writeFile } from "node:fs/promises";
 import { join } from "node:path";
-import { writeFile, mkdir } from "node:fs/promises";
-import { Result, ok, err } from "neverthrow";
 import type { StructuredTracer } from "@logger/index";
+import { err, ok, type Result } from "neverthrow";
 
 // pack_format to minecraft version mapping
 // based on https://minecraft.wiki/w/Pack_format
@@ -42,10 +42,7 @@ function getAssetVersion(
       .map(Number)
       .sort((a, b) => b - a);
     for (const format of availableFormats) {
-      if (
-        format >= supportedFormats.min_inclusive &&
-        format <= supportedFormats.max_inclusive
-      ) {
+      if (format >= supportedFormats.min_inclusive && format <= supportedFormats.max_inclusive) {
         return PACK_FORMAT_VERSION_MAP[format] || "1.21.5";
       }
     }
@@ -109,9 +106,7 @@ async function fetchGitHubTree(
     const data = (await response.json()) as GitHubTreeResponse;
 
     if (data.truncated) {
-      span?.warn(
-        "GitHub tree response was truncated, some files may be missing"
-      );
+      span?.warn("GitHub tree response was truncated, some files may be missing");
     }
 
     const filteredItems = data.tree.filter(
@@ -225,9 +220,7 @@ async function generateVanillaAssetsInline(
     processSpan?.info(
       `Processed ${blockTextures.size} block textures, ${itemTextures.size} item textures`
     );
-    processSpan?.info(
-      `Processed ${blockModels.size} block models, ${itemModels.size} item models`
-    );
+    processSpan?.info(`Processed ${blockModels.size} block models, ${itemModels.size} item models`);
     processSpan?.setAttributes({
       blockTextures: blockTextures.size,
       itemTextures: itemTextures.size,
@@ -392,17 +385,11 @@ export function isVanillaModel(modelRef: string): boolean {
     writeSpan?.info(`Generated vanilla assets file: ${outputPath}`);
     writeSpan?.end({ success: true, outputPath });
 
-    span?.info(
-      `Successfully generated vanilla assets for Minecraft ${version}`
-    );
+    span?.info(`Successfully generated vanilla assets for Minecraft ${version}`);
     span?.end({
       success: true,
       version,
-      totalAssets:
-        blockTextures.size +
-        itemTextures.size +
-        blockModels.size +
-        itemModels.size,
+      totalAssets: blockTextures.size + itemTextures.size + blockModels.size + itemModels.size,
     });
   } catch (error: any) {
     span?.error(`Failed to generate vanilla assets: ${error.message}`);

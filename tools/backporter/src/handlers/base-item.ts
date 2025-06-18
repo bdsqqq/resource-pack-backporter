@@ -1,10 +1,10 @@
-import type { WriteRequest, ProcessingContext } from "@backporter/file-manager";
+import type { ProcessingContext, WriteRequest } from "@backporter/file-manager";
 import type { ItemHandler } from "@backporter/handlers";
 
 export class BaseItemHandler implements ItemHandler {
   name = "base-item";
 
-  canHandle(jsonNode: any, context: ProcessingContext): boolean {
+  canHandle(_jsonNode: any, _context: ProcessingContext): boolean {
     // This is a fallback handler - it always can handle any item
     // But it should run last (lowest priority)
     return true;
@@ -48,10 +48,7 @@ export class BaseItemHandler implements ItemHandler {
   private hasComplexComponents(jsonNode: any): boolean {
     // Check if this item has component-based selections or display contexts
     // that would be handled by specialized handlers
-    return (
-      this.hasComponentSelection(jsonNode) ||
-      this.hasDisplayContextSelection(jsonNode)
-    );
+    return this.hasComponentSelection(jsonNode) || this.hasDisplayContextSelection(jsonNode);
   }
 
   private hasComponentSelection(obj: any): boolean {
@@ -92,31 +89,24 @@ export class BaseItemHandler implements ItemHandler {
     };
   }
 
-  private findTextureReferences(
-    context: ProcessingContext
-  ): TextureReference[] {
+  private findTextureReferences(context: ProcessingContext): TextureReference[] {
     const textureRefs: TextureReference[] = [];
 
     // Look for textures related to this item
-    const itemTexturePath = `assets/minecraft/textures/item/${context.itemId}.png`;
+    const _itemTexturePath = `assets/minecraft/textures/item/${context.itemId}.png`;
 
     // Find matching texture files
-    const matchingTextures = context.packStructure.textureFiles.filter(
-      (texturePath) => {
-        const normalizedPath = texturePath.replace(/\\/g, "/");
-        return (
-          normalizedPath.endsWith(`item/${context.itemId}.png`) ||
-          normalizedPath.includes(`${context.itemId}.png`)
-        );
-      }
-    );
+    const matchingTextures = context.packStructure.textureFiles.filter((texturePath) => {
+      const normalizedPath = texturePath.replace(/\\/g, "/");
+      return (
+        normalizedPath.endsWith(`item/${context.itemId}.png`) ||
+        normalizedPath.includes(`${context.itemId}.png`)
+      );
+    });
 
     for (const texturePath of matchingTextures) {
       // Convert absolute path to relative path for output
-      const relativePath = texturePath.replace(
-        /.*assets\/minecraft\/textures\//,
-        ""
-      );
+      const relativePath = texturePath.replace(/.*assets\/minecraft\/textures\//, "");
 
       textureRefs.push({
         path: `textures/${relativePath}`,

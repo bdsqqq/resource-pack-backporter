@@ -1,5 +1,5 @@
-import type { ExecutionPath, OutputTarget } from "./index";
 import type { StructuredTracer } from "@logger/index";
+import type { ExecutionPath, OutputTarget } from "./index";
 
 interface GroupedPaths {
   pommel: ExecutionPath[];
@@ -31,9 +31,7 @@ export class TargetSystemMapper {
       targets.push(this.generateBaseModel(itemId));
 
       // Generate CIT properties that point to individual model files
-      targets.push(
-        ...this.generateCITProperties(groupedPaths.enchantmentSpecific, itemId)
-      );
+      targets.push(...this.generateCITProperties(groupedPaths.enchantmentSpecific, itemId));
 
       // Generate individual model files for each enchantment (with Pommel overrides)
       targets.push(
@@ -48,15 +46,11 @@ export class TargetSystemMapper {
       targets.push(this.generateRegularBookModel(groupedPaths.pommel, itemId));
     } else {
       // Non-book item - generate generic model with correct texture paths
-      targets.push(
-        ...this.generateGenericItemModel(groupedPaths.pommel, paths, itemId)
-      );
+      targets.push(...this.generateGenericItemModel(groupedPaths.pommel, paths, itemId));
     }
 
     // Generate enhanced 3D models with animation data preserved
-    targets.push(
-      ...this.generateEnhanced3DModels(groupedPaths.animated, itemId)
-    );
+    targets.push(...this.generateEnhanced3DModels(groupedPaths.animated, itemId));
 
     return targets;
   }
@@ -71,10 +65,7 @@ export class TargetSystemMapper {
 
     for (const path of paths) {
       // GUI context with enchantments → CIT properties
-      if (
-        this.isGUIContext(path.conditions.displayContext) &&
-        path.conditions.enchantment
-      ) {
+      if (this.isGUIContext(path.conditions.displayContext) && path.conditions.enchantment) {
         grouped.enchantmentSpecific.push(path);
       }
       // 3D contexts OR ground context → Pommel overrides
@@ -115,10 +106,7 @@ export class TargetSystemMapper {
     };
   }
 
-  private generateRegularBookModel(
-    pommelPaths: ExecutionPath[],
-    itemId: string
-  ): OutputTarget {
+  private generateRegularBookModel(pommelPaths: ExecutionPath[], itemId: string): OutputTarget {
     // Generate a base model with Pommel overrides for regular (non-enchanted) books
     const overrides = this.createRegularBookOverrides(pommelPaths);
 
@@ -153,7 +141,7 @@ export class TargetSystemMapper {
         if (!enchantmentGroups.has(key)) {
           enchantmentGroups.set(key, []);
         }
-        enchantmentGroups.get(key)!.push(path);
+        enchantmentGroups.get(key)?.push(path);
       }
     }
 
@@ -170,11 +158,7 @@ export class TargetSystemMapper {
           ? `models/item/enchanted_books/${enchantmentKey}.json`
           : `models/item/${itemId}_${enchantmentKey}.json`;
 
-      const enchantmentTexturePath = this.getEnchantmentTexturePath(
-        itemId,
-        enchantment,
-        itemType
-      );
+      const enchantmentTexturePath = this.getEnchantmentTexturePath(itemId, enchantment, itemType);
 
       // For now, always use enchantment texture path (fallback can be added later with proper pack structure)
       const texturePath = enchantmentTexturePath;
@@ -219,14 +203,13 @@ export class TargetSystemMapper {
 
     for (const path of pommelPaths) {
       for (const context of path.conditions.displayContext) {
-        const predicate =
-          contextMapping[context as keyof typeof contextMapping];
+        const predicate = contextMapping[context as keyof typeof contextMapping];
         if (predicate) {
           const key = predicate;
           if (!predicateGroups.has(key)) {
             predicateGroups.set(key, []);
           }
-          predicateGroups.get(key)!.push(path);
+          predicateGroups.get(key)?.push(path);
         }
       }
     }
@@ -234,9 +217,7 @@ export class TargetSystemMapper {
     // Always add ground predicate for enchanted books (points to 2D texture)
     overrides.push({
       predicate: { "pommel:is_ground": 1 },
-      model: `minecraft:item/enchanted_books/${this.getTextureNameForEnchantment(
-        enchantment
-      )}`,
+      model: `minecraft:item/enchanted_books/${this.getTextureNameForEnchantment(enchantment)}`,
     });
 
     // Generate overrides from grouped predicates
@@ -245,11 +226,7 @@ export class TargetSystemMapper {
       if (predicate === "pommel:is_ground") continue;
 
       // Find the appropriate 3D model for this enchantment and context
-      const contextModel = this.findContextModelForEnchantment(
-        groupPaths,
-        enchantment,
-        predicate
-      );
+      const contextModel = this.findContextModelForEnchantment(groupPaths, enchantment, predicate);
 
       if (contextModel) {
         overrides.push({
@@ -283,14 +260,13 @@ export class TargetSystemMapper {
 
     for (const path of pommelPaths) {
       for (const context of path.conditions.displayContext) {
-        const predicate =
-          contextMapping[context as keyof typeof contextMapping];
+        const predicate = contextMapping[context as keyof typeof contextMapping];
         if (predicate) {
           const key = predicate;
           if (!predicateGroups.has(key)) {
             predicateGroups.set(key, []);
           }
-          predicateGroups.get(key)!.push(path);
+          predicateGroups.get(key)?.push(path);
         }
       }
     }
@@ -298,10 +274,7 @@ export class TargetSystemMapper {
     // Generate overrides from grouped predicates
     for (const [predicate, groupPaths] of predicateGroups) {
       // Find the appropriate model for this context
-      const contextModel = this.findContextModelForRegularBook(
-        groupPaths,
-        predicate
-      );
+      const contextModel = this.findContextModelForRegularBook(groupPaths, predicate);
 
       if (contextModel) {
         overrides.push({
@@ -315,10 +288,7 @@ export class TargetSystemMapper {
     return this.deduplicateOverrides(overrides);
   }
 
-  private findContextModelForRegularBook(
-    paths: ExecutionPath[],
-    predicate: string
-  ): string | null {
+  private findContextModelForRegularBook(paths: ExecutionPath[], predicate: string): string | null {
     // Find the model path for this context from the execution paths
     for (const path of paths) {
       if (
@@ -331,9 +301,7 @@ export class TargetSystemMapper {
             thirdperson_lefthand: "pommel:is_offhand",
             head: "pommel:is_offhand",
           } as const;
-          return (
-            contextMapping[ctx as keyof typeof contextMapping] === predicate
-          );
+          return contextMapping[ctx as keyof typeof contextMapping] === predicate;
         })
       ) {
         return path.targetModel;
@@ -359,21 +327,18 @@ export class TargetSystemMapper {
     // Fallback to generic 3D models based on context
     if (predicate === "pommel:is_held") {
       return `minecraft:item/books_3d/${enchantment.type}_3d_open`;
-    } else if (predicate === "pommel:is_offhand") {
+    }
+    if (predicate === "pommel:is_offhand") {
       return `minecraft:item/books_3d/${enchantment.type}_3d`;
-    } else if (predicate === "pommel:is_ground") {
-      return `minecraft:item/enchanted_books/${this.getTextureNameForEnchantment(
-        enchantment
-      )}`;
+    }
+    if (predicate === "pommel:is_ground") {
+      return `minecraft:item/enchanted_books/${this.getTextureNameForEnchantment(enchantment)}`;
     }
 
     return null;
   }
 
-  private generatePommelModel_UNUSED(
-    paths: ExecutionPath[],
-    itemId: string
-  ): OutputTarget {
+  private generatePommelModel_UNUSED(paths: ExecutionPath[], itemId: string): OutputTarget {
     const overrides: any[] = [];
 
     // Convert display contexts to Pommel predicates
@@ -393,14 +358,13 @@ export class TargetSystemMapper {
 
     for (const path of paths) {
       for (const context of path.conditions.displayContext) {
-        const predicate =
-          contextMapping[context as keyof typeof contextMapping];
+        const predicate = contextMapping[context as keyof typeof contextMapping];
         if (predicate) {
           const key = predicate;
           if (!predicateGroups.has(key)) {
             predicateGroups.set(key, []);
           }
-          predicateGroups.get(key)!.push(path);
+          predicateGroups.get(key)?.push(path);
         }
       }
     }
@@ -437,10 +401,7 @@ export class TargetSystemMapper {
     };
   }
 
-  private generateCITProperties(
-    paths: ExecutionPath[],
-    itemId: string
-  ): OutputTarget[] {
+  private generateCITProperties(paths: ExecutionPath[], _itemId: string): OutputTarget[] {
     const citProperties = new Map<string, OutputTarget>();
 
     for (const path of paths) {
@@ -468,10 +429,7 @@ export class TargetSystemMapper {
     return Array.from(citProperties.values());
   }
 
-  private generateEnhanced3DModels(
-    paths: ExecutionPath[],
-    itemId: string
-  ): OutputTarget[] {
+  private generateEnhanced3DModels(paths: ExecutionPath[], _itemId: string): OutputTarget[] {
     const targets: OutputTarget[] = [];
 
     for (const path of paths) {
@@ -513,12 +471,7 @@ export class TargetSystemMapper {
 
   private isAnimatedModel(modelPath: string): boolean {
     // Models with animation effects (like channeling with lightning)
-    const animatedEnchantments = [
-      "channeling",
-      "flame",
-      "fire_aspect",
-      "riptide",
-    ];
+    const animatedEnchantments = ["channeling", "flame", "fire_aspect", "riptide"];
 
     return animatedEnchantments.some(
       (enchant) => modelPath.includes(enchant) && modelPath.includes("3d")
@@ -534,9 +487,7 @@ export class TargetSystemMapper {
     const result: any[] = [];
 
     // Add ground predicate once
-    const groundOverride = overrides.find(
-      (o) => o.predicate["pommel:is_ground"]
-    );
+    const groundOverride = overrides.find((o) => o.predicate["pommel:is_ground"]);
     if (groundOverride) {
       result.push(groundOverride);
     }
@@ -549,9 +500,7 @@ export class TargetSystemMapper {
     }
 
     // Add offhand predicate three times (needs highest priority to override held)
-    const offhandOverride = overrides.find(
-      (o) => o.predicate["pommel:is_offhand"]
-    );
+    const offhandOverride = overrides.find((o) => o.predicate["pommel:is_offhand"]);
     if (offhandOverride) {
       result.push(offhandOverride);
       result.push({ ...offhandOverride }); // Duplicate 1
@@ -563,9 +512,7 @@ export class TargetSystemMapper {
       overrideCount: result.length,
       originalCount: overrides.length,
     });
-    debugSpan?.debug(
-      `Generated ${result.length} overrides with Pommel-compatible duplicates`
-    );
+    debugSpan?.debug(`Generated ${result.length} overrides with Pommel-compatible duplicates`);
 
     if (result.length < 6) {
       debugSpan?.debug("Debug override details", {
@@ -591,19 +538,14 @@ export class TargetSystemMapper {
     // return Array.from(uniqueOverrides.values());
   }
 
-  private getTextureNameForEnchantment(enchantment: {
-    type: string;
-    level: number;
-  }): string {
+  private getTextureNameForEnchantment(enchantment: { type: string; level: number }): string {
     // Handle name mappings for curse enchantments
     const nameMapping = {
       binding_curse: "curse_of_binding",
       vanishing_curse: "curse_of_vanishing",
     } as const;
 
-    const baseName =
-      nameMapping[enchantment.type as keyof typeof nameMapping] ||
-      enchantment.type;
+    const baseName = nameMapping[enchantment.type as keyof typeof nameMapping] || enchantment.type;
 
     // Single-level enchantments (no level suffix)
     const singleLevelEnchantments = [
@@ -630,20 +572,10 @@ export class TargetSystemMapper {
     return itemId.includes("book") || itemId === "enchanted_book";
   }
 
-  private categorizeItem(
-    itemId: string
-  ): "book" | "tool" | "weapon" | "armor" | "other" {
+  private categorizeItem(itemId: string): "book" | "tool" | "weapon" | "armor" | "other" {
     if (itemId.includes("book")) return "book";
 
-    const tools = [
-      "pickaxe",
-      "axe",
-      "shovel",
-      "hoe",
-      "shears",
-      "flint_and_steel",
-      "fishing_rod",
-    ];
+    const tools = ["pickaxe", "axe", "shovel", "hoe", "shears", "flint_and_steel", "fishing_rod"];
     if (tools.some((tool) => itemId.includes(tool))) return "tool";
 
     const weapons = ["sword", "bow", "crossbow", "trident", "mace"];
@@ -670,11 +602,7 @@ export class TargetSystemMapper {
       : null;
 
     // Generate overrides with potential model name updates
-    const overrides = this.createGenericPommelOverrides(
-      pommelPaths,
-      allPaths,
-      preservedModelName
-    );
+    const overrides = this.createGenericPommelOverrides(pommelPaths, allPaths, preservedModelName);
 
     const targets: OutputTarget[] = [];
 
@@ -705,10 +633,7 @@ export class TargetSystemMapper {
     return targets;
   }
 
-  private shouldPreserve3DModel(
-    fallbackPath: ExecutionPath,
-    itemId: string
-  ): string | null {
+  private shouldPreserve3DModel(fallbackPath: ExecutionPath, itemId: string): string | null {
     // Check if the fallback model would be overwritten by our Pommel model
     const fallbackModel = fallbackPath.targetModel.replace("minecraft:", "");
     const pommelModel = `item/${itemId}`;
@@ -729,14 +654,10 @@ export class TargetSystemMapper {
         path.conditions.displayContext.includes("fixed")
     );
 
-    if (guiPath && guiPath.targetModel) {
+    if (guiPath?.targetModel) {
       try {
         // Read the actual texture from the GUI model file
-        const modelPath =
-          guiPath.targetModel.replace(
-            "minecraft:",
-            "assets/minecraft/models/"
-          ) + ".json";
+        const modelPath = `${guiPath.targetModel.replace("minecraft:", "assets/minecraft/models/")}.json`;
 
         const fs = require("node:fs");
         const { join } = require("node:path");
@@ -779,7 +700,7 @@ export class TargetSystemMapper {
 
   private createGenericPommelOverrides(
     pommelPaths: ExecutionPath[],
-    allPaths: ExecutionPath[],
+    _allPaths: ExecutionPath[],
     preservedModelName?: string | null
   ): any[] {
     const overrides: any[] = [];
@@ -789,7 +710,7 @@ export class TargetSystemMapper {
       path.conditions.displayContext.includes("ground")
     );
 
-    if (groundPath && groundPath.targetModel) {
+    if (groundPath?.targetModel) {
       overrides.push({
         predicate: {
           "pommel:is_ground": 1,
@@ -805,7 +726,7 @@ export class TargetSystemMapper {
       )
     );
 
-    if (handPath && handPath.targetModel) {
+    if (handPath?.targetModel) {
       // Use the hand model from the actual hand context paths
       const handModelName = preservedModelName
         ? `minecraft:item/${preservedModelName}`
@@ -837,9 +758,7 @@ export class TargetSystemMapper {
   ): string {
     switch (itemType) {
       case "book":
-        return `minecraft:item/enchanted_books/${this.getTextureNameForEnchantment(
-          enchantment
-        )}`;
+        return `minecraft:item/enchanted_books/${this.getTextureNameForEnchantment(enchantment)}`;
       case "tool":
       case "weapon":
         return `minecraft:item/enchanted_${itemId}_${enchantment.type}_${enchantment.level}`;
@@ -855,10 +774,9 @@ export class TargetSystemMapper {
     if (!packStructure?.textureFiles) return false;
 
     // Convert texture reference to file path
-    const filePath =
-      texturePath
-        .replace("minecraft:item/", "assets/minecraft/textures/item/")
-        .replace("minecraft:", "assets/minecraft/textures/") + ".png";
+    const filePath = `${texturePath
+      .replace("minecraft:item/", "assets/minecraft/textures/item/")
+      .replace("minecraft:", "assets/minecraft/textures/")}.png`;
 
     return packStructure.textureFiles.some((file: string) =>
       file.replace(/\\/g, "/").endsWith(filePath.replace(/\\/g, "/"))

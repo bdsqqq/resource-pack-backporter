@@ -1,6 +1,6 @@
 // Handler Strategy Interface
 
-import type { WriteRequest, ProcessingContext } from "@backporter/file-manager";
+import type { ProcessingContext, WriteRequest } from "@backporter/file-manager";
 
 export interface ItemHandler {
   name: string;
@@ -8,10 +8,10 @@ export interface ItemHandler {
   process(jsonNode: any, context: ProcessingContext): WriteRequest[];
 }
 
+import { BaseItemHandler } from "./base-item";
 import { DisplayContextHandler } from "./display-context";
 import { StoredEnchanmentsHandler } from "./stored-enchantments";
 import { WritableBookContentHandler } from "./writable-book-content";
-import { BaseItemHandler } from "./base-item";
 
 // Handler registry - will be populated as we migrate handlers
 // Order matters: more specific handlers first, fallback handlers last

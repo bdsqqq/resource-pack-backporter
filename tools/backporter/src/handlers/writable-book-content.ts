@@ -1,10 +1,10 @@
-import type { WriteRequest, ProcessingContext } from "@backporter/file-manager";
+import type { ProcessingContext, WriteRequest } from "@backporter/file-manager";
 import type { ItemHandler } from "@backporter/handlers";
 
 export class WritableBookContentHandler implements ItemHandler {
   name = "writable-book-content";
 
-  canHandle(jsonNode: any, context: ProcessingContext): boolean {
+  canHandle(jsonNode: any, _context: ProcessingContext): boolean {
     // Check if this item has writable_book_content component
     return this.hasWritableBookContent(jsonNode);
   }
@@ -21,10 +21,7 @@ export class WritableBookContentHandler implements ItemHandler {
     const texture = this.extractTexture(contextMappings, context);
 
     // Create a Pommel model with book-specific overrides
-    const pommelModel = this.buildWritableBookPommelModel(
-      contextMappings,
-      texture
-    );
+    const pommelModel = this.buildWritableBookPommelModel(contextMappings, texture);
 
     return [
       {
@@ -63,7 +60,7 @@ export class WritableBookContentHandler implements ItemHandler {
 
   private extractContextMappings(
     jsonNode: any,
-    context: ProcessingContext
+    _context: ProcessingContext
   ): { [context: string]: string } {
     const mappings: { [context: string]: string } = {};
 
@@ -73,15 +70,10 @@ export class WritableBookContentHandler implements ItemHandler {
 
     if (displayContextSelector) {
       // Process cases to find writable book content conditions
-      if (
-        displayContextSelector.cases &&
-        Array.isArray(displayContextSelector.cases)
-      ) {
+      if (displayContextSelector.cases && Array.isArray(displayContextSelector.cases)) {
         for (const caseObj of displayContextSelector.cases) {
           if (caseObj.when && caseObj.model) {
-            const contexts = Array.isArray(caseObj.when)
-              ? caseObj.when
-              : [caseObj.when];
+            const contexts = Array.isArray(caseObj.when) ? caseObj.when : [caseObj.when];
 
             // Check if this case has writable book content logic
             const modelPath = this.extractModelFromBookContent(caseObj.model);
@@ -98,9 +90,7 @@ export class WritableBookContentHandler implements ItemHandler {
 
       // Handle fallback
       if (displayContextSelector.fallback) {
-        const fallbackModel = this.extractModelFromBookContent(
-          displayContextSelector.fallback
-        );
+        const fallbackModel = this.extractModelFromBookContent(displayContextSelector.fallback);
         if (fallbackModel) {
           const standardContexts = [
             "gui",
@@ -170,10 +160,10 @@ export class WritableBookContentHandler implements ItemHandler {
       modelObj.predicate === "minecraft:writable_book_content"
     ) {
       // For conditions, we prefer the on_false model (closed book) as it's more common
-      if (modelObj.on_false && modelObj.on_false.model) {
+      if (modelObj.on_false?.model) {
         return modelObj.on_false.model;
       }
-      if (modelObj.on_true && modelObj.on_true.model) {
+      if (modelObj.on_true?.model) {
         return modelObj.on_true.model;
       }
     }
@@ -198,8 +188,7 @@ export class WritableBookContentHandler implements ItemHandler {
 
     if (guiModel) {
       try {
-        const modelPath =
-          guiModel.replace("minecraft:", "assets/minecraft/models/") + ".json";
+        const modelPath = `${guiModel.replace("minecraft:", "assets/minecraft/models/")}.json`;
 
         const found = context.packStructure.modelFiles.find((file) => {
           const normalizedFile = file.replace(/\\/g, "/");
@@ -282,32 +271,19 @@ export class WritableBookContentHandler implements ItemHandler {
     }
 
     // If it's a complex condition object, extract the preferred model
-    if (
-      typeof modelPath === "object" &&
-      modelPath.type === "minecraft:condition"
-    ) {
+    if (typeof modelPath === "object" && modelPath.type === "minecraft:condition") {
       // For writable book content, prefer the "closed book" state (on_false)
-      if (
-        modelPath.on_false?.type === "minecraft:model" &&
-        modelPath.on_false.model
-      ) {
+      if (modelPath.on_false?.type === "minecraft:model" && modelPath.on_false.model) {
         return modelPath.on_false.model;
       }
       // Fallback to on_true if needed
-      if (
-        modelPath.on_true?.type === "minecraft:model" &&
-        modelPath.on_true.model
-      ) {
+      if (modelPath.on_true?.type === "minecraft:model" && modelPath.on_true.model) {
         return modelPath.on_true.model;
       }
     }
 
     // If it's a direct model object
-    if (
-      typeof modelPath === "object" &&
-      modelPath.type === "minecraft:model" &&
-      modelPath.model
-    ) {
+    if (typeof modelPath === "object" && modelPath.type === "minecraft:model" && modelPath.model) {
       return modelPath.model;
     }
 

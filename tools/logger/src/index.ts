@@ -41,11 +41,7 @@ class Span {
     return this;
   }
 
-  addEvent(
-    level: LogEvent["level"],
-    message: string,
-    attributes?: Record<string, any>
-  ): this {
+  addEvent(level: LogEvent["level"], message: string, attributes?: Record<string, any>): this {
     const event: LogEvent = {
       timestamp: performance.now(),
       level,
@@ -76,11 +72,7 @@ class Span {
   }
 
   startChild(operation: string, attributes?: Record<string, any>): Span {
-    const childSpan = this.tracer.startSpan(
-      operation,
-      this.context.spanId,
-      attributes
-    );
+    const childSpan = this.tracer.startSpan(operation, this.context.spanId, attributes);
     this.children.push(childSpan);
     return childSpan;
   }
@@ -124,11 +116,7 @@ export class StructuredTracer {
     this.traceId = this.generateId();
   }
 
-  startSpan(
-    operation: string,
-    parentSpanId?: string,
-    attributes?: Record<string, any>
-  ): Span {
+  startSpan(operation: string, parentSpanId?: string, attributes?: Record<string, any>): Span {
     const spanId = this.generateId();
     const level = parentSpanId ? this.getSpanLevel(parentSpanId) + 1 : 0;
 
@@ -158,11 +146,7 @@ export class StructuredTracer {
     this.logSpanEnd(span, duration);
 
     // Ship to Axiom if configured
-    if (
-      this.config.enableAxiom &&
-      this.config.axiomToken &&
-      this.config.axiomDataset
-    ) {
+    if (this.config.enableAxiom && this.config.axiomToken && this.config.axiomDataset) {
       this.shipToAxiom(span, duration);
     }
   }
@@ -207,9 +191,7 @@ export class StructuredTracer {
     const prefix = this.getSpanEndPrefix(context.level);
     const durationStr = this.formatDuration(duration);
 
-    console.log(
-      `${indent}${prefix} ${context.operation} completed ${durationStr}`
-    );
+    console.log(`${indent}${prefix} ${context.operation} completed ${durationStr}`);
   }
 
   private getIndent(level: number): string {
@@ -222,7 +204,7 @@ export class StructuredTracer {
     return "├─";
   }
 
-  private getSpanEndPrefix(level: number): string {
+  private getSpanEndPrefix(_level: number): string {
     return "└─";
   }
 
@@ -282,13 +264,11 @@ export class StructuredTracer {
 
     try {
       const response = await fetch(
-        "https://api.axiom.co/v1/datasets/" +
-          this.config.axiomDataset +
-          "/ingest",
+        `https://api.axiom.co/v1/datasets/${this.config.axiomDataset}/ingest`,
         {
           method: "POST",
           headers: {
-            Authorization: "Bearer " + this.config.axiomToken,
+            Authorization: `Bearer ${this.config.axiomToken}`,
             "Content-Type": "application/json",
           },
           body: JSON.stringify([payload]),
@@ -296,7 +276,7 @@ export class StructuredTracer {
       );
 
       if (!response.ok) {
-        console.warn("Failed to ship span to Axiom: " + response.statusText);
+        console.warn(`Failed to ship span to Axiom: ${response.statusText}`);
       }
     } catch (error) {
       console.warn("Failed to ship span to Axiom:", error);
@@ -326,10 +306,7 @@ export function getTracer(): StructuredTracer {
 }
 
 // Convenience functions
-export function startSpan(
-  operation: string,
-  attributes?: Record<string, any>
-): Span {
+export function startSpan(operation: string, attributes?: Record<string, any>): Span {
   return getTracer().startSpan(operation, undefined, attributes);
 }
 

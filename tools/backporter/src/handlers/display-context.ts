@@ -1,11 +1,10 @@
-import type { WriteRequest, ProcessingContext } from "@backporter/file-manager";
+import type { ProcessingContext, WriteRequest } from "@backporter/file-manager";
 import type { ItemHandler } from "@backporter/handlers";
-import type { StructuredTracer } from "@logger/index";
 
 export class DisplayContextHandler implements ItemHandler {
   name = "display-context";
 
-  canHandle(jsonNode: any, context: ProcessingContext): boolean {
+  canHandle(jsonNode: any, _context: ProcessingContext): boolean {
     // Check if this item has display context switching
     return this.hasDisplayContextSelection(jsonNode);
   }
@@ -101,9 +100,7 @@ export class DisplayContextHandler implements ItemHandler {
     if (selector.cases && Array.isArray(selector.cases)) {
       for (const caseObj of selector.cases) {
         if (caseObj.when && caseObj.model) {
-          const contexts = Array.isArray(caseObj.when)
-            ? caseObj.when
-            : [caseObj.when];
+          const contexts = Array.isArray(caseObj.when) ? caseObj.when : [caseObj.when];
           const modelPath = caseObj.model.model || caseObj.model;
 
           for (const context of contexts) {
@@ -116,7 +113,7 @@ export class DisplayContextHandler implements ItemHandler {
     }
 
     // Process fallback
-    if (selector.fallback && selector.fallback.model) {
+    if (selector.fallback?.model) {
       const fallbackModel = selector.fallback.model;
 
       // Add fallback for contexts not explicitly handled
@@ -150,8 +147,7 @@ export class DisplayContextHandler implements ItemHandler {
 
     if (guiModel) {
       try {
-        const modelPath =
-          guiModel.replace("minecraft:", "assets/minecraft/models/") + ".json";
+        const modelPath = `${guiModel.replace("minecraft:", "assets/minecraft/models/")}.json`;
 
         // Find the model file in pack structure
         const found = context.packStructure.modelFiles.find((file) => {
@@ -190,10 +186,7 @@ export class DisplayContextHandler implements ItemHandler {
     return `minecraft:item/${context.itemId}`;
   }
 
-  private buildPommelModel(
-    contextMappings: { [context: string]: string },
-    texture: string
-  ): any {
+  private buildPommelModel(contextMappings: { [context: string]: string }, texture: string): any {
     const overrides = [];
 
     // Map contexts to Pommel predicates

@@ -5,44 +5,46 @@ const testItem = {
   model: {
     type: "minecraft:select",
     property: "minecraft:stored_enchantments",
-    cases: [{
-      when: { "minecraft:channeling": 1 },
-      model: {
-        type: "minecraft:select",
-        property: "minecraft:display_context",
-        cases: [
-          {
-            when: ["gui", "fixed", "head"],
-            model: {
-              type: "minecraft:model",
-              model: "minecraft:item/enchanted_books/channeling_1"
-            }
-          },
-          {
-            when: ["ground"],
-            model: {
-              type: "minecraft:model",
-              model: "minecraft:item/enchanted_books/channeling_1"
-            }
-          },
-          {
-            when: ["firstperson_righthand", "thirdperson_righthand"],
-            model: {
-              type: "minecraft:model",
-              model: "minecraft:item/books_3d/channeling_3d_open"
-            }
-          },
-          {
-            when: ["firstperson_lefthand", "thirdperson_lefthand"],
-            model: {
-              type: "minecraft:model",
-              model: "minecraft:item/books_3d/channeling_3d"
-            }
-          }
-        ]
-      }
-    }]
-  }
+    cases: [
+      {
+        when: { "minecraft:channeling": 1 },
+        model: {
+          type: "minecraft:select",
+          property: "minecraft:display_context",
+          cases: [
+            {
+              when: ["gui", "fixed", "head"],
+              model: {
+                type: "minecraft:model",
+                model: "minecraft:item/enchanted_books/channeling_1",
+              },
+            },
+            {
+              when: ["ground"],
+              model: {
+                type: "minecraft:model",
+                model: "minecraft:item/enchanted_books/channeling_1",
+              },
+            },
+            {
+              when: ["firstperson_righthand", "thirdperson_righthand"],
+              model: {
+                type: "minecraft:model",
+                model: "minecraft:item/books_3d/channeling_3d_open",
+              },
+            },
+            {
+              when: ["firstperson_lefthand", "thirdperson_lefthand"],
+              model: {
+                type: "minecraft:model",
+                model: "minecraft:item/books_3d/channeling_3d",
+              },
+            },
+          ],
+        },
+      },
+    ],
+  },
 };
 
 console.log("Testing enchanted book target generation...");
@@ -56,7 +58,7 @@ paths.forEach((path, i) => {
     conditions: path.conditions,
     targetModel: path.targetModel,
     priority: path.priority,
-    isFallback: path.isFallback
+    isFallback: path.isFallback,
   });
 });
 
@@ -70,6 +72,6 @@ targets.forEach((target, i) => {
     file: target.file,
     priority: target.priority,
     hasOverrides: !!target.content?.overrides,
-    overrideCount: target.content?.overrides?.length || 0
+    overrideCount: target.content?.overrides?.length || 0,
   });
 });

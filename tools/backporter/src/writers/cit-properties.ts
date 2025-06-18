@@ -1,5 +1,5 @@
-import { writeFile, mkdir } from "node:fs/promises";
-import { join, dirname } from "node:path";
+import { mkdir, writeFile } from "node:fs/promises";
+import { dirname, join } from "node:path";
 import type { WriteRequest } from "@backporter/file-manager";
 
 interface FileWriter {
@@ -53,7 +53,7 @@ export class CITPropertiesWriter implements FileWriter {
       lines.push(`enchantmentLevels=${content.enchantmentLevels}`);
     }
 
-    return lines.join("\n") + "\n";
+    return `${lines.join("\n")}\n`;
   }
 
   private formatNBTProperties(nbt: any, lines: string[], prefix = "nbt"): void {

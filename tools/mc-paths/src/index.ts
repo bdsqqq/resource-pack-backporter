@@ -1,6 +1,6 @@
 import { existsSync } from "node:fs";
 import { join } from "node:path";
-import { Result, ok, err } from "neverthrow";
+import { err, ok, type Result } from "neverthrow";
 
 export interface PathResolution {
   exists: boolean;
@@ -79,13 +79,7 @@ export async function resolveTexturePath(
     const isVanilla = isVanillaTexture(textureRef);
 
     // Construct the full path
-    const fullPath = join(
-      packDir,
-      "assets",
-      namespace,
-      "textures",
-      `${path}.png`
-    );
+    const fullPath = join(packDir, "assets", namespace, "textures", `${path}.png`);
 
     return ok({
       exists: existsSync(fullPath),
@@ -96,9 +90,7 @@ export async function resolveTexturePath(
       isNamespaced,
     });
   } catch (error: any) {
-    return err(
-      `Failed to resolve texture path for ${textureRef}: ${error.message}`
-    );
+    return err(`Failed to resolve texture path for ${textureRef}: ${error.message}`);
   }
 }
 
@@ -126,13 +118,7 @@ export async function resolveModelPath(
     const isVanilla = isVanillaModel(modelRef);
 
     // Construct the full path
-    const fullPath = join(
-      packDir,
-      "assets",
-      namespace,
-      "models",
-      `${path}.json`
-    );
+    const fullPath = join(packDir, "assets", namespace, "models", `${path}.json`);
 
     return ok({
       exists: existsSync(fullPath),
@@ -143,16 +129,11 @@ export async function resolveModelPath(
       isNamespaced,
     });
   } catch (error: any) {
-    return err(
-      `Failed to resolve model path for ${modelRef}: ${error.message}`
-    );
+    return err(`Failed to resolve model path for ${modelRef}: ${error.message}`);
   }
 }
 
-export function resolveBlockstatePath(
-  packDir: string,
-  blockstateRef: string
-): PathResolution {
+export function resolveBlockstatePath(packDir: string, blockstateRef: string): PathResolution {
   // Handle namespace:path format (e.g., "minecraft:stone")
   let namespace = "minecraft";
   let path = blockstateRef;
@@ -164,13 +145,7 @@ export function resolveBlockstatePath(
   }
 
   // Construct the full path
-  const fullPath = join(
-    packDir,
-    "assets",
-    namespace,
-    "blockstates",
-    `${path}.json`
-  );
+  const fullPath = join(packDir, "assets", namespace, "blockstates", `${path}.json`);
 
   return {
     exists: existsSync(fullPath),

@@ -1,10 +1,8 @@
 import { readdir, stat } from "node:fs/promises";
-import { join, extname } from "node:path";
-import { Result, ok, err } from "neverthrow";
+import { extname, join } from "node:path";
+import { err, ok, type Result } from "neverthrow";
 
-export async function walkModels(
-  dir: string
-): Promise<Result<string[], string>> {
+export async function walkModels(dir: string): Promise<Result<string[], string>> {
   try {
     const files = await walkDirectory(
       dir,
@@ -16,9 +14,7 @@ export async function walkModels(
   }
 }
 
-export async function walkTextures(
-  dir: string
-): Promise<Result<string[], string>> {
+export async function walkTextures(dir: string): Promise<Result<string[], string>> {
   try {
     const files = await walkDirectory(
       dir,
@@ -30,9 +26,7 @@ export async function walkTextures(
   }
 }
 
-export async function walkAssets(
-  dir: string
-): Promise<Result<string[], string>> {
+export async function walkAssets(dir: string): Promise<Result<string[], string>> {
   try {
     const files = await walkDirectory(dir, () => true);
     return ok(files);
@@ -41,9 +35,7 @@ export async function walkAssets(
   }
 }
 
-export async function walkBlockstates(
-  dir: string
-): Promise<Result<string[], string>> {
+export async function walkBlockstates(dir: string): Promise<Result<string[], string>> {
   try {
     const files = await walkDirectory(
       dir,
@@ -55,10 +47,7 @@ export async function walkBlockstates(
   }
 }
 
-async function walkDirectory(
-  dir: string,
-  filter: (file: string) => boolean
-): Promise<string[]> {
+async function walkDirectory(dir: string, filter: (file: string) => boolean): Promise<string[]> {
   const files: string[] = [];
 
   try {

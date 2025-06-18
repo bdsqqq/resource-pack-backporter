@@ -1,18 +1,11 @@
-import {
-  readFile,
-  writeFile,
-  mkdir,
-  copyFile,
-  readdir,
-  stat,
-} from "node:fs/promises";
 import { existsSync } from "node:fs";
-import { join, dirname, relative, basename } from "node:path";
-import { ConditionalPathExtractor } from "./path-extractor";
-import { TargetSystemMapper } from "./target-mapper";
-import { BackportFileGenerator } from "./file-generator";
+import { copyFile, mkdir, readdir, readFile, stat, writeFile } from "node:fs/promises";
+import { basename, dirname, join } from "node:path";
 import type { BackportOptions } from "@backporter/coordination";
 import type { StructuredTracer } from "@logger/index";
+import { BackportFileGenerator } from "./file-generator";
+import { ConditionalPathExtractor } from "./path-extractor";
+import { TargetSystemMapper } from "./target-mapper";
 
 export class ConditionalBackportCoordinator {
   private pathExtractor: ConditionalPathExtractor;
@@ -41,11 +34,7 @@ export class ConditionalBackportCoordinator {
 
     try {
       this.verbose = options.verbose || false;
-      this.fileGenerator = new BackportFileGenerator(
-        outputDir,
-        inputDir,
-        this.tracer
-      );
+      this.fileGenerator = new BackportFileGenerator(outputDir, inputDir, this.tracer);
 
       // Update target mapper with source directory
       this.targetMapper = new TargetSystemMapper(inputDir);
@@ -92,10 +81,7 @@ export class ConditionalBackportCoordinator {
     }
   }
 
-  private async findItemFiles(
-    inputDir: string,
-    parentSpan: any
-  ): Promise<string[]> {
+  private async findItemFiles(inputDir: string, parentSpan: any): Promise<string[]> {
     const findSpan = parentSpan.startChild("Find Item Files");
     const itemsDir = join(inputDir, "assets", "minecraft", "items");
     const itemFiles: string[] = [];
@@ -125,7 +111,7 @@ export class ConditionalBackportCoordinator {
 
   private async processItemFile(
     itemFilePath: string,
-    sourceDir: string,
+    _sourceDir: string,
     parentSpan: any
   ): Promise<void> {
     const itemId = basename(itemFilePath, ".json");
@@ -166,7 +152,7 @@ export class ConditionalBackportCoordinator {
       });
 
       // Generate all output files
-      await this.fileGenerator!.generateAllFiles(targets, itemSpan);
+      await this.fileGenerator?.generateAllFiles(targets, itemSpan);
 
       itemSpan.end({
         success: true,
@@ -220,11 +206,7 @@ export class ConditionalBackportCoordinator {
     }
   }
 
-  private async copyPackFiles(
-    inputDir: string,
-    outputDir: string,
-    parentSpan: any
-  ): Promise<void> {
+  private async copyPackFiles(inputDir: string, outputDir: string, parentSpan: any): Promise<void> {
     const packSpan = parentSpan.startChild("Copy Pack Files");
 
     try {
@@ -267,16 +249,13 @@ export class ConditionalBackportCoordinator {
     }
   }
 
-  private async copyAndUpdatePackMcmeta(
-    inputPath: string,
-    outputPath: string
-  ): Promise<void> {
+  private async copyAndUpdatePackMcmeta(inputPath: string, outputPath: string): Promise<void> {
     try {
       const content = await readFile(inputPath, "utf-8");
       const packData = JSON.parse(content);
 
       // Update the description to add the backported by credit
-      if (packData.pack && packData.pack.description) {
+      if (packData.pack?.description) {
         const attribution = " ↺_backported_by_@bdsqqq";
         if (typeof packData.pack.description === "string") {
           if (!packData.pack.description.includes(attribution)) {
@@ -285,9 +264,7 @@ export class ConditionalBackportCoordinator {
         } else if (Array.isArray(packData.pack.description)) {
           // Handle text component format - check if attribution already exists
           const hasAttribution = packData.pack.description.some(
-            (item: any) =>
-              typeof item === "string" &&
-              item.includes("↺_backported_by_@bdsqqq")
+            (item: any) => typeof item === "string" && item.includes("↺_backported_by_@bdsqqq")
           );
           if (!hasAttribution) {
             packData.pack.description.push(attribution);
@@ -344,10 +321,7 @@ export class ConditionalBackportCoordinator {
     parentSpan.info("Copied base asset files", { copiedFiles });
   }
 
-  private async copyDirectoryRecursive(
-    sourceDir: string,
-    destDir: string
-  ): Promise<number> {
+  private async copyDirectoryRecursive(sourceDir: string, destDir: string): Promise<number> {
     const fs = require("node:fs");
     let copiedFiles = 0;
 
@@ -374,18 +348,13 @@ export class ConditionalBackportCoordinator {
     return copiedFiles;
   }
 
-  private async applyPostProcessing(
-    outputDir: string,
-    parentSpan: any
-  ): Promise<void> {
+  private async applyPostProcessing(outputDir: string, parentSpan: any): Promise<void> {
     const postSpan = parentSpan.startChild("Post-Processing");
     postSpan.setAttributes({ outputDir });
 
     try {
       // Apply model compatibility fixes
-      const { ModelCompatibilityProcessor } = await import(
-        "../postprocessors/model-compatibility"
-      );
+      const { ModelCompatibilityProcessor } = await import("../postprocessors/model-compatibility");
       const compatibilityProcessor = new ModelCompatibilityProcessor();
       await compatibilityProcessor.fixModelCompatibility(outputDir);
 

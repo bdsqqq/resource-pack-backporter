@@ -1,6 +1,6 @@
-import { mkdir, writeFile } from "node:fs/promises";
-import { join, dirname } from "node:path";
-import type { WriteRequest, FileManager } from "@backporter/file-manager";
+import { mkdir } from "node:fs/promises";
+import { dirname } from "node:path";
+import type { FileManager, WriteRequest } from "@backporter/file-manager";
 import { getMergers } from "@backporter/mergers";
 import { getWriters } from "@backporter/writers";
 import type { StructuredTracer } from "@logger/index";
@@ -66,7 +66,7 @@ export class FileManagerImpl implements FileManager {
       if (!groups.has(key)) {
         groups.set(key, []);
       }
-      groups.get(key)!.push(request);
+      groups.get(key)?.push(request);
     }
 
     return groups;
@@ -105,9 +105,7 @@ export class FileManagerImpl implements FileManager {
             key,
             requestCount: requests.length,
           });
-          const sorted = requests.sort(
-            (a, b) => (b.priority || 0) - (a.priority || 0)
-          );
+          const sorted = requests.sort((a, b) => (b.priority || 0) - (a.priority || 0));
           if (sorted.length > 0) {
             mergedRequests.push(sorted[0]);
           }

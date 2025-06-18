@@ -1,12 +1,10 @@
 import { mkdir } from "node:fs/promises";
-import { ResourcePackIntrospector } from "@backporter/introspection";
+import type { ProcessingContext, WriteRequest } from "@backporter/file-manager";
 import { FileManagerImpl } from "@backporter/file-manager";
 import { getHandlers } from "@backporter/handlers";
-import { getWriters } from "@backporter/writers";
-import type { ProcessingContext } from "@backporter/file-manager";
-import type { WriteRequest } from "@backporter/file-manager";
-import type { BackportOptions } from "./index";
+import { ResourcePackIntrospector } from "@backporter/introspection";
 import type { StructuredTracer } from "@logger/index";
+import type { BackportOptions } from "./index";
 
 export class BackportCoordinator {
   private introspector: ResourcePackIntrospector;
@@ -49,10 +47,7 @@ export class BackportCoordinator {
 
       // Analyze pack structure
       const analyzeSpan = backportSpan?.startChild("Analyze Pack Structure");
-      this.packStructure = await this.introspector.analyzeStructure(
-        inputDir,
-        this.verbose
-      );
+      this.packStructure = await this.introspector.analyzeStructure(inputDir, this.verbose);
 
       analyzeSpan?.info("Pack structure analyzed", {
         itemFiles: this.packStructure.itemFiles.length,
@@ -74,12 +69,7 @@ export class BackportCoordinator {
       });
 
       for (const itemFile of this.packStructure.itemFiles) {
-        await this.processItemFile(
-          itemFile,
-          this.packStructure,
-          fileManager,
-          processSpan
-        );
+        await this.processItemFile(itemFile, this.packStructure, fileManager, processSpan);
       }
 
       processSpan?.end({ itemsProcessed: this.packStructure.itemFiles.length });
@@ -91,12 +81,8 @@ export class BackportCoordinator {
 
       // Fix model compatibility issues
       const compatSpan = backportSpan?.startChild("Model Compatibility");
-      const { ModelCompatibilityProcessor } = await import(
-        "../postprocessors/model-compatibility"
-      );
-      const compatibilityProcessor = new ModelCompatibilityProcessor(
-        this.tracer
-      );
+      const { ModelCompatibilityProcessor } = await import("../postprocessors/model-compatibility");
+      const compatibilityProcessor = new ModelCompatibilityProcessor(this.tracer);
       await compatibilityProcessor.fixModelCompatibility(outputDir);
       compatSpan?.info("Compatibility fixes applied");
       compatSpan?.end();
@@ -144,7 +130,7 @@ export class BackportCoordinator {
       itemId,
       itemPath: itemFilePath,
       packStructure,
-      outputDir: fileManager["outputDir"], // Access private field for now
+      outputDir: fileManager.outputDir, // Access private field for now
     };
 
     // Load the item JSON for processing
@@ -158,9 +144,7 @@ export class BackportCoordinator {
     const appliedHandlers: string[] = [];
     for (const handler of handlers) {
       if (handler.canHandle(itemJson, context)) {
-        const handlerSpan = itemSpan?.startChild(
-          `Apply ${handler.name} handler`
-        );
+        const handlerSpan = itemSpan?.startChild(`Apply ${handler.name} handler`);
         handlerSpan?.setAttributes({ handlerName: handler.name });
 
         try {
@@ -232,11 +216,7 @@ export class BackportCoordinator {
     }
   }
 
-  private async copyPackMeta(
-    inputDir: string,
-    outputDir: string,
-    parentSpan?: any
-  ): Promise<void> {
+  private async copyPackMeta(inputDir: string, outputDir: string, parentSpan?: any): Promise<void> {
     const fs = require("node:fs");
     const { copyFile } = require("node:fs/promises");
     const { join } = require("node:path");
@@ -262,9 +242,7 @@ export class BackportCoordinator {
     if (!fs.existsSync(assetsDir)) return;
 
     const filesToCopy = [
-      ...(this.packStructure?.textureFiles?.filter(
-        (f: string) => !f.includes("/items/")
-      ) || []),
+      ...(this.packStructure?.textureFiles?.filter((f: string) => !f.includes("/items/")) || []),
       ...(this.packStructure?.modelFiles || []), // Copy ALL model files including item models
     ];
 

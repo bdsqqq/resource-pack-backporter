@@ -1,56 +1,94 @@
 import { readdir, readFile, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import { existsSync } from "node:fs";
+import type { StructuredTracer } from "@logger/index";
 
 export class ModelCompatibilityProcessor {
-  async fixModelCompatibility(outputDir: string): Promise<void> {
-    console.log("🔧 Fixing model compatibility...");
+  private tracer?: StructuredTracer;
 
-    const modelsDir = join(outputDir, "assets/minecraft/models");
-    if (!existsSync(modelsDir)) return;
-
-    await this.fixModelsInDirectory(modelsDir);
+  constructor(tracer?: StructuredTracer) {
+    this.tracer = tracer;
   }
 
-  private async fixModelsInDirectory(dir: string): Promise<void> {
+  async fixModelCompatibility(outputDir: string): Promise<void> {
+    const span = this.tracer?.startSpan("Fix Model Compatibility");
+    span?.setAttributes({ outputDir });
+
+    try {
+      const modelsDir = join(outputDir, "assets/minecraft/models");
+      if (!existsSync(modelsDir)) {
+        span?.info("No models directory found, skipping compatibility fixes");
+        span?.end({ success: true, skipped: true });
+        return;
+      }
+
+      await this.fixModelsInDirectory(modelsDir, span);
+      span?.end({ success: true });
+    } catch (error: any) {
+      span?.error("Model compatibility processing failed", {
+        error: error.message,
+        stack: error.stack,
+      });
+      span?.end({ success: false, error: error.message });
+      throw error;
+    }
+  }
+
+  private async fixModelsInDirectory(
+    dir: string,
+    parentSpan?: any
+  ): Promise<void> {
     const entries = await readdir(dir, { withFileTypes: true });
 
     for (const entry of entries) {
       const fullPath = join(dir, entry.name);
 
       if (entry.isDirectory()) {
-        await this.fixModelsInDirectory(fullPath);
+        await this.fixModelsInDirectory(fullPath, parentSpan);
       } else if (entry.name.endsWith(".json")) {
-        await this.fixSingleModel(fullPath);
+        await this.fixSingleModel(fullPath, parentSpan);
       }
     }
   }
 
-  private async fixSingleModel(modelPath: string): Promise<void> {
+  private async fixSingleModel(
+    modelPath: string,
+    parentSpan?: any
+  ): Promise<void> {
+    const modelSpan = parentSpan?.startChild(
+      `Fix model: ${modelPath.split("/").pop()}`
+    );
+    modelSpan?.setAttributes({ modelPath });
+
     try {
       const content = await readFile(modelPath, "utf-8");
       const model = JSON.parse(content);
       let hasChanges = false;
 
       // CRITICAL: Do not modify template files - they must remain standalone
-      const isTemplateFile = modelPath.includes('/books_3d/template_');
-      
+      const isTemplateFile = modelPath.includes("/books_3d/template_");
+
       if (!isTemplateFile) {
         // Remove problematic builtin/entity parent
         if (model.parent === "builtin/entity") {
-          console.log(`🔧 Fixing builtin/entity parent in ${modelPath}`);
+          modelSpan?.info("Fixed builtin/entity parent", {
+            oldParent: "builtin/entity",
+            newParent: "minecraft:item/handheld",
+          });
           model.parent = "minecraft:item/handheld";
           hasChanges = true;
         }
       } else {
-        console.log(`🔒 Processing template file with special handling: ${modelPath}`);
+        modelSpan?.info("Processing template file with special handling");
         // For template files, REMOVE any parent field entirely
         if (model.parent) {
-          console.log(`🔧 Removing parent field from template: ${model.parent} → (none)`);
+          modelSpan?.info("Removed parent field from template", {
+            removedParent: model.parent,
+          });
           delete model.parent;
           hasChanges = true;
         }
-        this.validateTemplateFile(model, modelPath);
+        this.validateTemplateFile(model, modelPath, modelSpan);
       }
 
       // Fix zero-thickness elements
@@ -60,7 +98,7 @@ export class ModelCompatibilityProcessor {
 
           for (let axis = 0; axis < 3; axis++) {
             if (element.from[axis] === element.to[axis]) {
-              console.log(`🔧 Fixing zero-thickness element in ${modelPath} (axis ${axis})`);
+              modelSpan?.info("Fixed zero-thickness element", { axis });
               element.to[axis] = element.to[axis] + 0.01;
               hasChanges = true;
             }
@@ -70,45 +108,60 @@ export class ModelCompatibilityProcessor {
 
       if (hasChanges) {
         await writeFile(modelPath, JSON.stringify(model, null, "\t"));
-        console.log(`✓ Fixed model compatibility: ${modelPath}`);
+        modelSpan?.info("Model compatibility fixes applied");
+        modelSpan?.end({ success: true, hasChanges: true });
+      } else {
+        modelSpan?.end({ success: true, hasChanges: false });
       }
-    } catch (error) {
-      console.log(`⚠ Error processing model ${modelPath}: ${error.message}`);
-      // Skip files that can't be processed
+    } catch (error: any) {
+      modelSpan?.error("Error processing model", {
+        error: error.message,
+        stack: error.stack,
+      });
+      modelSpan?.end({ success: false, error: error.message });
+      // Skip files that can't be processed - don't rethrow
     }
   }
 
-  private validateTemplateFile(model: any, modelPath: string): void {
+  private validateTemplateFile(
+    model: any,
+    modelPath: string,
+    modelSpan?: any
+  ): void {
     const errors: string[] = [];
-    
+
     // Template files should NOT have parent field
     if (model.parent) {
-      errors.push(`Template file should not have parent field, found: ${model.parent}`);
+      errors.push(
+        `Template file should not have parent field, found: ${model.parent}`
+      );
     }
-    
+
     // Template files should have required structure
     if (!model.credit) {
-      errors.push('Template file missing credit field');
+      errors.push("Template file missing credit field");
     }
-    
+
     if (!model.texture_size || !Array.isArray(model.texture_size)) {
-      errors.push('Template file missing or invalid texture_size field');
+      errors.push("Template file missing or invalid texture_size field");
     }
-    
+
     if (!model.elements || !Array.isArray(model.elements)) {
-      errors.push('Template file missing or invalid elements field');
+      errors.push("Template file missing or invalid elements field");
     }
-    
-    if (!model.display || typeof model.display !== 'object') {
-      errors.push('Template file missing or invalid display field');
+
+    if (!model.display || typeof model.display !== "object") {
+      errors.push("Template file missing or invalid display field");
     }
-    
+
     if (errors.length > 0) {
-      console.error(`✗ Template file validation failed: ${modelPath}`);
-      errors.forEach(error => console.error(`   - ${error}`));
+      modelSpan?.error("Template file validation failed", {
+        errors,
+        validationErrors: errors.length,
+      });
       throw new Error(`Template file validation failed: ${modelPath}`);
-    } else {
-      console.log(`✓ Template file validation passed: ${modelPath}`);
     }
+
+    modelSpan?.info("Template file validation passed");
   }
 }

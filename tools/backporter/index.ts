@@ -2,6 +2,7 @@
 
 import { basename } from "node:path";
 import { ConditionalBackportCoordinator } from "@backporter/conditional-compiler/backport-coordinator";
+import { createTracer } from "@logger/index";
 
 // CLI entry point
 export async function main() {
@@ -22,18 +23,35 @@ export async function main() {
     outputDir = `dist/${packName}`;
   }
 
-  console.log("🚀 Starting backport with conditional compiler architecture...");
-  console.log(`📥 Input: ${inputDir}`);
-  console.log(`📤 Output: ${outputDir}`);
-  if (verbose) {
-    console.log("◉ Verbose logging enabled");
-  }
+  // Initialize tracer
+  const tracer = createTracer({
+    serviceName: "resource-pack-backporter",
+    axiomDataset: process.env.AXIOM_DATASET,
+    axiomToken: process.env.AXIOM_TOKEN,
+    enableConsole: true,
+    enableAxiom: !!process.env.AXIOM_TOKEN,
+  });
 
-  const coordinator = new ConditionalBackportCoordinator();
+  const mainSpan = tracer.startSpan("Resource Pack Backport");
+  mainSpan.setAttributes({
+    inputDir,
+    outputDir,
+    verbose,
+    args: allArgs,
+  });
+
   try {
+    const coordinator = new ConditionalBackportCoordinator(tracer);
     await coordinator.backport(inputDir, outputDir, { verbose });
+    mainSpan.end({ success: true });
+    await tracer.flush();
   } catch (error: any) {
-    console.error("✗ Backport failed:", error.message);
+    mainSpan.error("Backport failed", {
+      error: error.message,
+      stack: error.stack,
+    });
+    mainSpan.end({ success: false, error: error.message });
+    await tracer.flush();
     process?.exit?.(1);
   }
 }

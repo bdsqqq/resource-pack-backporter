@@ -1,6 +1,7 @@
 import { validateJson } from "@json-utils/index";
-import { walkAssets, walkModels, walkTextures } from "@file-utils/index";
+import { walkModels, walkTextures } from "@file-utils/index";
 import { resolveTexturePath } from "@mc-paths/index";
+import type { StructuredTracer } from "@logger/index";
 
 export interface ValidationOptions {
   verbose?: boolean;
@@ -19,16 +20,17 @@ export interface ValidationResult {
 
 export async function validateResourcePack(
   packDir: string,
-  options: ValidationOptions = {}
+  options: ValidationOptions = {},
+  tracer?: StructuredTracer
 ): Promise<ValidationResult> {
   const { verbose = false } = options;
   const errors: string[] = [];
   const warnings: string[] = [];
   let filesChecked = 0;
 
-  if (verbose) {
-    console.log(`◉ Scanning pack directory: ${packDir}`);
-  }
+  const validationSpan = tracer?.startSpan("Pack Directory Scan");
+  validationSpan?.setAttributes({ packDir, verbose });
+  validationSpan?.info("Starting pack validation");
 
   // Check pack.mcmeta exists and is valid
   try {
@@ -37,7 +39,7 @@ export async function validateResourcePack(
       errors.push(`Invalid pack.mcmeta: ${packMeta.error}`);
     } else {
       if (verbose) {
-        console.log("✓ pack.mcmeta is valid");
+        console.log("├─ pack.mcmeta is valid");
       }
     }
     filesChecked++;
@@ -48,7 +50,7 @@ export async function validateResourcePack(
   // Find all model files
   const modelFiles = walkModels(`${packDir}/assets`);
   if (verbose) {
-    console.log(`📄 Found ${modelFiles.length} model files`);
+    console.log(`├─ Found ${modelFiles.length} model files`);
   }
 
   // Validate each model file
@@ -75,13 +77,21 @@ export async function validateResourcePack(
   }
 
   // Find all texture files and check for unused ones
-  const textureFiles = walkTextures(`${packDir}/assets`);
   if (verbose) {
-    console.log(`▪  Found ${textureFiles.length} texture files`);
+    const textureCount = walkTextures(`${packDir}/assets`).length;
+    console.log(`└─ Found ${textureCount} texture files`);
   }
 
   const isValid = errors.length === 0;
   const issues = errors.length + warnings.length;
+
+  validationSpan?.end({
+    success: isValid,
+    filesChecked,
+    issues,
+    errors: errors.length,
+    warnings: warnings.length,
+  });
 
   return {
     isValid,

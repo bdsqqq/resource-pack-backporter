@@ -10,8 +10,6 @@ export class StoredEnchanmentsHandler implements ItemHandler {
   }
 
   process(jsonNode: any, context: ProcessingContext): WriteRequest[] {
-    console.log(`🎯 StoredEnchanmentsHandler processing ${context.itemId}`);
-
     // Extract enchantment variants from the JSON
     const enchantmentVariants = this.extractEnchantmentVariants(
       jsonNode,
@@ -19,11 +17,8 @@ export class StoredEnchanmentsHandler implements ItemHandler {
     );
 
     if (enchantmentVariants.length === 0) {
-      console.log(`⚠ No enchantment variants found for ${context.itemId}`);
       return [];
     }
-
-    console.log(`🔮 Found ${enchantmentVariants.length} enchantment variants`);
 
     // Generate both CIT properties AND individual Pommel models for each variant
     const requests: WriteRequest[] = [];
@@ -162,16 +157,11 @@ export class StoredEnchanmentsHandler implements ItemHandler {
           const fs = require("node:fs");
           const modelContent = JSON.parse(fs.readFileSync(found, "utf-8"));
           if (modelContent.textures?.layer0) {
-            console.log(
-              `🎨 Extracted enchantment texture: ${modelContent.textures.layer0}`
-            );
             return modelContent.textures.layer0;
           }
         }
-      } catch (error) {
-        console.log(
-          `⚠ Error reading model for enchantment texture: ${error.message}`
-        );
+      } catch {
+        // Silently continue to fallback
       }
     }
 
@@ -182,6 +172,7 @@ export class StoredEnchanmentsHandler implements ItemHandler {
 
     for (const dir of possibleDirs) {
       const textures = context.packStructure.textureDirectories[dir];
+      if (!textures) continue;
 
       // Try different naming patterns
       const patterns = [

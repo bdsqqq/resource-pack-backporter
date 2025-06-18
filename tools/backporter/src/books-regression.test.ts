@@ -3,6 +3,7 @@ import { existsSync } from "node:fs";
 import { mkdir, readFile, rm, writeFile, copyFile } from "node:fs/promises";
 import { join } from "node:path";
 import { ConditionalBackportCoordinator } from "@backporter/conditional-compiler/backport-coordinator";
+import { createTestTracer } from "./test-utils";
 
 /**
  * Books Resource Pack Regression Test Suite
@@ -30,7 +31,7 @@ describe("Books Resource Pack Regression Tests", () => {
     await mkdir(inputDir, { recursive: true });
     await mkdir(outputDir, { recursive: true });
 
-    coordinator = new ConditionalBackportCoordinator();
+    coordinator = new ConditionalBackportCoordinator(createTestTracer());
   });
 
   afterEach(async () => {
@@ -167,19 +168,6 @@ describe("Books Resource Pack Regression Tests", () => {
       await coordinator.backport(inputDir, outputDir);
 
       // 1. Base enchanted_book.json should have minimal overrides (CIT replaces for specific enchantments)
-      const baseEnchantedBook = JSON.parse(
-        await readFile(
-          join(
-            outputDir,
-            "assets",
-            "minecraft",
-            "models",
-            "item",
-            "enchanted_book.json"
-          ),
-          "utf-8"
-        )
-      );
       // Base model might have general overrides, but individual enchantments handled by CIT
 
       // 2. CIT property must exist for enchanted books

@@ -1,4 +1,5 @@
 import type { ExecutionPath, OutputTarget } from "./index";
+import type { StructuredTracer } from "@logger/index";
 
 interface GroupedPaths {
   pommel: ExecutionPath[];
@@ -8,7 +9,13 @@ interface GroupedPaths {
 }
 
 export class TargetSystemMapper {
-  constructor(private sourceDir?: string) {}
+  private sourceDir?: string;
+  private tracer?: StructuredTracer;
+
+  constructor(sourceDir?: string, tracer?: StructuredTracer) {
+    this.sourceDir = sourceDir;
+    this.tracer = tracer;
+  }
 
   mapPathsToTargets(paths: ExecutionPath[], itemId: string): OutputTarget[] {
     const targets: OutputTarget[] = [];
@@ -92,8 +99,8 @@ export class TargetSystemMapper {
   }
 
   private generateBaseModel(itemId: string): OutputTarget {
-    // Generate a base model with basic Pommel overrides as fallback
-    // CIT will replace this for specific enchantments, but this provides a working fallback
+    // Generate a base model with NO overrides for enchanted books
+    // CIT will handle all enchantment-specific models, base model is just for fallback texture
     return {
       type: "pommel",
       file: `models/item/${itemId}.json`,
@@ -102,20 +109,7 @@ export class TargetSystemMapper {
         textures: {
           layer0: `minecraft:item/enchanted_books/${itemId}`,
         },
-        overrides: [
-          {
-            predicate: {
-              "pommel:is_held": 1,
-            },
-            model: `minecraft:item/books_3d/${itemId}_3d_open`,
-          },
-          {
-            predicate: {
-              "pommel:is_offhand": 1,
-            },
-            model: `minecraft:item/books_3d/${itemId}_3d`,
-          },
-        ],
+        // No overrides - CIT handles everything for enchanted books
       },
       priority: 1,
     };
@@ -564,19 +558,22 @@ export class TargetSystemMapper {
       result.push({ ...offhandOverride }); // Duplicate 2
     }
 
-    console.log(
+    const debugSpan = this.tracer?.startSpan("Generate Pommel Overrides");
+    debugSpan?.setAttributes({
+      overrideCount: result.length,
+      originalCount: overrides.length,
+    });
+    debugSpan?.debug(
       `Generated ${result.length} overrides with Pommel-compatible duplicates`
     );
+
     if (result.length < 6) {
-      console.log(
-        "DEBUG: Overrides found:",
-        overrides.map((o: any) => Object.keys(o.predicate)[0])
-      );
-      console.log(
-        "DEBUG: Result predicates:",
-        result.map((o: any) => Object.keys(o.predicate)[0])
-      );
+      debugSpan?.debug("Debug override details", {
+        overridesFound: overrides.map((o: any) => Object.keys(o.predicate)[0]),
+        resultPredicates: result.map((o: any) => Object.keys(o.predicate)[0]),
+      });
     }
+    debugSpan?.end({ success: true });
     return result;
 
     // Original deduplication logic (commented out for testing)
@@ -665,13 +662,19 @@ export class TargetSystemMapper {
   ): OutputTarget[] {
     // For non-book items, extract texture from the GUI model and generate proper Pommel overrides
     const textureRef = this.extractBaseTexture(allPaths, itemId);
-    
+
     // Check if we need to preserve the original 3D model
     const fallbackPath = allPaths.find((path) => path.isFallback);
-    const preservedModelName = fallbackPath ? this.shouldPreserve3DModel(fallbackPath, itemId) : null;
-    
+    const preservedModelName = fallbackPath
+      ? this.shouldPreserve3DModel(fallbackPath, itemId)
+      : null;
+
     // Generate overrides with potential model name updates
-    const overrides = this.createGenericPommelOverrides(pommelPaths, allPaths, preservedModelName);
+    const overrides = this.createGenericPommelOverrides(
+      pommelPaths,
+      allPaths,
+      preservedModelName
+    );
 
     const targets: OutputTarget[] = [];
 
@@ -702,16 +705,19 @@ export class TargetSystemMapper {
     return targets;
   }
 
-  private shouldPreserve3DModel(fallbackPath: ExecutionPath, itemId: string): string | null {
+  private shouldPreserve3DModel(
+    fallbackPath: ExecutionPath,
+    itemId: string
+  ): string | null {
     // Check if the fallback model would be overwritten by our Pommel model
     const fallbackModel = fallbackPath.targetModel.replace("minecraft:", "");
     const pommelModel = `item/${itemId}`;
-    
+
     if (fallbackModel === pommelModel) {
       // Would be overwritten - preserve with _3d suffix
       return `${itemId}_3d`;
     }
-    
+
     return null;
   }
 
@@ -726,18 +732,22 @@ export class TargetSystemMapper {
     if (guiPath && guiPath.targetModel) {
       try {
         // Read the actual texture from the GUI model file
-        const modelPath = guiPath.targetModel.replace("minecraft:", "assets/minecraft/models/") + ".json";
-        
+        const modelPath =
+          guiPath.targetModel.replace(
+            "minecraft:",
+            "assets/minecraft/models/"
+          ) + ".json";
+
         const fs = require("node:fs");
         const { join } = require("node:path");
-        
+
         // Try different possible paths for the model file
         const possiblePaths = [
           this.sourceDir ? join(this.sourceDir, modelPath) : modelPath, // Source directory
           modelPath, // Direct path
-          `test-fixtures/${modelPath}` // In test fixtures for tests
+          `test-fixtures/${modelPath}`, // In test fixtures for tests
         ];
-        
+
         for (const tryPath of possiblePaths) {
           if (fs.existsSync(tryPath)) {
             const modelContent = JSON.parse(fs.readFileSync(tryPath, "utf-8"));
@@ -753,7 +763,13 @@ export class TargetSystemMapper {
           }
         }
       } catch (error) {
-        console.log(`⚠ Error reading GUI model for texture: ${error.message}`);
+        const errorSpan = this.tracer?.startSpan("Extract Base Texture Error");
+        errorSpan?.warn("Error reading GUI model for texture", {
+          error: (error as Error).message,
+          guiPath: guiPath?.targetModel,
+          itemId,
+        });
+        errorSpan?.end({ success: false });
       }
     }
 
@@ -768,12 +784,9 @@ export class TargetSystemMapper {
   ): any[] {
     const overrides: any[] = [];
 
-    // Find the fallback 3D model (used for hand contexts)
-    const fallbackPath = allPaths.find((path) => path.isFallback);
-    
-    // Map ground context to 2D model
-    const groundPath = allPaths.find(
-      (path) => path.conditions.displayContext.includes("ground")
+    // Map ground context to ground model
+    const groundPath = pommelPaths.find((path) =>
+      path.conditions.displayContext.includes("ground")
     );
 
     if (groundPath && groundPath.targetModel) {
@@ -785,13 +798,19 @@ export class TargetSystemMapper {
       });
     }
 
-    // Map hand contexts to 3D model (fallback or preserved)
-    if (fallbackPath && fallbackPath.targetModel) {
-      // Use preserved model name if available, otherwise original
-      const handModelName = preservedModelName 
+    // Find hand contexts from pommel paths (not fallback!)
+    const handPath = pommelPaths.find((path) =>
+      path.conditions.displayContext.some(
+        (ctx) => ctx.includes("firstperson") || ctx.includes("thirdperson")
+      )
+    );
+
+    if (handPath && handPath.targetModel) {
+      // Use the hand model from the actual hand context paths
+      const handModelName = preservedModelName
         ? `minecraft:item/${preservedModelName}`
-        : fallbackPath.targetModel;
-        
+        : handPath.targetModel;
+
       // Add held predicates for 3D model
       overrides.push({
         predicate: {
@@ -799,7 +818,7 @@ export class TargetSystemMapper {
         },
         model: handModelName,
       });
-      
+
       overrides.push({
         predicate: {
           "pommel:is_offhand": 1,

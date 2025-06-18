@@ -12,14 +12,17 @@ import { ConditionalPathExtractor } from "./path-extractor";
 import { TargetSystemMapper } from "./target-mapper";
 import { BackportFileGenerator } from "./file-generator";
 import type { BackportOptions } from "@backporter/coordination";
+import type { StructuredTracer } from "@logger/index";
 
 export class ConditionalBackportCoordinator {
   private pathExtractor: ConditionalPathExtractor;
   private targetMapper: TargetSystemMapper;
   private fileGenerator: BackportFileGenerator | null = null;
-  private verbose: boolean = false;
+  private verbose = false;
+  private tracer: StructuredTracer;
 
-  constructor() {
+  constructor(tracer: StructuredTracer) {
+    this.tracer = tracer;
     this.pathExtractor = new ConditionalPathExtractor();
     this.targetMapper = new TargetSystemMapper();
   }
@@ -29,46 +32,77 @@ export class ConditionalBackportCoordinator {
     outputDir: string,
     options: Partial<BackportOptions> = {}
   ): Promise<void> {
-    this.verbose = options.verbose || false;
-    this.fileGenerator = new BackportFileGenerator(outputDir, inputDir);
+    const backportSpan = this.tracer.startSpan("Conditional Compiler Backport");
+    backportSpan.setAttributes({
+      inputDir,
+      outputDir,
+      clearOutput: options.clearOutput,
+    });
 
-    // Update target mapper with source directory
-    this.targetMapper = new TargetSystemMapper(inputDir);
+    try {
+      this.verbose = options.verbose || false;
+      this.fileGenerator = new BackportFileGenerator(
+        outputDir,
+        inputDir,
+        this.tracer
+      );
 
-    console.log("🚀 Starting conditional compiler backport...");
+      // Update target mapper with source directory
+      this.targetMapper = new TargetSystemMapper(inputDir);
 
-    // Clear output directory if requested
-    if (options.clearOutput !== false) {
-      console.log("🧹 Clearing output directory...");
-      if (existsSync(outputDir)) {
-        const fs = require("node:fs");
-        await fs.promises.rm(outputDir, { recursive: true, force: true });
+      // Clear output directory if requested
+      if (options.clearOutput !== false) {
+        const clearSpan = backportSpan.startChild("Clear Output Directory");
+        if (existsSync(outputDir)) {
+          const fs = require("node:fs");
+          await fs.promises.rm(outputDir, { recursive: true, force: true });
+          clearSpan.info("Directory cleared", { path: outputDir });
+        } else {
+          clearSpan.info("Directory does not exist, skipping clear");
+        }
+        clearSpan.end();
       }
+
+      // Copy base assets first
+      await this.copyBaseAssets(inputDir, outputDir, backportSpan);
+
+      // Find and process item files
+      const itemFiles = await this.findItemFiles(inputDir, backportSpan);
+
+      const processingSpan = backportSpan.startChild("Item Processing");
+      processingSpan.setAttributes({ itemCount: itemFiles.length });
+
+      for (const itemFile of itemFiles) {
+        await this.processItemFile(itemFile, inputDir, processingSpan);
+      }
+
+      processingSpan.end({ itemsProcessed: itemFiles.length });
+
+      // Apply post-processing
+      await this.applyPostProcessing(outputDir, backportSpan);
+
+      backportSpan.end({ success: true, itemsProcessed: itemFiles.length });
+    } catch (error: any) {
+      backportSpan.error("Backport failed", {
+        error: error.message,
+        stack: error.stack,
+      });
+      backportSpan.end({ success: false, error: error.message });
+      throw error;
     }
-
-    // Copy base assets first
-    await this.copyBaseAssets(inputDir, outputDir);
-
-    // Find and process item files
-    const itemFiles = await this.findItemFiles(inputDir);
-    console.log(`▸ Found ${itemFiles.length} item files to process`);
-
-    for (const itemFile of itemFiles) {
-      await this.processItemFile(itemFile, inputDir);
-    }
-
-    // Apply post-processing
-    await this.applyPostProcessing(outputDir);
-
-    console.log("✓ Conditional compiler backport complete!");
   }
 
-  private async findItemFiles(inputDir: string): Promise<string[]> {
+  private async findItemFiles(
+    inputDir: string,
+    parentSpan: any
+  ): Promise<string[]> {
+    const findSpan = parentSpan.startChild("Find Item Files");
     const itemsDir = join(inputDir, "assets", "minecraft", "items");
     const itemFiles: string[] = [];
 
     if (!existsSync(itemsDir)) {
-      console.warn("⚠ No items directory found in source pack");
+      findSpan.warn("No items directory found in source pack", { itemsDir });
+      findSpan.end({ itemsFound: 0 });
       return itemFiles;
     }
 
@@ -81,15 +115,22 @@ export class ConditionalBackportCoordinator {
       }
     }
 
+    findSpan.info("Found item files", {
+      count: itemFiles.length,
+      files: itemFiles.map((f) => basename(f)),
+    });
+    findSpan.end({ itemsFound: itemFiles.length });
     return itemFiles;
   }
 
   private async processItemFile(
     itemFilePath: string,
-    sourceDir: string
+    sourceDir: string,
+    parentSpan: any
   ): Promise<void> {
     const itemId = basename(itemFilePath, ".json");
-    console.log(`↻ Processing ${itemId}...`);
+    const itemSpan = parentSpan.startChild(`Process Item: ${itemId}`);
+    itemSpan.setAttributes({ itemId, itemFilePath });
 
     try {
       // Read and parse the item JSON
@@ -97,40 +138,48 @@ export class ConditionalBackportCoordinator {
 
       // Check if this item uses the new conditional selector format
       if (!this.hasConditionalSelectors(itemJson)) {
-        console.log(`»  Skipping ${itemId} - no conditional selectors`);
+        itemSpan.info("Skipping - no conditional selectors");
+        itemSpan.end({ skipped: true, reason: "no_conditional_selectors" });
         return;
       }
 
       // Extract all execution paths from the nested selectors
       const paths = this.pathExtractor.extractAllPaths(itemJson);
+      itemSpan.info("Extracted execution paths", { pathCount: paths.length });
 
       if (this.verbose) {
-        console.log(`  Extracted ${paths.length} execution paths`);
-        for (const path of paths.slice(0, 3)) {
-          // Show first 3 for brevity
-          console.log(
-            `    ${path.conditions.displayContext.join("|")} + ${
-              path.conditions.enchantment?.type || "none"
-            } → ${path.targetModel}`
-          );
-        }
-        if (paths.length > 3) {
-          console.log(`    ... and ${paths.length - 3} more`);
-        }
+        const samplePaths = paths.slice(0, 3).map((path) => ({
+          contexts: path.conditions.displayContext.join("|"),
+          enchantment: path.conditions.enchantment?.type || "none",
+          target: path.targetModel,
+        }));
+        itemSpan.debug("Sample execution paths", {
+          samplePaths,
+          totalPaths: paths.length,
+        });
       }
 
       // Map execution paths to target systems
       const targets = this.targetMapper.mapPathsToTargets(paths, itemId);
-
-      console.log(`📝 Generated ${targets.length} output targets`);
+      itemSpan.info("Generated output targets", {
+        targetCount: targets.length,
+      });
 
       // Generate all output files
-      await this.fileGenerator!.generateAllFiles(targets);
+      await this.fileGenerator!.generateAllFiles(targets, itemSpan);
+
+      itemSpan.end({
+        success: true,
+        pathsExtracted: paths.length,
+        targetsGenerated: targets.length,
+      });
     } catch (error: any) {
-      console.error(`✗ Failed to process ${itemId}:`, error.message);
-      if (this.verbose) {
-        console.error(error.stack);
-      }
+      itemSpan.error(`Failed to process ${itemId}`, {
+        error: error.message,
+        stack: error.stack,
+      });
+      itemSpan.end({ success: false, error: error.message });
+      throw error;
     }
   }
 
@@ -143,26 +192,44 @@ export class ConditionalBackportCoordinator {
 
   private async copyBaseAssets(
     inputDir: string,
-    outputDir: string
+    outputDir: string,
+    parentSpan: any
   ): Promise<void> {
-    console.log("📋 Copying base assets...");
+    const copySpan = parentSpan.startChild("Copy Base Assets");
+    copySpan.setAttributes({ inputDir, outputDir });
 
-    // Ensure output directory exists
-    await mkdir(outputDir, { recursive: true });
+    try {
+      // Ensure output directory exists
+      await mkdir(outputDir, { recursive: true });
+      copySpan.info("Created output directory", { outputDir });
 
-    // Copy pack.mcmeta and other root-level files
-    await this.copyPackFiles(inputDir, outputDir);
+      // Copy pack.mcmeta and other root-level files
+      await this.copyPackFiles(inputDir, outputDir, copySpan);
 
-    // Copy minecraft assets (models, textures, but not items - we'll regenerate those)
-    await this.copyMinecraftAssets(inputDir, outputDir);
+      // Copy minecraft assets (models, textures, but not items - we'll regenerate those)
+      await this.copyMinecraftAssets(inputDir, outputDir, copySpan);
+
+      copySpan.end({ success: true });
+    } catch (error: any) {
+      copySpan.error("Failed to copy base assets", {
+        error: error.message,
+        stack: error.stack,
+      });
+      copySpan.end({ success: false, error: error.message });
+      throw error;
+    }
   }
 
   private async copyPackFiles(
     inputDir: string,
-    outputDir: string
+    outputDir: string,
+    parentSpan: any
   ): Promise<void> {
+    const packSpan = parentSpan.startChild("Copy Pack Files");
+
     try {
       const entries = await readdir(inputDir);
+      let copiedCount = 0;
 
       for (const entry of entries) {
         const fullPath = join(inputDir, entry);
@@ -171,19 +238,32 @@ export class ConditionalBackportCoordinator {
         // Only copy files (not directories) from the root level
         if (stats.isFile() && !entry.startsWith(".")) {
           const outputPath = join(outputDir, entry);
+          const fileSpan = packSpan.startChild(`Copy File: ${entry}`);
 
-          // Special handling for pack.mcmeta to update description
-          if (entry === "pack.mcmeta") {
-            await this.copyAndUpdatePackMcmeta(fullPath, outputPath);
-          } else {
-            await copyFile(fullPath, outputPath);
+          try {
+            // Special handling for pack.mcmeta to update description
+            if (entry === "pack.mcmeta") {
+              await this.copyAndUpdatePackMcmeta(fullPath, outputPath);
+              fileSpan.info("Updated pack.mcmeta with attribution");
+            } else {
+              await copyFile(fullPath, outputPath);
+              fileSpan.info("Copied file");
+            }
+
+            copiedCount++;
+            fileSpan.end({ success: true });
+          } catch (error: any) {
+            fileSpan.error("Failed to copy file", { error: error.message });
+            fileSpan.end({ success: false, error: error.message });
           }
-
-          console.log(`✓ Copied ${entry}`);
         }
       }
-    } catch (error) {
-      console.warn(`⚠ Could not copy pack files: ${error.message}`);
+
+      packSpan.info("Pack files copied", { copiedCount });
+      packSpan.end({ success: true, copiedCount });
+    } catch (error: any) {
+      packSpan.error("Could not copy pack files", { error: error.message });
+      packSpan.end({ success: false, error: error.message });
     }
   }
 
@@ -205,7 +285,7 @@ export class ConditionalBackportCoordinator {
         } else if (Array.isArray(packData.pack.description)) {
           // Handle text component format - check if attribution already exists
           const hasAttribution = packData.pack.description.some(
-            (item) =>
+            (item: any) =>
               typeof item === "string" &&
               item.includes("↺_backported_by_@bdsqqq")
           );
@@ -219,16 +299,19 @@ export class ConditionalBackportCoordinator {
       await writeFile(outputPath, JSON.stringify(packData, null, 2), "utf-8");
     } catch (error) {
       // If parsing fails, just copy the file as-is
-      console.warn(
-        `⚠ Could not update pack.mcmeta description, copying as-is: ${error.message}`
-      );
+      const span = this.tracer.startSpan("Copy pack.mcmeta fallback");
+      span.warn("Could not update pack.mcmeta description, copying as-is", {
+        error: (error as Error).message,
+      });
+      span.end({ success: true, fallback: true });
       await copyFile(inputPath, outputPath);
     }
   }
 
   private async copyMinecraftAssets(
     inputDir: string,
-    outputDir: string
+    outputDir: string,
+    parentSpan: any
   ): Promise<void> {
     const assetsDir = join(inputDir, "assets", "minecraft");
     if (!existsSync(assetsDir)) return;
@@ -258,7 +341,7 @@ export class ConditionalBackportCoordinator {
       }
     }
 
-    console.log(`✓ Copied ${copiedFiles} base asset files`);
+    parentSpan.info("Copied base asset files", { copiedFiles });
   }
 
   private async copyDirectoryRecursive(
@@ -291,8 +374,12 @@ export class ConditionalBackportCoordinator {
     return copiedFiles;
   }
 
-  private async applyPostProcessing(outputDir: string): Promise<void> {
-    console.log("🔧 Applying post-processing...");
+  private async applyPostProcessing(
+    outputDir: string,
+    parentSpan: any
+  ): Promise<void> {
+    const postSpan = parentSpan.startChild("Post-Processing");
+    postSpan.setAttributes({ outputDir });
 
     try {
       // Apply model compatibility fixes
@@ -302,9 +389,14 @@ export class ConditionalBackportCoordinator {
       const compatibilityProcessor = new ModelCompatibilityProcessor();
       await compatibilityProcessor.fixModelCompatibility(outputDir);
 
-      console.log("✓ Post-processing complete");
+      postSpan.info("Model compatibility fixes applied");
+      postSpan.end({ success: true });
     } catch (error: any) {
-      console.warn("⚠ Post-processing failed:", error.message);
+      postSpan.error("Post-processing failed", {
+        error: error.message,
+        stack: error.stack,
+      });
+      postSpan.end({ success: false, error: error.message });
     }
   }
 }

@@ -3,6 +3,7 @@ import { mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import { ConditionalPathExtractor } from "./path-extractor";
 import type { ResourcePackStructure } from "@backporter/file-manager";
+import { createTestTracer } from "../test-utils";
 
 // Mock a minimal version of the DisplayContextStrategy class for testing
 class TestDisplayContextStrategy {
@@ -13,89 +14,119 @@ class TestDisplayContextStrategy {
     packStructure: ResourcePackStructure,
     modelMappings: { [context: string]: string }
   ): string {
-    console.log(`◉ determineTextureRef called for ${itemId}`);
-    console.log("◉ modelMappings:", modelMappings);
+    const tracer = createTestTracer();
+    const span = tracer.startSpan(`Determine texture ref for ${itemId}`);
+    span.setAttributes({ itemId, modelMappings });
 
-    // Extract texture from the GUI model specified in the pack
-    const guiModel = modelMappings.gui || modelMappings.fixed;
-    console.log(`◉ guiModel: ${guiModel}`);
-    if (guiModel) {
-      // Try to read the actual model file to get its texture
-      const modelPath = guiModel.replace(
-        "minecraft:",
-        "assets/minecraft/models/"
-      );
-      const modelFile = `${modelPath}.json`;
+    try {
+      // Extract texture from the GUI model specified in the pack
+      const guiModel = modelMappings.gui || modelMappings.fixed;
+      span.debug("Using GUI model", { guiModel });
 
-      // Look for the model file in the pack structure with exact path matching
-      // IMPORTANT: Only search in source files, never in output directories
-      const found = packStructure.modelFiles.find((file) => {
-        // Normalize paths and check for exact structural match
-        const normalizedFile = file.replace(/\\/g, "/");
-        const normalizedModelFile = modelFile.replace(/\\/g, "/");
+      if (guiModel) {
+        // Try to read the actual model file to get its texture
+        const modelPath = guiModel.replace(
+          "minecraft:",
+          "assets/minecraft/models/"
+        );
+        const modelFile = `${modelPath}.json`;
 
-        // Skip any files in output directories (dist/, build/, out/, etc.)
-        if (
-          normalizedFile.includes("/dist/") ||
-          normalizedFile.includes("/build/") ||
-          normalizedFile.includes("/out/") ||
-          normalizedFile.startsWith("dist/") ||
-          normalizedFile.startsWith("build/") ||
-          normalizedFile.startsWith("out/")
-        ) {
-          return false;
-        }
+        // Look for the model file in the pack structure with exact path matching
+        // IMPORTANT: Only search in source files, never in output directories
+        const found = packStructure.modelFiles.find((file) => {
+          // Normalize paths and check for exact structural match
+          const normalizedFile = file.replace(/\\/g, "/");
+          const normalizedModelFile = modelFile.replace(/\\/g, "/");
 
-        // Check if the full path ends with the model file path AND has correct path separator before it
-        const matches =
-          normalizedFile.endsWith(normalizedModelFile) &&
-          (normalizedFile === normalizedModelFile ||
-            normalizedFile.endsWith(`/${normalizedModelFile}`));
-        if (matches) {
-          console.log(
-            `◉ FOUND MATCH: ${normalizedFile} for ${normalizedModelFile}`
-          );
-        }
-        return matches;
-      });
-      if (found) {
-        try {
-          // Read the model file synchronously to get texture
-          const fs = require("node:fs");
-          console.log(`◉ About to read file: ${found}`);
-          const modelContent = JSON.parse(fs.readFileSync(found, "utf-8"));
-          console.log("◉ File content:", modelContent);
-          if (modelContent.textures?.layer0) {
-            console.log(
-              `◉ Extracted texture: ${modelContent.textures.layer0}`
-            );
-            return modelContent.textures.layer0;
+          // Skip any files in output directories (dist/, build/, out/, etc.)
+          if (
+            normalizedFile.includes("/dist/") ||
+            normalizedFile.includes("/build/") ||
+            normalizedFile.includes("/out/") ||
+            normalizedFile.startsWith("dist/") ||
+            normalizedFile.startsWith("build/") ||
+            normalizedFile.startsWith("out/")
+          ) {
+            return false;
           }
-          console.log("◉ No layer0 texture found in model file");
-        } catch (error) {
-          console.log(
-            `◉ Error reading model file: ${(error as Error).message}`
-          );
-          // Fallback if model can't be read
+
+          // Check if the full path ends with the model file path AND has correct path separator before it
+          const matches =
+            normalizedFile.endsWith(normalizedModelFile) &&
+            (normalizedFile === normalizedModelFile ||
+              normalizedFile.endsWith(`/${normalizedModelFile}`));
+          if (matches) {
+            span.debug("Found model file match", {
+              normalizedFile,
+              normalizedModelFile,
+            });
+          }
+          return matches;
+        });
+
+        if (found) {
+          const fileSpan = span.startChild("Read model file");
+          fileSpan.setAttributes({ filePath: found });
+
+          try {
+            // Read the model file synchronously to get texture
+            const fs = require("node:fs");
+            const modelContent = JSON.parse(fs.readFileSync(found, "utf-8"));
+            fileSpan.debug("Model file content loaded", { modelContent });
+
+            if (modelContent.textures?.layer0) {
+              const texture = modelContent.textures.layer0;
+              fileSpan.info("Extracted texture from model", { texture });
+              fileSpan.end({ success: true, texture });
+              span.end({ success: true, texture });
+              return texture;
+            }
+            fileSpan.warn("No layer0 texture found in model file");
+            fileSpan.end({ success: false, reason: "no_layer0_texture" });
+          } catch (error) {
+            fileSpan.error("Error reading model file", {
+              error: (error as Error).message,
+            });
+            fileSpan.end({ success: false, error: (error as Error).message });
+            // Fallback if model can't be read
+          }
         }
       }
-    }
 
-    // Fallback to looking for texture files
-    const possibleDirs = Object.keys(packStructure.textureDirectories);
-    for (const dir of possibleDirs) {
-      const textures = packStructure.textureDirectories[dir];
-      const found = textures.find((texture) =>
-        texture.endsWith(`${itemId}.png`)
-      );
-      if (found) {
-        return found
-          .replace(/^.*assets\/minecraft\/textures\//, "minecraft:")
-          .replace(/\.png$/, "");
+      // Fallback to looking for texture files
+      const possibleDirs = Object.keys(packStructure.textureDirectories);
+      for (const dir of possibleDirs) {
+        const textures = packStructure.textureDirectories[dir];
+        if (textures) {
+          const found = textures.find((texture) =>
+            texture.endsWith(`${itemId}.png`)
+          );
+          if (found) {
+            const fallbackTexture = found
+              .replace(/^.*assets\/minecraft\/textures\//, "minecraft:")
+              .replace(/\.png$/, "");
+            span.info("Using fallback texture from directory", {
+              fallbackTexture,
+              dir,
+            });
+            span.end({ success: true, texture: fallbackTexture });
+            return fallbackTexture;
+          }
+        }
       }
-    }
 
-    return `minecraft:item/${itemId}`;
+      const defaultTexture = `minecraft:item/${itemId}`;
+      span.info("Using default texture", { defaultTexture });
+      span.end({ success: true, texture: defaultTexture });
+      return defaultTexture;
+    } catch (error: any) {
+      span.error("Failed to determine texture ref", {
+        error: error.message,
+        stack: error.stack,
+      });
+      span.end({ success: false, error: error.message });
+      throw error;
+    }
   }
 
   // Expose the private method for testing

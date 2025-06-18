@@ -2,6 +2,7 @@ import { expect, test, beforeEach, afterEach } from "bun:test";
 import { mkdir, writeFile, rm, readdir, readFile } from "node:fs/promises";
 import { join, dirname } from "node:path";
 import { ConditionalBackportCoordinator } from "@backporter/index";
+import { createTestTracer } from "./test-utils";
 
 const TEST_INPUT_DIR = "test-fixtures/integration-input";
 const TEST_OUTPUT_DIR = "test-fixtures/integration-output";
@@ -77,7 +78,7 @@ test("backports pack with display context switching", async () => {
   });
 
   // Run backport
-  const coordinator = new ConditionalBackportCoordinator();
+  const coordinator = new ConditionalBackportCoordinator(createTestTracer());
   await coordinator.backport(TEST_INPUT_DIR, TEST_OUTPUT_DIR);
 
   // Verify pack.mcmeta was copied
@@ -138,7 +139,7 @@ test("backports pack with no special components (base item)", async () => {
     "assets/minecraft/textures/item/simple_item.png": "simple_texture",
   });
 
-  const coordinator = new ConditionalBackportCoordinator();
+  const coordinator = new ConditionalBackportCoordinator(createTestTracer());
   await coordinator.backport(TEST_INPUT_DIR, TEST_OUTPUT_DIR);
 
   // Should just copy the model as-is (base handler behavior)
@@ -204,7 +205,7 @@ test("processes multiple items with different handlers", async () => {
     "assets/minecraft/textures/item/simple.png": "simple_texture",
   });
 
-  const coordinator = new ConditionalBackportCoordinator();
+  const coordinator = new ConditionalBackportCoordinator(createTestTracer());
   await coordinator.backport(TEST_INPUT_DIR, TEST_OUTPUT_DIR);
 
   // Context item should be processed (has conditional selectors)
@@ -263,7 +264,7 @@ test("differentiates between display context and base item handling", async () =
     "assets/minecraft/textures/item/basic_item.png": "basic_texture",
   });
 
-  const coordinator = new ConditionalBackportCoordinator();
+  const coordinator = new ConditionalBackportCoordinator(createTestTracer());
   await coordinator.backport(TEST_INPUT_DIR, TEST_OUTPUT_DIR);
 
   // Context item should have Pommel overrides (display context handler)
@@ -288,7 +289,7 @@ test("handles pack with no items gracefully", async () => {
     "assets/minecraft/textures/block/stone.png": "stone_texture",
   });
 
-  const coordinator = new ConditionalBackportCoordinator();
+  const coordinator = new ConditionalBackportCoordinator(createTestTracer());
   await coordinator.backport(TEST_INPUT_DIR, TEST_OUTPUT_DIR);
 
   // Should still copy pack.mcmeta and non-item assets

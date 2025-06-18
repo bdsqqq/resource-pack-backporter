@@ -3,6 +3,7 @@ import { existsSync } from "node:fs";
 import { mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import { ConditionalBackportCoordinator } from "@backporter/conditional-compiler/backport-coordinator";
+import { createTestTracer } from "./test-utils";
 
 describe("Integration Tests", () => {
   let testDir: string;
@@ -105,7 +106,7 @@ describe("Integration Tests", () => {
     );
 
     // Import and run the backporter
-    const coordinator = new ConditionalBackportCoordinator();
+    const coordinator = new ConditionalBackportCoordinator(createTestTracer());
     await coordinator.backport(inputDir, outputDir);
 
     // Verify output structure
@@ -247,7 +248,7 @@ describe("Integration Tests", () => {
     );
 
     // Run backporter
-    const coordinator = new ConditionalBackportCoordinator();
+    const coordinator = new ConditionalBackportCoordinator(createTestTracer());
 
     await coordinator.backport(inputDir, outputDir);
 
@@ -361,7 +362,7 @@ describe("Integration Tests", () => {
     );
 
     // Run backporter
-    const coordinator = new ConditionalBackportCoordinator();
+    const coordinator = new ConditionalBackportCoordinator(createTestTracer());
 
     await coordinator.backport(inputDir, outputDir);
 
@@ -477,7 +478,7 @@ describe("Integration Tests", () => {
     );
 
     // Run backporter
-    const coordinator = new ConditionalBackportCoordinator();
+    const coordinator = new ConditionalBackportCoordinator(createTestTracer());
 
     await coordinator.backport(inputDir, outputDir);
 

@@ -22,6 +22,7 @@
       "@file-utils/*": ["tools/file-utils/src/*"],
       "@json-utils/*": ["tools/json-utils/src/*"],
       "@mc-paths/*": ["tools/mc-paths/src/*"],
+      "@logger/*": ["tools/logger/src/*"],
       "@tools/*": ["tools/*"]
     },
 

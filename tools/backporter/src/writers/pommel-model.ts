@@ -26,8 +26,6 @@ export class PommelModelWriter implements FileWriter {
 
     // Write the file
     await writeFile(fullPath, JSON.stringify(modelContent, null, 2));
-
-    console.log(`✓ Wrote Pommel model: ${request.path}`);
   }
 
   private formatPommelModel(content: any): any {

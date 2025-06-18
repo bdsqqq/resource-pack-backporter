@@ -10,15 +10,10 @@ export class WritableBookContentHandler implements ItemHandler {
   }
 
   process(jsonNode: any, context: ProcessingContext): WriteRequest[] {
-    console.log(`🎯 WritableBookContentHandler processing ${context.itemId}`);
-
     // Extract context mappings from the JSON
     const contextMappings = this.extractContextMappings(jsonNode, context);
 
     if (Object.keys(contextMappings).length === 0) {
-      console.log(
-        `⚠ No context mappings found for writable book ${context.itemId}`
-      );
       return [];
     }
 
@@ -235,10 +230,8 @@ export class WritableBookContentHandler implements ItemHandler {
             return modelContent.textures.layer0;
           }
         }
-      } catch (error) {
-        console.log(
-          `⚠ Error reading book model for texture: ${error.message}`
-        );
+      } catch {
+        // Silently continue to fallback texture
       }
     }
 

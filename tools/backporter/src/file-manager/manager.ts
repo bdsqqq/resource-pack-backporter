@@ -3,13 +3,16 @@ import { join, dirname } from "node:path";
 import type { WriteRequest, FileManager } from "@backporter/file-manager";
 import { getMergers } from "@backporter/mergers";
 import { getWriters } from "@backporter/writers";
+import type { StructuredTracer } from "@logger/index";
 
 export class FileManagerImpl implements FileManager {
   private requests: WriteRequest[] = [];
   private outputDir: string;
+  private tracer?: StructuredTracer;
 
-  constructor(outputDir: string) {
+  constructor(outputDir: string, tracer?: StructuredTracer) {
     this.outputDir = outputDir;
+    this.tracer = tracer;
   }
 
   addRequests(requests: WriteRequest[]): void {
@@ -17,17 +20,37 @@ export class FileManagerImpl implements FileManager {
   }
 
   async writeAll(): Promise<void> {
-    console.log(`📝 Processing ${this.requests.length} write requests...`);
+    const span = this.tracer?.startSpan("Write All Files");
+    span?.setAttributes({ requestCount: this.requests.length });
 
-    // Group requests by path for merging
-    const requestsByPath = this.groupRequestsByPath();
+    try {
+      // Group requests by path for merging
+      const requestsByPath = this.groupRequestsByPath();
 
-    // Merge conflicting requests
-    const mergedRequests = await this.mergeRequests(requestsByPath);
+      // Merge conflicting requests
+      const mergedRequests = await this.mergeRequests(requestsByPath);
 
-    // Write all requests using appropriate writers
-    for (const request of mergedRequests) {
-      await this.writeRequest(request);
+      // Write all requests using appropriate writers
+      const writeSpan = span?.startChild("Write Requests");
+      writeSpan?.setAttributes({ mergedRequestCount: mergedRequests.length });
+
+      for (const request of mergedRequests) {
+        await this.writeRequest(request);
+      }
+
+      writeSpan?.end({ success: true });
+      span?.end({
+        success: true,
+        originalRequests: this.requests.length,
+        mergedRequests: mergedRequests.length,
+      });
+    } catch (error: any) {
+      span?.error("Failed to write files", {
+        error: error.message,
+        stack: error.stack,
+      });
+      span?.end({ success: false, error: error.message });
+      throw error;
     }
   }
 
@@ -54,53 +77,87 @@ export class FileManagerImpl implements FileManager {
   ): Promise<WriteRequest[]> {
     const mergedRequests: WriteRequest[] = [];
     const mergers = getMergers();
+    const mergeSpan = this.tracer?.startSpan("Merge Conflicting Requests");
+    mergeSpan?.setAttributes({ totalGroups: requestsByPath.size });
 
-    for (const [key, requests] of requestsByPath) {
-      if (requests.length === 1) {
-        mergedRequests.push(requests[0]);
-        continue;
+    try {
+      for (const [key, requests] of requestsByPath) {
+        if (requests.length === 1) {
+          mergedRequests.push(requests[0]);
+          continue;
+        }
+
+        // Find a merger that can handle these requests
+        const merger = mergers.find((m) => m.canMerge(requests));
+        if (merger) {
+          mergeSpan?.info(`Merging requests using ${merger.name}`, {
+            requestCount: requests.length,
+            key,
+            mergerName: merger.name,
+          });
+          const merged = merger.merge(requests);
+          if (merged) {
+            mergedRequests.push(merged);
+          }
+        } else {
+          // No merger found, use highest priority request
+          mergeSpan?.warn("No merger found, using highest priority request", {
+            key,
+            requestCount: requests.length,
+          });
+          const sorted = requests.sort(
+            (a, b) => (b.priority || 0) - (a.priority || 0)
+          );
+          if (sorted.length > 0) {
+            mergedRequests.push(sorted[0]);
+          }
+        }
       }
 
-      // Find a merger that can handle these requests
-      const merger = mergers.find((m) => m.canMerge(requests));
-      if (merger) {
-        console.log(
-          `↻ Merging ${requests.length} requests for ${key} using ${merger.name}`
-        );
-        const merged = merger.merge(requests);
-        mergedRequests.push(merged);
-      } else {
-        // No merger found, use highest priority request
-        console.warn(
-          `⚠ No merger for ${key}, using highest priority request`
-        );
-        const sorted = requests.sort(
-          (a, b) => (b.priority || 0) - (a.priority || 0)
-        );
-        mergedRequests.push(sorted[0]);
-      }
+      mergeSpan?.end({
+        success: true,
+        originalRequests: Array.from(requestsByPath.values()).flat().length,
+        mergedRequests: mergedRequests.length,
+      });
+      return mergedRequests;
+    } catch (error: any) {
+      mergeSpan?.error("Failed to merge requests", {
+        error: error.message,
+        stack: error.stack,
+      });
+      mergeSpan?.end({ success: false, error: error.message });
+      throw error;
     }
-
-    return mergedRequests;
   }
 
   private async writeRequest(request: WriteRequest): Promise<void> {
-    const writers = getWriters();
-    const writer = writers.find((w) => w.canWrite(request));
-
-    if (!writer) {
-      console.error(`✗ No writer found for request type: ${request.type}`);
-      return;
-    }
+    const writeSpan = this.tracer?.startSpan(`Write ${request.type}`);
+    writeSpan?.setAttributes({
+      requestType: request.type,
+      requestPath: request.path,
+    });
 
     try {
+      const writers = getWriters();
+      const writer = writers.find((w) => w.canWrite(request));
+
+      if (!writer) {
+        writeSpan?.error("No writer found for request type", {
+          requestType: request.type,
+        });
+        writeSpan?.end({ success: false, error: "no_writer_found" });
+        return;
+      }
+
       await writer.write(request, this.outputDir);
-      console.log(`✓ Wrote ${request.type}: ${request.path}`);
-    } catch (error) {
-      console.error(
-        `✗ Failed to write ${request.type}: ${request.path}`,
-        error
-      );
+      writeSpan?.info("File written successfully");
+      writeSpan?.end({ success: true });
+    } catch (error: any) {
+      writeSpan?.error("Failed to write file", {
+        error: error.message,
+        stack: error.stack,
+      });
+      writeSpan?.end({ success: false, error: error.message });
       throw error;
     }
   }

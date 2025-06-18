@@ -6,14 +6,17 @@ import { getWriters } from "@backporter/writers";
 import type { ProcessingContext } from "@backporter/file-manager";
 import type { WriteRequest } from "@backporter/file-manager";
 import type { BackportOptions } from "./index";
+import type { StructuredTracer } from "@logger/index";
 
 export class BackportCoordinator {
   private introspector: ResourcePackIntrospector;
   private packStructure: any;
-  private verbose: boolean = false;
+  private verbose = false;
+  private tracer?: StructuredTracer;
 
-  constructor() {
+  constructor(tracer?: StructuredTracer) {
     this.introspector = new ResourcePackIntrospector();
+    this.tracer = tracer;
   }
 
   async backport(
@@ -21,72 +24,119 @@ export class BackportCoordinator {
     outputDir: string,
     options: Partial<BackportOptions> = {}
   ): Promise<void> {
-    this.verbose = options.verbose || false;
-
-    console.log("◉ Analyzing resource pack structure...");
-
-    // Clear output directory if requested
-    if (options.clearOutput !== false) {
-      console.log("🧹 Clearing output directory...");
-      const fs = require("node:fs");
-      if (fs.existsSync(outputDir)) {
-        await fs.promises.rm(outputDir, { recursive: true, force: true });
-      }
-    }
-
-    // Analyze pack structure
-    this.packStructure = await this.introspector.analyzeStructure(
+    const backportSpan = this.tracer?.startSpan("Coordination Backport");
+    backportSpan?.setAttributes({
       inputDir,
-      this.verbose
-    );
+      outputDir,
+      clearOutput: options.clearOutput,
+    });
 
-    console.log(`▸ Found ${this.packStructure.itemFiles.length} item files`);
-    console.log(
-      `🎨 Found ${this.packStructure.textureFiles.length} texture files`
-    );
-    console.log(`📦 Found ${this.packStructure.modelFiles.length} model files`);
+    try {
+      this.verbose = options.verbose || false;
 
-    // Initialize file manager
-    const fileManager = new FileManagerImpl(outputDir);
+      // Clear output directory if requested
+      if (options.clearOutput !== false) {
+        const clearSpan = backportSpan?.startChild("Clear Output Directory");
+        const fs = require("node:fs");
+        if (fs.existsSync(outputDir)) {
+          await fs.promises.rm(outputDir, { recursive: true, force: true });
+          clearSpan?.info("Directory cleared", { path: outputDir });
+        } else {
+          clearSpan?.info("Directory does not exist, skipping clear");
+        }
+        clearSpan?.end();
+      }
 
-    // Copy base assets
-    await this.copyBaseAssets(inputDir, outputDir);
+      // Analyze pack structure
+      const analyzeSpan = backportSpan?.startChild("Analyze Pack Structure");
+      this.packStructure = await this.introspector.analyzeStructure(
+        inputDir,
+        this.verbose
+      );
 
-    // Process each item file using the strategy pattern
-    for (const itemFile of this.packStructure.itemFiles) {
-      await this.processItemFile(itemFile, this.packStructure, fileManager);
+      analyzeSpan?.info("Pack structure analyzed", {
+        itemFiles: this.packStructure.itemFiles.length,
+        textureFiles: this.packStructure.textureFiles.length,
+        modelFiles: this.packStructure.modelFiles.length,
+      });
+      analyzeSpan?.end();
+
+      // Initialize file manager
+      const fileManager = new FileManagerImpl(outputDir, this.tracer);
+
+      // Copy base assets
+      await this.copyBaseAssets(inputDir, outputDir, backportSpan);
+
+      // Process each item file using the strategy pattern
+      const processSpan = backportSpan?.startChild("Process Item Files");
+      processSpan?.setAttributes({
+        itemCount: this.packStructure.itemFiles.length,
+      });
+
+      for (const itemFile of this.packStructure.itemFiles) {
+        await this.processItemFile(
+          itemFile,
+          this.packStructure,
+          fileManager,
+          processSpan
+        );
+      }
+
+      processSpan?.end({ itemsProcessed: this.packStructure.itemFiles.length });
+
+      // Write all accumulated requests
+      const writeSpan = backportSpan?.startChild("Write Files");
+      await fileManager.writeAll();
+      writeSpan?.end();
+
+      // Fix model compatibility issues
+      const compatSpan = backportSpan?.startChild("Model Compatibility");
+      const { ModelCompatibilityProcessor } = await import(
+        "../postprocessors/model-compatibility"
+      );
+      const compatibilityProcessor = new ModelCompatibilityProcessor(
+        this.tracer
+      );
+      await compatibilityProcessor.fixModelCompatibility(outputDir);
+      compatSpan?.info("Compatibility fixes applied");
+      compatSpan?.end();
+
+      backportSpan?.end({
+        success: true,
+        itemsProcessed: this.packStructure.itemFiles.length,
+      });
+    } catch (error: any) {
+      backportSpan?.error("Backport failed", {
+        error: error.message,
+        stack: error.stack,
+      });
+      backportSpan?.end({ success: false, error: error.message });
+      throw error;
     }
-
-    // Write all accumulated requests
-    await fileManager.writeAll();
-
-    // Fix model compatibility issues
-    const { ModelCompatibilityProcessor } = await import(
-      "../postprocessors/model-compatibility"
-    );
-    const compatibilityProcessor = new ModelCompatibilityProcessor();
-    await compatibilityProcessor.fixModelCompatibility(outputDir);
-
-    console.log("✓ Backport complete!");
   }
 
   private async processItemFile(
     itemFilePath: string,
     packStructure: any,
-    fileManager: FileManagerImpl
+    fileManager: FileManagerImpl,
+    parentSpan?: any
   ): Promise<void> {
     // Analyze the item file
     const analysis = await this.introspector.analyzeComponent(itemFilePath);
     const itemId = analysis.itemId;
 
-    console.log(`↻ Processing ${itemId}...`);
+    const itemSpan = parentSpan?.startChild(`Process ${itemId}`);
+    itemSpan?.setAttributes({
+      itemId,
+      componentsUsed: analysis.componentsUsed,
+      displayContexts: analysis.displayContexts,
+    });
+
     if (this.verbose) {
-      console.log(
-        `  Components: ${analysis.componentsUsed.join(", ") || "none"}`
-      );
-      console.log(
-        `  Contexts: ${analysis.displayContexts.join(", ") || "none"}`
-      );
+      itemSpan?.debug("Item analysis details", {
+        components: analysis.componentsUsed.join(", ") || "none",
+        contexts: analysis.displayContexts.join(", ") || "none",
+      });
     }
 
     // Create processing context
@@ -108,46 +158,84 @@ export class BackportCoordinator {
     const appliedHandlers: string[] = [];
     for (const handler of handlers) {
       if (handler.canHandle(itemJson, context)) {
-        console.log(`🎯 Applying ${handler.name} handler`);
-        const requests = handler.process(itemJson, context);
-        allRequests.push(...requests);
-        appliedHandlers.push(handler.name);
+        const handlerSpan = itemSpan?.startChild(
+          `Apply ${handler.name} handler`
+        );
+        handlerSpan?.setAttributes({ handlerName: handler.name });
+
+        try {
+          const requests = handler.process(itemJson, context);
+          allRequests.push(...requests);
+          appliedHandlers.push(handler.name);
+
+          handlerSpan?.info("Handler applied successfully", {
+            requestsGenerated: requests.length,
+          });
+          handlerSpan?.end({ success: true, requestCount: requests.length });
+        } catch (error: any) {
+          handlerSpan?.error("Handler failed", {
+            error: error.message,
+            stack: error.stack,
+          });
+          handlerSpan?.end({ success: false, error: error.message });
+          throw error;
+        }
       }
     }
 
     if (appliedHandlers.length === 0) {
-      console.log(`⚠ No handler could process ${itemId}`);
+      itemSpan?.warn("No handler could process item");
     } else if (this.verbose) {
-      console.log(`  Applied handlers: ${appliedHandlers.join(", ")}`);
+      itemSpan?.debug("Applied handlers", {
+        handlers: appliedHandlers.join(", "),
+      });
     }
 
     if (allRequests.length === 0) {
-      console.log(`⚠ No handlers processed ${itemId}`);
+      itemSpan?.warn("No handlers generated requests");
+      itemSpan?.end({ success: true, requestCount: 0 });
     } else {
-      console.log(`📝 Generated ${allRequests.length} write requests`);
+      itemSpan?.info("Generated write requests", {
+        requestCount: allRequests.length,
+      });
       fileManager.addRequests(allRequests);
+      itemSpan?.end({ success: true, requestCount: allRequests.length });
     }
   }
 
   private async copyBaseAssets(
     inputDir: string,
-    outputDir: string
+    outputDir: string,
+    parentSpan?: any
   ): Promise<void> {
-    console.log("📋 Copying base assets...");
+    const copySpan = parentSpan?.startChild("Copy Base Assets");
+    copySpan?.setAttributes({ inputDir, outputDir });
 
-    // Ensure output directory exists
-    await mkdir(outputDir, { recursive: true });
+    try {
+      // Ensure output directory exists
+      await mkdir(outputDir, { recursive: true });
 
-    // Copy pack.mcmeta
-    await this.copyPackMeta(inputDir, outputDir);
+      // Copy pack.mcmeta
+      await this.copyPackMeta(inputDir, outputDir, copySpan);
 
-    // Copy minecraft assets only (not mod-specific assets)
-    await this.copyMinecraftAssets(inputDir, outputDir);
+      // Copy minecraft assets only (not mod-specific assets)
+      await this.copyMinecraftAssets(inputDir, outputDir, copySpan);
+
+      copySpan?.end({ success: true });
+    } catch (error: any) {
+      copySpan?.error("Failed to copy assets", {
+        error: error.message,
+        stack: error.stack,
+      });
+      copySpan?.end({ success: false, error: error.message });
+      throw error;
+    }
   }
 
   private async copyPackMeta(
     inputDir: string,
-    outputDir: string
+    outputDir: string,
+    parentSpan?: any
   ): Promise<void> {
     const fs = require("node:fs");
     const { copyFile } = require("node:fs/promises");
@@ -156,13 +244,14 @@ export class BackportCoordinator {
     const packMetaPath = join(inputDir, "pack.mcmeta");
     if (fs.existsSync(packMetaPath)) {
       await copyFile(packMetaPath, join(outputDir, "pack.mcmeta"));
-      console.log("✓ Copied pack.mcmeta");
+      parentSpan?.debug("Copied pack.mcmeta");
     }
   }
 
   private async copyMinecraftAssets(
     inputDir: string,
-    outputDir: string
+    outputDir: string,
+    parentSpan?: any
   ): Promise<void> {
     const fs = require("node:fs");
     const { copyFile, mkdir } = require("node:fs/promises");
@@ -174,7 +263,7 @@ export class BackportCoordinator {
 
     const filesToCopy = [
       ...(this.packStructure?.textureFiles?.filter(
-        (f) => !f.includes("/items/")
+        (f: string) => !f.includes("/items/")
       ) || []),
       ...(this.packStructure?.modelFiles || []), // Copy ALL model files including item models
     ];
@@ -187,10 +276,15 @@ export class BackportCoordinator {
         await mkdir(dirname(destFile), { recursive: true });
         await copyFile(sourceFile, destFile);
       } catch (error) {
-        console.log(`⚠ Failed to copy ${sourceFile}: ${error.message}`);
+        parentSpan?.warn("Failed to copy file", {
+          sourceFile,
+          error: (error as Error).message,
+        });
       }
     }
 
-    console.log(`✓ Copied ${filesToCopy.length} base asset files`);
+    parentSpan?.info("Copied base asset files", {
+      fileCount: filesToCopy.length,
+    });
   }
 }

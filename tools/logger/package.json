@@ -1,0 +1,11 @@
+{
+  "name": "@logger/index",
+  "version": "1.0.0",
+  "description": "Structured CLI tracer with Axiom integration",
+  "main": "src/index.ts",
+  "type": "module",
+  "dependencies": {},
+  "devDependencies": {
+    "@types/node": "^20.0.0"
+  }
+}

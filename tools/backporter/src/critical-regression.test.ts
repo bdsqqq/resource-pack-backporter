@@ -3,6 +3,7 @@ import { existsSync } from "node:fs";
 import { mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import { ConditionalBackportCoordinator } from "@backporter/conditional-compiler/backport-coordinator";
+import { createTestTracer } from "./test-utils";
 
 /**
  * Critical Regression Test Suite
@@ -28,7 +29,7 @@ describe("Critical Books Regression Prevention", () => {
     await mkdir(inputDir, { recursive: true });
     await mkdir(outputDir, { recursive: true });
 
-    coordinator = new ConditionalBackportCoordinator();
+    coordinator = new ConditionalBackportCoordinator(createTestTracer());
   });
 
   afterEach(async () => {

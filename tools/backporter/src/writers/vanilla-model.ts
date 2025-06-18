@@ -21,8 +21,6 @@ export class VanillaModelWriter implements FileWriter {
 
     // Write the file
     await writeFile(fullPath, JSON.stringify(modelContent, null, 2));
-
-    console.log(`✓ Wrote vanilla model: ${request.path}`);
   }
 
   private formatVanillaModel(content: any): any {

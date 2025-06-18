@@ -26,8 +26,6 @@ export class CITPropertiesWriter implements FileWriter {
 
     // Write the file
     await writeFile(fullPath, propertiesContent);
-
-    console.log(`✓ Wrote CIT properties: ${request.path}`);
   }
 
   private formatCITProperties(content: any): string {

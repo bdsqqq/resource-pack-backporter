@@ -62,20 +62,17 @@ bun run lint ./my-pack --verbose
 the linter provides clear, actionable feedback:
 
 ```
-◉ Starting resource pack validation...
-▸ Pack directory: ./my-pack
-✗ Resource pack validation failed!
-▪ Checked 45 files, found 3 issues
+[INFO]: Starting resource pack validation
+├─ Pack directory: ./my-pack
+└─ Quick validation mode
 
-! Errors:
-  - Invalid JSON in assets/minecraft/models/item/sword.json: Unexpected token '}' at line 12
-  - Missing texture: minecraft:item/custom_sword (referenced in models/item/sword.json)
-  - Invalid pack.mcmeta: Missing required 'pack_format' field
+[FAILED]: Resource pack validation failed
+└─ Checked 45 files, found 3 issues
 
-→ Suggestions:
-  - Fix JSON syntax errors before deployment
-  - Ensure all referenced textures exist in textures/ directory
-  - Update pack.mcmeta with correct format version
+[ERROR]: Validation issues found
+├─ Invalid JSON in assets/minecraft/models/item/sword.json: Unexpected token '}' at line 12
+├─ Missing texture: minecraft:item/custom_sword (referenced in models/item/sword.json)
+└─ Invalid pack.mcmeta: Missing required 'pack_format' field
 ```
 
 ## supported file types

@@ -4,6 +4,7 @@ import { existsSync } from "node:fs";
 import { readFile } from "node:fs/promises";
 import { basename } from "node:path";
 import { ConditionalBackportCoordinator } from "@backporter/conditional-compiler/backport-coordinator";
+import { createTracer } from "@logger/index";
 
 // CLI entry point
 async function main() {
@@ -24,18 +25,23 @@ async function main() {
     outputDir = `dist/${packName}`;
   }
 
-  console.log("🚀 Starting backport with conditional compiler architecture...");
-  console.log(`📥 Input: ${inputDir}`);
-  console.log(`📤 Output: ${outputDir}`);
-  if (verbose) {
-    console.log("◉ Verbose logging enabled");
-  }
+  // Initialize tracer
+  const tracer = createTracer({
+    serviceName: "backporter-cli",
+    enableConsole: false, // Let the coordinator handle console output
+    enableAxiom: false,
+  });
 
-  const coordinator = new ConditionalBackportCoordinator();
+  const coordinator = new ConditionalBackportCoordinator(tracer);
   try {
     await coordinator.backport(inputDir, outputDir, { verbose });
   } catch (error: any) {
-    console.error("✗ Backport failed:", error.message);
+    const errorSpan = tracer.startSpan("Backport Error");
+    errorSpan.error("Backport failed", {
+      error: error.message,
+      stack: error.stack,
+    });
+    errorSpan.end({ success: false, error: error.message });
     process?.exit?.(1);
   }
 }
@@ -62,8 +68,10 @@ async function generatePackOutputName(inputDir: string): Promise<string> {
     if (!packName) packName = "unknown_pack";
 
     return `↺--${packName}`;
-  } catch (error) {
-    console.warn("⚠ Could not parse folder name, using default name");
+  } catch {
+    const warnSpan = tracer.startSpan("Parse Folder Name Warning");
+    warnSpan.warn("Could not parse folder name, using default name");
+    warnSpan.end({ success: true, fallback: true });
   }
 
   return "↺--backported_pack";
@@ -73,6 +81,6 @@ async function generatePackOutputName(inputDir: string): Promise<string> {
 export { ConditionalBackportCoordinator };
 
 // Run if this is the main module
-if (typeof window === "undefined" && import.meta.main) {
+if (import.meta.main) {
   main();
 }

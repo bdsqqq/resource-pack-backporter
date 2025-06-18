@@ -1,5 +1,6 @@
 import type { WriteRequest, ProcessingContext } from "@backporter/file-manager";
 import type { ItemHandler } from "@backporter/handlers";
+import type { StructuredTracer } from "@logger/index";
 
 export class DisplayContextHandler implements ItemHandler {
   name = "display-context";
@@ -10,13 +11,10 @@ export class DisplayContextHandler implements ItemHandler {
   }
 
   process(jsonNode: any, context: ProcessingContext): WriteRequest[] {
-    console.log(`🎯 DisplayContextHandler processing ${context.itemId}`);
-
     // Extract context mappings from the JSON
     const contextMappings = this.extractContextMappings(jsonNode);
 
     if (Object.keys(contextMappings).length === 0) {
-      console.log(`⚠ No context mappings found for ${context.itemId}`);
       return [];
     }
 
@@ -96,9 +94,6 @@ export class DisplayContextHandler implements ItemHandler {
 
     // Check if this has nested component selections - if so, skip it
     if (this.hasNestedComponentSelections(selector)) {
-      console.log(
-        `◉ Skipping complex nested component selection for display context handler`
-      );
       return mappings;
     }
 
@@ -183,14 +178,11 @@ export class DisplayContextHandler implements ItemHandler {
           const fs = require("node:fs");
           const modelContent = JSON.parse(fs.readFileSync(found, "utf-8"));
           if (modelContent.textures?.layer0) {
-            console.log(
-              `🎨 Extracted texture: ${modelContent.textures.layer0}`
-            );
             return modelContent.textures.layer0;
           }
         }
-      } catch (error) {
-        console.log(`⚠ Error reading model for texture: ${error.message}`);
+      } catch {
+        // Silently continue to fallback texture
       }
     }
 

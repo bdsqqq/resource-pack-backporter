@@ -11,8 +11,6 @@ export class BaseItemHandler implements ItemHandler {
   }
 
   process(jsonNode: any, context: ProcessingContext): WriteRequest[] {
-    console.log(`🎯 BaseItemHandler processing ${context.itemId} (fallback)`);
-
     // For base items, we just need to copy the vanilla model structure
     // and ensure textures are available
     const requests: WriteRequest[] = [];

@@ -1,8 +1,14 @@
 import type { WriteRequest } from "@backporter/file-manager";
 import type { RequestMerger } from "@backporter/mergers";
+import type { StructuredTracer } from "@logger/index";
 
 export class OverridesMerger implements RequestMerger {
   name = "overrides-merger";
+  private tracer?: StructuredTracer;
+
+  constructor(tracer?: StructuredTracer) {
+    this.tracer = tracer;
+  }
 
   canMerge(requests: WriteRequest[]): boolean {
     // Can merge if all requests are pommel-model type with same path
@@ -50,9 +56,16 @@ export class OverridesMerger implements RequestMerger {
       overrides: sortedOverrides,
     };
 
-    console.log(
-      `↻ Merged ${requests.length} pommel-model requests into 1 (${uniqueOverrides.length} overrides, priority ${highestPriority})`
+    const mergeSpan = this.tracer?.startSpan("Merge Pommel Overrides");
+    mergeSpan?.setAttributes({
+      requestCount: requests.length,
+      overrideCount: uniqueOverrides.length,
+      priority: highestPriority,
+    });
+    mergeSpan?.debug(
+      `Merged ${requests.length} pommel-model requests into 1 (${uniqueOverrides.length} overrides, priority ${highestPriority})`
     );
+    mergeSpan?.end({ success: true });
 
     return base;
   }

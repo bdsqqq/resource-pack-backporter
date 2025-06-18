@@ -2,6 +2,7 @@ import { existsSync } from "node:fs";
 import { readFile, readdir } from "node:fs/promises";
 import { join } from "node:path";
 import type { ResourcePackStructure } from "@backporter/file-manager";
+import type { StructuredTracer } from "@logger/index";
 
 export interface ComponentAnalysis {
   itemId: string;
@@ -18,9 +19,15 @@ export interface ConditionalModel {
 }
 
 export class ResourcePackIntrospector {
+  private tracer?: StructuredTracer;
+
+  constructor(tracer?: StructuredTracer) {
+    this.tracer = tracer;
+  }
+
   async analyzeStructure(
     packDir: string,
-    verbose: boolean = false
+    verbose = false
   ): Promise<ResourcePackStructure> {
     const structure: ResourcePackStructure = {
       itemFiles: [],
@@ -40,27 +47,45 @@ export class ResourcePackIntrospector {
     basePath = "",
     verbose = false
   ) {
+    const scanSpan = this.tracer?.startSpan(
+      `Scan Directory: ${basePath || "root"}`
+    );
+    scanSpan?.setAttributes({ dir, basePath });
+
     if (verbose) {
-      console.log(`📂 Scanning directory: ${dir} (basePath: ${basePath})`);
+      scanSpan?.debug("Scanning directory", { dir, basePath });
     }
+
     if (!existsSync(dir)) {
       if (verbose) {
-        console.log(`✗ Directory does not exist: ${dir}`);
+        scanSpan?.debug("Directory does not exist", { dir });
       }
+      scanSpan?.end({ success: false, reason: "directory_not_found" });
       return;
     }
 
-    const entries = await readdir(dir, { withFileTypes: true });
+    try {
+      const entries = await readdir(dir, { withFileTypes: true });
 
-    for (const entry of entries) {
-      const fullPath = join(dir, entry.name);
-      const relativePath = join(basePath, entry.name);
+      for (const entry of entries) {
+        const fullPath = join(dir, entry.name);
+        const relativePath = join(basePath, entry.name);
 
-      if (entry.isDirectory()) {
-        await this.scanDirectory(fullPath, structure, relativePath, verbose);
-      } else if (entry.isFile()) {
-        await this.categorizeFile(fullPath, relativePath, structure, verbose);
+        if (entry.isDirectory()) {
+          await this.scanDirectory(fullPath, structure, relativePath, verbose);
+        } else if (entry.isFile()) {
+          await this.categorizeFile(fullPath, relativePath, structure, verbose);
+        }
       }
+
+      scanSpan?.end({ success: true, entriesProcessed: entries.length });
+    } catch (error: any) {
+      scanSpan?.error("Failed to scan directory", {
+        error: error.message,
+        stack: error.stack,
+      });
+      scanSpan?.end({ success: false, error: error.message });
+      throw error;
     }
   }
 
@@ -70,35 +95,53 @@ export class ResourcePackIntrospector {
     structure: ResourcePackStructure,
     verbose = false
   ) {
+    const fileSpan = this.tracer?.startSpan("Categorize File");
+    fileSpan?.setAttributes({ relativePath, fullPath });
+
     if (verbose) {
-      console.log(`◉ Categorizing: ${relativePath}`);
+      fileSpan?.debug("Categorizing file");
     }
+
     if (
       relativePath.includes("assets/minecraft/items/") &&
       relativePath.endsWith(".json")
     ) {
       if (verbose) {
-        console.log(`📄 Found item file: ${relativePath}`);
+        fileSpan?.debug("Found item file");
       }
       structure.itemFiles.push(fullPath);
+      fileSpan?.end({ success: true, type: "item" });
     } else if (
       relativePath.includes("assets/minecraft/models/") &&
       relativePath.endsWith(".json")
     ) {
+      if (verbose) {
+        fileSpan?.debug("Found model file");
+      }
       structure.modelFiles.push(fullPath);
       const dir = relativePath.substring(0, relativePath.lastIndexOf("/"));
       if (!structure.modelDirectories[dir])
         structure.modelDirectories[dir] = [];
       structure.modelDirectories[dir].push(relativePath);
+      fileSpan?.end({ success: true, type: "model" });
     } else if (
       relativePath.includes("assets/minecraft/textures/") &&
       this.isImageFile(relativePath)
     ) {
+      if (verbose) {
+        fileSpan?.debug("Found texture file");
+      }
       structure.textureFiles.push(fullPath);
       const dir = relativePath.substring(0, relativePath.lastIndexOf("/"));
       if (!structure.textureDirectories[dir])
         structure.textureDirectories[dir] = [];
       structure.textureDirectories[dir].push(relativePath);
+      fileSpan?.end({ success: true, type: "texture" });
+    } else {
+      if (verbose) {
+        fileSpan?.debug("Skipped file (not a resource)");
+      }
+      fileSpan?.end({ success: true, type: "skipped" });
     }
   }
 

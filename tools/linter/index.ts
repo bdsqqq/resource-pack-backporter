@@ -1,6 +1,7 @@
 #!/usr/bin/env bun
 
 import { validateResourcePack } from "@linter/validator";
+import { createTracer } from "@logger/index";
 
 // CLI entry point
 export async function main() {
@@ -16,47 +17,74 @@ export async function main() {
 
   const [packDir = "."] = nonFlagArgs;
 
-  console.log("◉ Starting resource pack validation...");
-  console.log(`▸ Pack directory: ${packDir}`);
-  if (verbose) {
-    console.log("◉ Verbose logging enabled");
-  }
-  if (fix) {
-    console.log("🔧 Fix mode enabled");
-  }
+  // Initialize tracer
+  const tracer = createTracer({
+    serviceName: "resource-pack-linter",
+    axiomDataset: process.env.AXIOM_DATASET,
+    axiomToken: process.env.AXIOM_TOKEN,
+    enableConsole: true,
+    enableAxiom: !!process.env.AXIOM_TOKEN,
+  });
+
+  const mainSpan = tracer.startSpan("Resource Pack Validation");
+  mainSpan.setAttributes({
+    packDir,
+    verbose,
+    fix,
+    args: allArgs,
+  });
 
   try {
-    const result = await validateResourcePack(packDir, { verbose, fix });
+    const result = await validateResourcePack(
+      packDir,
+      { verbose, fix },
+      tracer
+    );
 
     if (result.isValid) {
-      console.log("✓ Resource pack validation passed!");
-      console.log(
-        `▪ Checked ${result.stats.filesChecked} files, found ${result.stats.issues} issues`
-      );
+      mainSpan.info("Validation passed", {
+        filesChecked: result.stats.filesChecked,
+        issues: result.stats.issues,
+      });
+      mainSpan.end({ success: true, ...result.stats });
     } else {
-      console.error("✗ Resource pack validation failed!");
-      console.error(
-        `▪ Checked ${result.stats.filesChecked} files, found ${result.stats.issues} issues`
-      );
+      mainSpan.error("Validation failed", {
+        filesChecked: result.stats.filesChecked,
+        issues: result.stats.issues,
+        errors: result.errors.length,
+        warnings: result.warnings.length,
+      });
 
+      // Log detailed issues
       if (result.errors.length > 0) {
-        console.error("\n! Errors:");
-        for (const error of result.errors) {
-          console.error(`  - ${error}`);
-        }
+        const errorSpan = mainSpan.startChild("Validation Errors");
+        result.errors.forEach((error, i) => {
+          errorSpan.error(`Error ${i + 1}`, { message: error });
+        });
+        errorSpan.end({ errorCount: result.errors.length });
       }
 
       if (result.warnings.length > 0) {
-        console.warn("\n⚠ Warnings:");
-        for (const warning of result.warnings) {
-          console.warn(`  - ${warning}`);
-        }
+        const warningSpan = mainSpan.startChild("Validation Warnings");
+        result.warnings.forEach((warning, i) => {
+          warningSpan.warn(`Warning ${i + 1}`, { message: warning });
+        });
+        warningSpan.end({ warningCount: result.warnings.length });
       }
 
+      mainSpan.end({ success: false, ...result.stats });
+      await tracer.flush();
       process?.exit?.(1);
     }
+
+    await tracer.flush();
   } catch (error: any) {
-    console.error("✗ Validation failed:", error.message);
+    mainSpan.error("Validation failed", {
+      error: error.message,
+      stack: error.stack,
+    });
+    mainSpan.end({ success: false, error: error.message });
+    await tracer.flush();
     process?.exit?.(1);
   }
 }

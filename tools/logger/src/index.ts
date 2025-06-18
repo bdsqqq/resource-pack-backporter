@@ -77,8 +77,15 @@ export class Span {
     return this.addEvent("debug", message, attributes);
   }
 
-  startChild(operation: string, attributes?: Record<string, AttributeValue>): Span {
-    const childSpan = this.tracer.startSpan(operation, this.context.spanId, attributes);
+  startChild(
+    operation: string,
+    attributes?: Record<string, AttributeValue>
+  ): Span {
+    const childSpan = this.tracer.startSpan(
+      operation,
+      this.context.spanId,
+      attributes
+    );
     this.children.push(childSpan);
     return childSpan;
   }
@@ -156,7 +163,11 @@ export class StructuredTracer {
     this.logSpanEnd(span, duration);
 
     // Ship to Axiom if configured
-    if (this.config.enableAxiom && this.config.axiomToken && this.config.axiomDataset) {
+    if (
+      this.config.enableAxiom &&
+      this.config.axiomToken &&
+      this.config.axiomDataset
+    ) {
       this.shipToAxiom(span, duration);
     }
   }
@@ -168,19 +179,8 @@ export class StructuredTracer {
     const prefix = this.getEventPrefix(event.level);
     const message = `${indent}${prefix} ${event.message}`;
 
-    switch (event.level) {
-      case "error":
-        console.error(message);
-        break;
-      case "warn":
-        console.warn(message);
-        break;
-      case "debug":
-        console.debug(message);
-        break;
-      default:
-        console.log(message);
-    }
+    // Always use console.log to ensure output goes to stdout for proper redirection
+    console.log(message);
   }
 
   private logSpanStart(span: Span): void {
@@ -201,7 +201,9 @@ export class StructuredTracer {
     const prefix = this.getSpanEndPrefix(context.level);
     const durationStr = this.formatDuration(duration);
 
-    console.log(`${indent}${prefix} ${context.operation} completed ${durationStr}`);
+    console.log(
+      `${indent}${prefix} ${context.operation} completed ${durationStr}`
+    );
   }
 
   private getIndent(level: number): string {
@@ -316,7 +318,10 @@ export function getTracer(): StructuredTracer {
 }
 
 // Convenience functions
-export function startSpan(operation: string, attributes?: Record<string, AttributeValue>): Span {
+export function startSpan(
+  operation: string,
+  attributes?: Record<string, AttributeValue>
+): Span {
   return getTracer().startSpan(operation, undefined, attributes);
 }
 

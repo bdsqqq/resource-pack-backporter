@@ -11,7 +11,9 @@ export async function main() {
   // Parse flags
   const verbose = allArgs.includes("--verbose") || allArgs.includes("-v");
   const fix = allArgs.includes("--fix");
-  const nonFlagArgs = allArgs.filter((arg) => !arg.startsWith("--") && !arg.startsWith("-"));
+  const nonFlagArgs = allArgs.filter(
+    (arg) => !arg.startsWith("--") && !arg.startsWith("-")
+  );
 
   const [packDir = "."] = nonFlagArgs;
 
@@ -32,7 +34,11 @@ export async function main() {
     args: allArgs.join(" "),
   });
 
-  const validationResult = await validateResourcePack(packDir, { verbose, fix }, tracer);
+  const validationResult = await validateResourcePack(
+    packDir,
+    { verbose, fix },
+    tracer
+  );
 
   if (validationResult.isErr()) {
     mainSpan.error("Validation failed with error", {
@@ -51,6 +57,12 @@ export async function main() {
       filesChecked: result.stats.filesChecked,
       issues: result.stats.issues,
     });
+
+    // Show clear success status
+    const statusSpan = mainSpan.startChild("Validation Status");
+    statusSpan.info("No validation issues found");
+    statusSpan.end({ errorCount: 0, warningCount: 0 });
+
     mainSpan.end({ success: true, ...result.stats });
   } else {
     // Check if we have actual errors or just warnings
@@ -79,6 +91,11 @@ export async function main() {
         errorSpan.error(error, { errorIndex: i + 1 });
       });
       errorSpan.end({ errorCount: result.errors.length });
+    } else if (result.warnings.length === 0 && verbose) {
+      // Only show "no errors" message in verbose mode when there are also no warnings
+      const errorSpan = mainSpan.startChild("Validation Status");
+      errorSpan.info("No validation errors found");
+      errorSpan.end({ errorCount: 0 });
     }
 
     if (result.warnings.length > 0) {

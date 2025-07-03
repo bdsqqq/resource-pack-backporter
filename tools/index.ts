@@ -1,4 +1,4 @@
-#!/usr/bin/env bun
+#!/usr/bin/env tsx
 
 // Main CLI dispatcher for minecraft resource pack tools
 
@@ -15,7 +15,7 @@ async function main() {
     case "backport": {
       const { main: backportMain } = await import("./backporter/index");
       // Override argv to make it look like backporter was called directly
-      process.argv = ["bun", "backporter", ...restArgs];
+      process.argv = ["tsx", "backporter", ...restArgs];
       await backportMain();
       break;
     }
@@ -23,7 +23,7 @@ async function main() {
     case "lint": {
       const { main: lintMain } = await import("./linter/index");
       // Override argv to make it look like linter was called directly
-      process.argv = ["bun", "linter", ...restArgs];
+      process.argv = ["tsx", "linter", ...restArgs];
       await lintMain();
       break;
     }
@@ -55,7 +55,7 @@ function printHelp() {
   console.log(`
 ⚙  Minecraft Resource Pack Tools
 
-Usage: bun run tools/index.ts <command> [options]
+Usage: pnpm tsx tools/index.ts <command> [options]
 
 Commands:
   backport    Backport resource packs from 1.21.4+ to 1.21.1 using CIT + Pommel
@@ -66,13 +66,13 @@ Options:
   --verbose   Enable verbose logging
 
 Examples:
-  bun run tools/index.ts backport ./my-pack ./output
-  bun run tools/index.ts lint ./my-pack --verbose
-  bun run tools/index.ts help
+  pnpm tsx tools/index.ts backport ./my-pack ./output
+  pnpm tsx tools/index.ts lint ./my-pack --verbose
+  pnpm tsx tools/index.ts help
 
 Or use the direct commands:
-  bun run backport
-  bun run lint
+  pnpm backport
+  pnpm lint
 `);
 }
 

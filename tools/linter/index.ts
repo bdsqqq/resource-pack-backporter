@@ -1,4 +1,4 @@
-#!/usr/bin/env bun
+#!/usr/bin/env tsx
 
 import { validateResourcePack } from "@linter/validator";
 import { createTracer } from "@logger/index";

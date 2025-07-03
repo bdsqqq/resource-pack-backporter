@@ -20,29 +20,25 @@ static validation tool for minecraft resource packs that catches common errors a
 
 ```bash
 # direct usage
-bun run tools/linter/index.ts <pack-directory>
-
-# via unified cli
-bun run tools/index.ts lint <pack-directory>
-
-# via package script
-bun run lint <pack-directory>
+pnpm tsx tools/linter/index.ts <pack-directory>
+pnpm tsx tools/index.ts lint <pack-directory>
+pnpm lint <pack-directory>
 
 # run linter tests
-bun run test:linter
+pnpm test:linter
 ```
 
 ## examples
 
 ```bash
 # lint current directory
-bun run lint .
+pnpm lint .
 
 # lint specific pack
-bun run lint ./my-resource-pack
+pnpm lint ./my-resource-pack
 
 # lint with verbose output (shows vanilla texture references)
-bun run lint ./my-pack --verbose
+pnpm lint ./my-pack --verbose
 ```
 
 ## validation checks
@@ -118,10 +114,10 @@ comprehensive test suite with 17+ test cases covering:
 
 ```bash
 # run linter tests specifically
-bun run test:linter
+pnpm test:linter
 
 # or run all tests
-bun test
+pnpm test
 ```
 
 **test coverage includes:**
@@ -157,11 +153,11 @@ designed for ci/cd pipelines with clear exit codes:
 
 # github actions example
 - name: Lint Resource Pack
-  run: bun run lint ./pack
+  run: pnpm lint ./pack
 
 # with verbose logging
 - name: Lint with Details
-  run: bun run lint ./pack --verbose
+  run: pnpm lint ./pack --verbose
 ```
 
 ## programmatic usage

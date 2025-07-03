@@ -181,7 +181,7 @@ export AXIOM_TOKEN="your-axiom-token"
 export AXIOM_DATASET="cli-traces"
 
 # Run your CLI tool
-bun run my-tool.ts
+pnpm my-tool.ts
 ```
 
 ## Best Practices

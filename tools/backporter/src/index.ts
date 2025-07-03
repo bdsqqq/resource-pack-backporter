@@ -1,4 +1,4 @@
-#!/usr/bin/env bun
+#!/usr/bin/env tsx
 
 import { basename } from "node:path";
 import { ConditionalBackportCoordinator } from "@backporter/conditional-compiler/backport-coordinator";

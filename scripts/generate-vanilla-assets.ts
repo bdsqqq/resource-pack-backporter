@@ -1,4 +1,4 @@
-#!/usr/bin/env bun
+#!/usr/bin/env tsx
 
 import { mkdir, writeFile } from "node:fs/promises";
 
@@ -118,7 +118,7 @@ async function generateVanillaAssets(version: string): Promise<void> {
     // Generate TypeScript file
     const generatedCode = `// Auto-generated vanilla asset registry for Minecraft ${version}
 // Generated on ${new Date().toISOString()}
-// DO NOT EDIT MANUALLY - regenerate with: bun run scripts/generate-vanilla-assets.ts
+// DO NOT EDIT MANUALLY - regenerate with: pnpm generate-vanilla-assets
 
 export interface VanillaAssetRegistry {
   textures: {

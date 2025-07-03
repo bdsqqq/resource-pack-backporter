@@ -15,23 +15,23 @@ transforms modern minecraft resource packs (1.21.4+) to work with older versions
 
 ```bash
 # direct usage
-bun run tools/backporter/index.ts <input-dir> [output-dir]
+pnpm tools/backporter/index.ts <input-dir> [output-dir]
 
 # via unified cli
-bun run tools/index.ts backport <input-dir> [output-dir]
+pnpm tools/index.ts backport <input-dir> [output-dir]
 
 # via package script
-bun run backport <input-dir> [output-dir]
+pnpm backport <input-dir> [output-dir]
 ```
 
 ## examples
 
 ```bash
 # backport a resource pack
-bun run backport ./my-pack ./my-pack-backported
+pnpm backport ./my-pack ./my-pack-backported
 
 # backport to default output location
-bun run backport ./my-pack
+pnpm backport ./my-pack
 # outputs to: dist/↺-my-pack
 ```
 
@@ -83,12 +83,12 @@ the backporter uses a modular conditional compiler architecture:
 
 ```bash
 # run all backporter tests
-bun test tools/backporter/src/
+pnpm test tools/backporter/src/
 
 # run specific test suites
-bun test tools/backporter/src/index.test.ts
-bun test tools/backporter/src/integration.test.ts
-bun test tools/backporter/src/books-regression.test.ts
+pnpm test tools/backporter/src/index.test.ts
+pnpm test tools/backporter/src/integration.test.ts
+pnpm test tools/backporter/src/books-regression.test.ts
 ```
 
 ## configuration

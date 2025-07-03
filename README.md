@@ -1,240 +1,125 @@
-# Resource Pack Tools
+# pack-toolbox
 
-comprehensive toolbox for minecraft resource pack development, testing, and deployment. originally "Better Fresher 3D Books v1.1" backporter, now evolved into a full-featured resource pack development suite.
+minecraft resource pack dev tools. started as a backporter for "better fresher 3d books v1.1", now it's a whole thing.
 
-## tools overview
+## what it does
 
-### ↻ [backporter](tools/backporter/)
+**backporter** - takes your shiny 1.21.4+ conditional models and makes them work on 1.21.1 via pommel predicates + cit properties. bc mojang moves fast but servers don't.
 
-transforms modern minecraft resource packs (1.21.4+) to work with older versions (1.21.1) by converting conditional item models to pommel predicates and cit properties.
+**linter** - validates your pack. checks json syntax, texture refs, model inheritance, the works. auto-generates vanilla assets so you don't have to think about it.
 
-### ◉ [linter](tools/linter/)
-
-static validation tool with auto-generation and comprehensive test coverage that detects pack format, generates vanilla assets, validates json syntax, texture references, model inheritance chains, and pack structure. zero configuration required - perfect for build pipelines.
-
-### ⚙ utility modules
-
-- **[file-utils](tools/file-utils/)**: filesystem traversal and asset discovery
-- **[json-utils](tools/json-utils/)**: json validation with detailed error reporting
-- **[mc-paths](tools/mc-paths/)**: minecraft-specific path resolution with dynamically generated vanilla asset validation
+**utils** - file traversal, json validation, minecraft path resolution. the boring stuff that makes everything else work.
 
 ## quick start
 
 ```bash
-# install dependencies
 pnpm install
-
-# backport a resource pack
-pnpm backport ./my-pack ./my-pack-backported
-
-# lint a resource pack
+pnpm backport ./my-pack ./my-pack-legacy  
 pnpm lint ./my-pack
-
-# run unified cli
-pnpm tsx tools/index.ts --help
 ```
 
-## installation
+requires node 18+ and pnpm.
 
-requires [Node.js](https://nodejs.org) 18+ and [pnpm](https://pnpm.io):
+## how it works
+
+the backporter does some pretty gnarly stuff under the hood:
+
+1. **conditional compilation** - parses 1.21.4+ conditional selectors, maps them to pommel predicates
+2. **display context mapping** - gui/ground/held/offhand contexts become pommel:is_ground, pommel:is_held, etc
+3. **enchanted book handling** - generates individual cit properties for each enchantment level
+4. **template protection** - never adds parent fields to template files (learned this the hard way)
+
+the linter is more straightforward but does some clever things:
+
+- detects pack_format, fetches vanilla assets from github for that exact version
+- validates texture references against both custom and vanilla assets  
+- checks model inheritance chains for circular deps
+- warns about non-namespaced refs (bc that's usually a mistake)
+
+## architecture
+
+```
+tools/
+├── backporter/          # the main event
+│   ├── conditional-compiler/    # 1.21.4+ → legacy magic
+│   ├── coordination/           # orchestrates the whole process
+│   ├── file-manager/           # i/o + template protection
+│   ├── handlers/               # per-component processors
+│   └── writers/                # output generation
+├── linter/              # validation + auto-generation
+├── file-utils/          # filesystem stuff
+├── json-utils/          # json parsing w/ good errors
+└── mc-paths/            # minecraft-specific path resolution
+```
+
+everything's typescript with path aliases (@backporter/*, @linter/*, etc). tests are colocated bc that's the only sane way to do it.
+
+## performance
+
+tested on large packs:
+- backporter: ~100 items/sec
+- linter: ~1000 files/sec  
+- file walking: ~5000 files/sec
+
+uses parallel processing where possible, streams large files, caches parsed data. should handle even the chonkiest packs.
+
+## limitations
+
+**backporter:**
+- needs pommel mod on the client
+- 3d models must exist already (doesn't generate geometry)
+- some 1.21.4+ features might not have legacy equivalents
+
+**linter:**
+- validates structure/syntax, not content quality
+- doesn't check cross-version compatibility
+- limited to standard resource pack features
+
+## testing
+
+100 tests covering the critical paths. run with:
 
 ```bash
-# clone repository
-git clone <repository-url>
-cd resource-pack-tools
-
-# install dependencies
-pnpm install
-
-# verify installation
-pnpm test
+pnpm test                    # all tests
+pnpm test:coverage          # with coverage
+pnpm test tools/linter/     # specific tool
 ```
 
-## usage patterns
+the test suite caught some tricky edge cases during development - template file corruption, path matching bugs, enchantment name mapping issues. afaict it's pretty solid now but minecraft modding has its quirks.
 
-### development workflow
-
-```bash
-# 1. create/modify your resource pack
-# 2. validate with linter
-pnpm lint ./my-pack
-
-# 3. backport for compatibility
-pnpm backport ./my-pack ./my-pack-v1.21.1
-
-# 4. test the backported pack
-pnpm lint ./my-pack-v1.21.1
-```
-
-### ci/cd integration
-
-```bash
-# validate pack in ci pipeline
-pnpm lint ./pack || exit 1
-
-# generate multiple versions
-pnpm backport ./pack ./pack-v1.21.1
-```
-
-### api usage
+## api usage
 
 ```typescript
-// programmatic usage
 import { ConditionalBackportCoordinator } from "@backporter/index";
 import { validateResourcePack } from "@linter/validator";
 
 const coordinator = new ConditionalBackportCoordinator();
 await coordinator.backport("./input", "./output");
 
-const lintResults = await validateResourcePack("./pack");
-```
-
-## architecture
-
-built with modular architecture and clean separation of concerns:
-
-```
-tools/
-├── backporter/          # main backporting logic
-│   ├── src/
-│   │   ├── conditional-compiler/    # 1.21.4+ → legacy conversion
-│   │   ├── coordination/           # process orchestration
-│   │   ├── file-manager/           # i/o operations
-│   │   ├── handlers/               # component processors
-│   │   ├── writers/                # output generators
-│   │   ├── mergers/                # conflict resolution
-│   │   └── postprocessors/         # compatibility fixes
-│   └── *.test.ts                   # colocated tests
-├── linter/              # validation tools
-│   └── src/
-├── file-utils/          # filesystem utilities
-│   └── src/
-├── json-utils/          # json processing
-│   └── src/
-└── mc-paths/            # minecraft path resolution
-    └── src/
-```
-
-## key features
-
-### backporter capabilities
-
-- **conditional compilation**: converts 1.21.4+ conditional selectors to legacy formats
-- **display context mapping**: gui/ground/held/offhand → pommel predicates
-- **enchanted book support**: individual cit properties for each enchantment
-- **3d model preservation**: maintains custom model references
-- **template protection**: prevents corruption of template files
-- **model compatibility**: fixes common model issues automatically
-
-### linter capabilities
-
-- **automatic vanilla asset generation**: detects pack_format and generates validation for target minecraft version
-- **json syntax validation**: comprehensive error reporting with line/column info
-- **vanilla asset validation**: supports minecraft 1.13-1.21+ with auto-generation
-- **texture reference checking**: validates all model → texture references, distinguishes custom vs vanilla
-- **model inheritance validation**: checks parent model references and chains
-- **missing file detection**: identifies broken asset links with context
-- **namespace warnings**: alerts about non-namespaced references
-- **pack structure validation**: ensures proper minecraft pack format
-- **zero configuration**: works out of the box, perfect for ci/cd pipelines
-- **comprehensive test coverage**: 17+ test cases covering all validation scenarios including auto-generation
-
-### development experience
-
-- **typescript throughout**: full type safety and intellisense
-- **path aliases**: clean imports with `@backporter/*`, `@linter/*` etc.
-- **colocated tests**: tests sit next to the code they validate
-- **unified cli**: single entry point for all tools
-- **comprehensive docs**: detailed readme for each module
-
-## testing
-
-comprehensive test coverage across all tools:
-
-```bash
-# run all tests
-pnpm test
-
-# run specific tool tests
-pnpm test tools/backporter/src/
-pnpm test:linter
-
-# run with coverage
-pnpm test:coverage
-
-# run specific test files
-pnpm test tools/backporter/src/integration.test.ts
-pnpm test tools/linter/src/validator.test.ts
+const results = await validateResourcePack("./pack");
 ```
 
 ## contributing
 
-1. **follow the architecture**: new tools go in `tools/`, utilities in dedicated modules
-2. **colocate tests**: put `*.test.ts` files next to the code they test
-3. **use path aliases**: import with `@toolname/*` instead of relative paths
-4. **document thoroughly**: each module needs a comprehensive readme
-5. **maintain backward compatibility**: existing cli interfaces should continue working
+1. new tools go in `tools/`
+2. colocate tests with code
+3. use path aliases, not relative imports
+4. document everything
 
-### adding new tools
-
-```bash
-# create new tool structure
-mkdir -p tools/newtool/src
-echo "# New Tool" > tools/newtool/README.md
-
-# add to unified cli
-# edit tools/index.ts to add new command
-
-# add path alias
-# edit tsconfig.json paths section
-```
-
-## performance
-
-optimized for large resource packs:
-
-- **parallel processing**: concurrent file operations where possible
-- **streaming**: minimal memory usage for large files
-- **caching**: efficient reuse of parsed data
-- **early termination**: skip processing when possible
-
-typical performance on modern hardware:
-
-- backporter: ~100 items/second
-- linter: ~1000 files/second
-- file walking: ~5000 files/second
-
-## limitations
-
-### backporter
-
-- requires pommel mod for predicate support
-- 3d models must be pre-created
-- some 1.21.4+ features may not have legacy equivalents
-
-### linter
-
-- validates syntax and references, not content quality
-- doesn't check minecraft version compatibility
-- limited to standard resource pack features
+the codebase follows "moderate complexity over architecture" - it's complex enough to handle minecraft's weirdness but not so abstract you can't figure out what's happening.
 
 ## roadmap
 
-potential future enhancements:
+maybe:
+- asset optimizer (texture compression, model optimization)
+- pack merger (safely combine multiple packs)
+- version detector (analyze pack requirements)
+- web interface (bc cli tools are intimidating)
 
-- **asset optimizer**: compress textures, optimize models
-- **pack merger**: combine multiple packs safely
-- **version detector**: identify minecraft version requirements
-- **template generator**: scaffold new resource packs
-- **web interface**: browser-based pack tools
-
-## license
-
-[license information]
+but honestly the current feature set handles 90% of use cases. might be better to keep it focused.
 
 ## acknowledgments
 
-- original "Better Fresher 3D Books v1.1" pack
-- minecraft modding community
-- pommel mod developers
-- optifine cit documentation
+- original "better fresher 3d books v1.1" pack
+- pommel mod devs for making legacy compat possible
+- minecraft modding community for reverse-engineering all this stuff

@@ -22,21 +22,21 @@ static validation tool with auto-generation and comprehensive test coverage that
 
 ```bash
 # install dependencies
-bun install
+pnpm install
 
 # backport a resource pack
-bun run backport ./my-pack ./my-pack-backported
+pnpm backport ./my-pack ./my-pack-backported
 
 # lint a resource pack
-bun run lint ./my-pack
+pnpm lint ./my-pack
 
 # run unified cli
-bun run tools/index.ts --help
+pnpm tsx tools/index.ts --help
 ```
 
 ## installation
 
-requires [bun](https://bun.sh) runtime:
+requires [Node.js](https://nodejs.org) 18+ and [pnpm](https://pnpm.io):
 
 ```bash
 # clone repository
@@ -44,10 +44,10 @@ git clone <repository-url>
 cd resource-pack-tools
 
 # install dependencies
-bun install
+pnpm install
 
 # verify installation
-bun test
+pnpm test
 ```
 
 ## usage patterns
@@ -57,23 +57,23 @@ bun test
 ```bash
 # 1. create/modify your resource pack
 # 2. validate with linter
-bun run lint ./my-pack
+pnpm lint ./my-pack
 
 # 3. backport for compatibility
-bun run backport ./my-pack ./my-pack-v1.21.1
+pnpm backport ./my-pack ./my-pack-v1.21.1
 
 # 4. test the backported pack
-bun run lint ./my-pack-v1.21.1
+pnpm lint ./my-pack-v1.21.1
 ```
 
 ### ci/cd integration
 
 ```bash
 # validate pack in ci pipeline
-bun run lint ./pack || exit 1
+pnpm lint ./pack || exit 1
 
 # generate multiple versions
-bun run backport ./pack ./pack-v1.21.1
+pnpm backport ./pack ./pack-v1.21.1
 ```
 
 ### api usage
@@ -153,18 +153,18 @@ comprehensive test coverage across all tools:
 
 ```bash
 # run all tests
-bun test
+pnpm test
 
 # run specific tool tests
-bun test tools/backporter/src/
-bun run test:linter
+pnpm test tools/backporter/src/
+pnpm test:linter
 
 # run with coverage
-bun test --coverage
+pnpm test:coverage
 
 # run specific test files
-bun test tools/backporter/src/integration.test.ts
-bun test tools/linter/src/validator.test.ts
+pnpm test tools/backporter/src/integration.test.ts
+pnpm test tools/linter/src/validator.test.ts
 ```
 
 ## contributing

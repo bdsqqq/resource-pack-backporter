@@ -11,9 +11,7 @@ export async function main() {
   // Parse flags
   const verbose = allArgs.includes("--verbose") || allArgs.includes("-v");
   const fix = allArgs.includes("--fix");
-  const nonFlagArgs = allArgs.filter(
-    (arg) => !arg.startsWith("--") && !arg.startsWith("-")
-  );
+  const nonFlagArgs = allArgs.filter((arg) => !arg.startsWith("--") && !arg.startsWith("-"));
 
   const [packDir = "."] = nonFlagArgs;
 
@@ -34,11 +32,7 @@ export async function main() {
     args: allArgs.join(" "),
   });
 
-  const validationResult = await validateResourcePack(
-    packDir,
-    { verbose, fix },
-    tracer
-  );
+  const validationResult = await validateResourcePack(packDir, { verbose, fix }, tracer);
 
   if (validationResult.isErr()) {
     mainSpan.error("Validation failed with error", {

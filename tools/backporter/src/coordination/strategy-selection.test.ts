@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it } from "bun:test";
+import { beforeEach, describe, expect, it } from "vitest";
 
 // Mock the interfaces and types we need
 interface ComponentAnalysis {

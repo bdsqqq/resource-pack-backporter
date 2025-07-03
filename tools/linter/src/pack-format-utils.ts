@@ -1,5 +1,5 @@
 import { existsSync } from "node:fs";
-import { mkdir, writeFile } from "node:fs/promises";
+import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import type { StructuredTracer } from "@logger/index";
 import { err, ok, type Result } from "neverthrow";
@@ -434,7 +434,7 @@ export async function ensureVanillaAssetsGenerated(
 
     let packMeta: PackMetadata;
     try {
-      const packMetaContent = await Bun.file(packMetaPath).text();
+      const packMetaContent = await readFile(packMetaPath, "utf-8");
       packMeta = JSON.parse(packMetaContent);
     } catch (parseError: unknown) {
       const message = parseError instanceof Error ? parseError.message : String(parseError);

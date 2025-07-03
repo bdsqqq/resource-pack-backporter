@@ -1,4 +1,4 @@
-import { describe, expect, it } from "bun:test";
+import { describe, expect, it } from "vitest";
 
 describe("Path Matching Regression Tests", () => {
   it("should not match book.json when searching for knowledge_book.json", () => {
